@@ -193,8 +193,21 @@ namespace Yukar.Engine
             svr = new SharpKmyBase.StdResourceServer();
         }
 
-        internal static void setCurrentResourceDir(string path)
+        internal static void setCurrentResourceDir(string path, bool addTextureDirPrefix = true)
         {
+            if (!addTextureDirPrefix)
+            {
+                if (path.StartsWith(sCommonPath))
+                {
+                    commonSvr.bringToFront(path);
+                }
+                else
+                {
+                    svr.bringToFront(path);
+                }
+                return;
+            }
+
             if (path.StartsWith(sCommonPath))
             {
                 commonSvr.bringToFront(path + Path.DirectorySeparatorChar + "texture");
@@ -931,10 +944,11 @@ namespace Yukar.Engine
         }
 
 		internal SharpKmyGfx.ParticleInstance LoadParticle(string path)
-		{
+        {
+            Graphics.setCurrentResourceDir(Common.Util.file.getDirName(path));
 
-			if (!mParticleDictionary.ContainsKey(path))
-			{
+            if (!mParticleDictionary.ContainsKey(path))
+            {
                 SharpKmyGfx.ParticleRoot m = SharpKmyGfx.ParticleRoot.load(path);
 				if (m != null)
 				{
@@ -951,7 +965,7 @@ namespace Yukar.Engine
 			if (def != null)
 			{
 				def.refcount++;
-				return new SharpKmyGfx.ParticleInstance(def);
+                return new SharpKmyGfx.ParticleInstance(def);
 			}
 			return null;
 		}
@@ -963,7 +977,8 @@ namespace Yukar.Engine
 
 			if (inst.basedef.refcount == 0 && inst.basedef.path != null)
             {
-				mParticleDictionary.Remove(inst.basedef.path);
+                inst.basedef.Release();
+                mParticleDictionary.Remove(inst.basedef.path);
 			}
 		}
 

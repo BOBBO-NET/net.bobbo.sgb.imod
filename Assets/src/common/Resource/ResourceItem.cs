@@ -17,6 +17,7 @@ namespace Yukar.Common.Resource
         RES_FOLDER_MODEL,
         RES_ROM,    // ".sgr" 参照用
         RES_FOLDER_FACE,
+        RES_MODEL_AND_PARTICLE,
     }
 
     public enum ResourceSource
