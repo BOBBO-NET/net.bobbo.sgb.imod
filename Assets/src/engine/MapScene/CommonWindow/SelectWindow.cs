@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Resolution overrides, Margin corrections for the Save window selection options and message
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -262,7 +264,23 @@ namespace Yukar.Engine
                 int num = nums == null ? -1 : nums[i];
                 Common.Resource.Icon.Ref icon = icons == null ? null : icons[i];
                 DrawMenuItem(i, pos, flags[i]);
-                DrawMenuItem(strs[i], pos, flags[i], num, icon);
+                // Custom overrides
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    if (UnityEntry.mMargin == true)
+                    {
+                        DrawMenuItem(" " + strs[i], pos, flags[i], num, icon);
+                    }
+                    else
+                    {
+                        DrawMenuItem(strs[i], pos, flags[i], num, icon);
+                    }
+                }
+                else
+                {
+                    DrawMenuItem(strs[i], pos, flags[i], num, icon);
+                }
+                // End of custom overrides
 
                 if (i % columnNum == columnNum - 1)
                 {
@@ -689,11 +707,43 @@ namespace Yukar.Engine
 
                 if (nums != null && icons != null)
                 {
-                    DrawMenuItem(strs[i], pos, flags[i], nums[i], icons[i]);
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mMargin == true)
+                        {
+                            DrawMenuItem(" " + strs[i], pos, flags[i], nums[i], icons[i]);
+                        }
+                        else
+                        {
+                            DrawMenuItem(strs[i], pos, flags[i], nums[i], icons[i]);
+                        }
+                    }
+                    else
+                    {
+                        DrawMenuItem(strs[i], pos, flags[i], nums[i], icons[i]);
+                    }
+                    // End of custom overrides
                 }
                 else
                 {
-                    DrawMenuItem(strs[i], pos, flags[i]);
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mMargin == true)
+                        {
+                            DrawMenuItem(" " + strs[i], pos, flags[i]);
+                        }
+                        else
+                        {
+                            DrawMenuItem(strs[i], pos, flags[i]);
+                        }
+                    }
+                    else
+                    {
+                        DrawMenuItem(strs[i], pos, flags[i]);
+                    }
+                    // End of custom overrides
                 }
 
                 if (i % columnNum == columnNum - 1)
@@ -816,15 +866,18 @@ namespace Yukar.Engine
 
     internal class MainMenu : SelectWindow
     {
+        // Custom overrides
         internal const int ITEM = 0;
         internal const int SKILL = 1;
         internal const int EQUIPMENT = 2;
         internal const int STATUS = 3;
-        //internal const int SORT = 4;
+
         internal const int SAVE = 4;
-        internal const int EXIT = 5;
-        internal const int CONFIG = 6;
-        internal const int CLOSE = 7;
+        internal const int CONFIG = 5;
+        internal const int CLOSE = 6;
+        internal const int EXIT = 7;
+        // End of custom overrides
+
         private string[] strs;
         private bool[] flags;
 
@@ -840,16 +893,19 @@ namespace Yukar.Engine
             innerWidth += 4;
             innerHeight += 4;
 
+            // Custom overrides
             strs = new String[]{
                 p.gs.glossary.item,
                 p.gs.glossary.skill,
                 p.gs.glossary.equipment,
                 p.gs.glossary.status,
                 p.gs.glossary.save,
-                p.gs.glossary.exit,
+
                 p.gs.glossary.config,
                 p.gs.glossary.close,
+                p.gs.glossary.exit,
             };
+            // End of custom overrides
             flags = new bool[]{
                 true,
                 true,

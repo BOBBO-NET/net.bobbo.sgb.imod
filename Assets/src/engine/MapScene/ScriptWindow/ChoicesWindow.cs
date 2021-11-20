@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Margin for common selection options
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -72,6 +74,21 @@ namespace Yukar.Engine
 
             textSize.X = 0;
             textSize.Y = 0;
+
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mMargin == true)
+                {
+                    int j = 0;
+                    foreach (var str in strs)
+                    {
+                        strs[j] = " " + strs[j] + "  "; // (1 space at left and 2 spaces at right side) ;
+                        j = ++j;
+                    }
+                }
+            }
+            // End of custom overrides
 
             foreach (var str in strs)
             {

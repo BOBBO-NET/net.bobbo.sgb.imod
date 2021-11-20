@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Resolution overrides
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -70,12 +72,32 @@ namespace Yukar.Engine
 
         internal override void DrawCallback()
         {
+            const int SEPARATOR_X = 260;
             var hero = p.owner.parent.owner.data.party.members[heroIndex];
             itemHeight = LINE_HEIGHT;
 
             // 名前を書く
             var pos = new Vector2(TEXT_OFFSET, 0);
-            p.textDrawer.DrawString(p.owner.parent.owner.data.party.getHeroName(hero.rom.guId), pos, Color.White);
+            // Custom overrides
+            // Hero name label font scale and color
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mHeroesNamesDecoration == true)
+                {
+                    p.textDrawer.DrawString(p.owner.parent.owner.data.party.getHeroName(hero.rom.guId), pos,
+                        UnityEntry.mHeroesNamesDecorationFontColor, UnityEntry.mHeroesNamesDecorationFontScale);
+                }
+                else
+                {
+                    p.textDrawer.DrawString(p.owner.parent.owner.data.party.getHeroName(hero.rom.guId), pos, Color.White);
+                }
+            }
+            else
+            {
+                p.textDrawer.DrawString(p.owner.parent.owner.data.party.getHeroName(hero.rom.guId), pos, Color.White);
+            }
+            // End of custom overrides
+	
 
             // 左側(基本ステータス)を書く
             pos.X = TEXT_OFFSET;
@@ -105,23 +127,16 @@ namespace Yukar.Engine
                 innerHeight - pos.Y - LINE_HEIGHT - TEXT_OFFSET - 10);
             p.selBox.Draw(pos, size, Color.Black);
 
-            const int FIXED_BORDER_SIZE = 16;
-            pos.X += FIXED_BORDER_SIZE;
-            pos.Y += FIXED_BORDER_SIZE;
-            size.X -= FIXED_BORDER_SIZE * 2;
-            size.Y -= FIXED_BORDER_SIZE * 2;
-            float descriptionTextScale = 0.8f;
-            float descLineHeight = LINE_HEIGHT / 2;
-            float descLineSpace = LINE_HEIGHT / 2 * 0.25f;
-            var strs = MessageWindow.SplitStringInnerWidth(hero.rom.description, (int)(size.X * 1.0f / descriptionTextScale), p.textDrawer).Take(3);
-            descriptionTextScale = Math.Min(descriptionTextScale, size.Y / (descLineHeight * strs.Count() - descLineSpace));
-            strs = MessageWindow.SplitStringInnerWidth(hero.rom.description, (int)(size.X * 1.0f / descriptionTextScale), p.textDrawer).Take(3);
-            descriptionTextScale = Math.Min(descriptionTextScale, size.Y / (descLineHeight * strs.Count() - descLineSpace));
-
-            foreach (string text in strs)
+            pos.X += p.selBox.paddingLeft;
+            pos.Y += p.selBox.paddingTop;
+            size.X -= p.selBox.paddingLeft + p.selBox.paddingRight;
+            size.Y -= p.selBox.paddingTop + p.selBox.paddingBottom;
+            const float DescriptionTextScale = 0.8f;
+            foreach (string text in MessageWindow.SplitStringInnerWidth(hero.rom.description, (int)(size.X * 1.0f / DescriptionTextScale), p.textDrawer).Take(3))
             {
-                p.textDrawer.DrawString(text, pos, TextDrawer.HorizontalAlignment.Left, TextDrawer.VerticalAlignment.Center, Color.White, descriptionTextScale);
-                pos.Y += (descLineHeight + descLineSpace) * descriptionTextScale;
+                p.textDrawer.DrawString(text, pos, TextDrawer.HorizontalAlignment.Left, TextDrawer.VerticalAlignment.Center, Color.White, DescriptionTextScale);
+
+                pos.Y += 24;
             }
 
             // 下(ページアイコン)を書く
@@ -170,10 +185,33 @@ namespace Yukar.Engine
             }
 
             // 立ち絵を書く
-            pos.X = -windowPos.X + maxWindowSize.X / 2;
-            pos.Y = -windowPos.Y + maxWindowSize.Y / 2;
-            size.X = -pos.X;
-            size.Y = Graphics.ScreenHeight;
+            // Write a standing picture
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mResolution == 1)
+                {
+                    pos.X = -windowPos.X + maxWindowSize.X / 2;
+                    pos.Y = -windowPos.Y + maxWindowSize.Y / 2;
+                    size.X = -pos.X;
+                    size.Y = Graphics.ScreenHeight;
+                }
+                else
+                {
+                    pos.X = -windowPos.X + maxWindowSize.X / 2 + 460;
+                    pos.Y = -windowPos.Y + maxWindowSize.Y / 2 + 225;
+                    size.X = 320;
+                    size.Y = 544;
+                }
+            }
+            else
+            {
+                pos.X = -windowPos.X + maxWindowSize.X / 2;
+                pos.Y = -windowPos.Y + maxWindowSize.Y / 2;
+                size.X = -pos.X;
+                size.Y = Graphics.ScreenHeight;
+            }
+            // End of custom overrides
             float color = 1.0f;
             if (changeCount >= CHANGE_COUNT)
             {
@@ -263,12 +301,45 @@ namespace Yukar.Engine
 
             if (showReturn)
             {
-                windowPos.Y = 16 + maxWindowSize.Y / 2;
+                // Custom overrides
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    if (UnityEntry.mResolution == 1)
+                    {
+                        windowPos.Y = 16 + maxWindowSize.Y / 2;
+                    }
+                    else
+                    {
+                        windowPos.Y = 16 + 280 + maxWindowSize.Y / 2;
+                    }
+                }
+                else
+                {
+                    windowPos.Y = 16 + maxWindowSize.Y / 2;
+                }
+                // End of custom overrides
+
             }
             else
             {
-                windowPos.Y = 16 + 64 + maxWindowSize.Y / 2;
+                // Custom overrides
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    if (UnityEntry.mResolution == 1)
+                    {
+                        windowPos.Y = 16 + 64 + maxWindowSize.Y / 2;
+                    }
+                    else
+                    {
+                        windowPos.Y = 16 + 64 + 280 + maxWindowSize.Y / 2;
+                    }
+                }
+                else
+                {
+                    windowPos.Y = 16 + 64 + maxWindowSize.Y / 2;
+                }
             }
+            // End of custom overrides
             innerHeight = (int)maxWindowSize.Y - p.window.paddingTop - p.window.paddingBottom;
         }
 
@@ -289,18 +360,55 @@ namespace Yukar.Engine
             setColumnNum(2);
             setRowNum(2, false);
 
+            // 1920/960 resolution
             if (showReturn)
             {
                 maxWindowSize.Y = 486;
-                targetWindowPos.Y = 16 + maxWindowSize.Y / 2;
+                // Custom overrides
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    if (UnityEntry.mResolution == 1)
+                    {
+                        targetWindowPos.Y = 16 + maxWindowSize.Y / 2;
+                    }
+                    else
+                    {
+                        targetWindowPos.Y = 16 + 280 + maxWindowSize.Y / 2;
+                        if (targetWindowPos.Y > 539)
+                            targetWindowPos.Y = targetWindowPos.Y - 280;
+                    }
+                }
+                else
+                {
+                    targetWindowPos.Y = 16 + maxWindowSize.Y / 2;
+                }
+                // End of custom overrides   
             }
             else
             {
                 maxWindowSize.Y = 422;
-                targetWindowPos.Y = 16 + 64 + maxWindowSize.Y / 2;
+                // Custom overrides
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    if (UnityEntry.mResolution == 1)
+                    {
+                        targetWindowPos.Y = 16 + 64 + maxWindowSize.Y / 2;
+                    }
+                    else
+                    {
+                        targetWindowPos.Y = 16 + 64 + 280 + maxWindowSize.Y / 2;
+                        if (targetWindowPos.Y > 571)
+                            targetWindowPos.Y = targetWindowPos.Y - 280;
+                    }
+                }
+                else
+                {
+                    targetWindowPos.Y = 16 + 64 + maxWindowSize.Y / 2;
+                }
+                // End of custom overrides
             }
         }
-
+	
         internal override void DrawCallback()
         {
             var area = new Vector2(innerWidth / columnNum, itemHeight);
@@ -378,13 +486,14 @@ namespace Yukar.Engine
             const int CONTENT_PADDING = 8;
             const string TEXT_SPACE = "  ";
 
-            // 名前枠
+            // Name box
             pos = origPos;
             pos.X += MARGIN;
             pos.Y += MARGIN;
             area.X = origArea.X - MARGIN * 2;
             area.Y = NAME_HEIGHT;
-            Graphics.DrawFillRect((int)pos.X, (int)pos.Y, (int)area.X, (int)area.Y, 32, 32, 32, 16);
+            // Custom overrides
+            // Graphics.DrawFillRect((int)pos.X, (int)pos.Y, (int)area.X, (int)area.Y, 32, 32, 32, 16);
 
             // 顔グラ
             const int CHR_WIDTH = 160;
@@ -401,9 +510,24 @@ namespace Yukar.Engine
             pos.Y += MARGIN;
             area.X = origArea.X - MARGIN * 2;
             area.Y = NAME_HEIGHT;
-            p.textDrawer.DrawString(party.getHeroName(member.rom.guId) + TEXT_SPACE, pos, area,
+
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mHeroesNamesDecoration == true)
+                {
+                    p.textDrawer.DrawString(party.getHeroName(member.rom.guId) + TEXT_SPACE, pos, area,
+                TextDrawer.HorizontalAlignment.Right,
+                TextDrawer.VerticalAlignment.Center, UnityEntry.mHeroesNamesDecorationFontColor, UnityEntry.mHeroesNamesDecorationFontScale);
+                }
+            }
+            else
+            {
+                p.textDrawer.DrawString(party.getHeroName(member.rom.guId) + TEXT_SPACE, pos, area,
                 TextDrawer.HorizontalAlignment.Right,
                 TextDrawer.VerticalAlignment.Center, color, 0.75f);
+            }
+            // End of custom overrides
             pos.Y += area.Y + CONTENT_PADDING;
 
             // LV
@@ -412,7 +536,8 @@ namespace Yukar.Engine
             area.X = p.textDrawer.MeasureString(lvLabel + "99").X * 0.75f + MARGIN * 3;
             area.Y = TEXT_HEIGHT;
             pos.X = origPos.X + origArea.X - area.X - MARGIN;
-            Graphics.DrawFillRect((int)pos.X, (int)pos.Y, (int)area.X, (int)area.Y, 32, 32, 32, 16);
+            // Custom overrides
+            // Graphics.DrawFillRect((int)pos.X, (int)pos.Y, (int)area.X, (int)area.Y, 32, 32, 32, 16);
             pos.X += MARGIN;
             p.textDrawer.DrawString(lvLabel, pos, area, TextDrawer.HorizontalAlignment.Left, TextDrawer.VerticalAlignment.Center, color, 0.75f);
             pos.X -= MARGIN;
@@ -426,7 +551,8 @@ namespace Yukar.Engine
             area.Y = TEXT_HEIGHT * 5;
             pos.X = origPos.X + origArea.X - area.X - MARGIN;
             pos.Y = origPos.Y + origArea.Y - area.Y - MARGIN;
-            Graphics.DrawFillRect((int)pos.X, (int)pos.Y, (int)area.X, (int)area.Y, 32, 32, 32, 16);
+            // Custom overrides
+            // Graphics.DrawFillRect((int)pos.X, (int)pos.Y, (int)area.X, (int)area.Y, 32, 32, 32, 16);
 
             // HP
             area.Y = TEXT_HEIGHT;
@@ -508,7 +634,8 @@ namespace Yukar.Engine
                 pos.Y += 4;
                 p.textDrawer.DrawString(strs[i], pos, Color.Lavender, 0.75f);
                 pos.Y -= 4;
-                p.textDrawer.DrawString(nums[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White);
+                // Custom overrides - basic status font size
+                p.textDrawer.DrawString(nums[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White, 0.75f);
                 pos.Y += LINE_HEIGHT / 2;
             }
         }
@@ -533,7 +660,9 @@ namespace Yukar.Engine
                 pos.Y += 4;
                 p.textDrawer.DrawString(strs[i], pos, Color.Lavender, 0.75f);
                 pos.Y -= 4;
-                p.textDrawer.DrawString(nums[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White);
+                // Custom overrides - detailed status font size
+	            // p.textDrawer.DrawString(nums[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White);
+	            p.textDrawer.DrawString(nums[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White, 0.75f);
                 pos.Y += LINE_HEIGHT / 2;
             }
         }
@@ -550,7 +679,7 @@ namespace Yukar.Engine
             var nums = new int[]{
                 member.equipmentEffect.attack + member.power,
                 member.equipmentEffect.elementAttack,
-                member.magic,
+                member.equipmentEffect.magic + member.magic,
                 member.equipmentEffect.defense + member.vitality,
                 member.speed, Math.Min(100, member.equipmentEffect.dexterity),
                 Math.Min(100, member.equipmentEffect.evation)
@@ -564,9 +693,13 @@ namespace Yukar.Engine
             {
                 pos.Y += 4;
                 p.textDrawer.DrawString(strs[i], pos, Color.Lavender, 0.75f);
-                pos.Y -= 4;
-                p.textDrawer.DrawString(nums[i] + suffix[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White);
-                pos.Y += LINE_HEIGHT / 2;
+                // Custom overrides
+                // pos.Y -= 4;
+                // p.textDrawer.DrawString(nums[i] + suffix[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White);
+                // pos.Y += LINE_HEIGHT / 2;
+                p.textDrawer.DrawString(nums[i] + suffix[i], pos, width, TextDrawer.HorizontalAlignment.Right, Color.White, 0.75f);
+                pos.Y += LINE_HEIGHT / 2.5f;
+                // End of custom overrides
             }
         }
 
@@ -577,7 +710,7 @@ namespace Yukar.Engine
             var nums = new int[]{
                 member.equipmentEffect.attack + member.power,
                 member.equipmentEffect.elementAttack,
-                member.magic,
+                member.equipmentEffect.magic + member.magic,
                 member.equipmentEffect.defense + member.vitality,
                 member.speed, Math.Min(100, member.equipmentEffect.dexterity),
                 Math.Min(100, member.equipmentEffect.evation)
@@ -599,7 +732,7 @@ namespace Yukar.Engine
             var nums2 = new int[]{
                 member.equipmentEffect.attack + member.power,
                 member.equipmentEffect.elementAttack,
-                member.magic,
+                member.equipmentEffect.magic + member.magic,
                 member.equipmentEffect.defense + member.vitality,
                 member.speed, Math.Min(100, member.equipmentEffect.dexterity),
                 Math.Min(100, member.equipmentEffect.evation)

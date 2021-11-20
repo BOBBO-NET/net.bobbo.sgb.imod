@@ -1,4 +1,6 @@
-﻿//#define VR_MONO_MODE
+﻿// Custom overrides
+// Resolution overrides
+//#define VR_MONO_MODE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +14,23 @@ public class UnityVR : MonoBehaviour
     {
 #if ENABLE_VR_UNITY
 #if VR_MONO_MODE
-        Screen.SetResolution(960, 544, false);
+        // Custom overrides
+        if (UnityEntry.mOverridesOn == true)
+        {
+            if (UnityEntry.mResolution == 1)
+            {
+                Screen.SetResolution(960, 544, false);
+            }
+            else
+            {
+                Screen.SetResolution(1920, 1080, false);
+            }
+        }
+        else
+        {
+            Screen.SetResolution(960, 544, false);
+        }
+        // End of custom overrides
 #else
 #endif//VR_MONO_MODE
 #endif//ENABLE_VR_UNITY

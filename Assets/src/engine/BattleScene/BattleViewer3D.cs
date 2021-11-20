@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Resolution override
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -504,7 +506,29 @@ namespace Yukar.Engine
         int STATUS_WIDTH { get { return Graphics.ScreenWidth - STATUS_X; } }
 #else
         int STATUS_X { get { return 256; } }
-        int STATUS_WIDTH { get { return 960 - STATUS_X * 2; } }
+        int STATUS_WIDTH
+        {
+            // Custom overrides
+            get
+            {
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    if (UnityEntry.mResolution == 1)
+                    {
+                        return 960 - STATUS_X * 2;
+                    }
+                    else
+                    {
+                        return 1920 - STATUS_X * 2;
+                    }
+                }
+                else
+                {
+                    return 960 - STATUS_X * 2;
+                }
+            }
+            // End of custom overrides
+        }
 #endif
         int STATUS_Y { get { return Graphics.ScreenHeight - 24 * 4 - 4; } }
 
@@ -701,7 +725,7 @@ namespace Yukar.Engine
         internal BattleActor AddPartyMember(BattlePlayerData data)
         {
             int empty = 0;
-            while (friends.Length > empty && friends[empty] != null)
+            while (friends.Length <= empty || friends[empty] != null)
                 empty++;
             if (friends.Length <= empty)
                 return null;
@@ -883,6 +907,7 @@ namespace Yukar.Engine
             foreach (var entry in turnChr)
             {
                 entry.Update(drawer, camera.Now.yAngle, false);
+                entry.hide |= MapCharacter.HideCauses.BY_BATTLE;
             }
             skillEffect.Update(drawer, camera.Now.yAngle, false);
             foreach (var mapChr in friends)
@@ -918,7 +943,7 @@ namespace Yukar.Engine
             {
                 // ステータスを書く位置を更新する
                 playerData[i].statusWindowDrawPosition = friends[i].getScreenPos(p, v, MapScene.EffectPosType.Head);
-                var neutralPos = friends[i].getPosWithoutOffset();
+                var neutralPos = friends[i].getPos();
                 //var neutralPos = BattleCharacterPosition.getPosition(CenterOfField, BattleCharacterPosition.PosType.FRIEND, i, playerData.Count);
                 if (playerData[i].isMovableToForward() &&
                     (friends[i].getActorState() < BattleActor.ActorStateType.START_COMMAND_SELECT ||
@@ -962,11 +987,7 @@ namespace Yukar.Engine
                 {
                     if (playerData[i] == owner.commandSelectPlayer)
                     {
-                        if ((turnChr[i].hide & MapCharacter.HideCauses.BY_BATTLE) != MapCharacter.HideCauses.NONE)
-                        {
-                            turnChr[i].forceRestartParticle();
-                        }
-                        turnChr[i].hide &= ~MapCharacter.HideCauses.BY_BATTLE;
+                        turnChr[i].hide &= ~MapCharacter.HideCauses.BY_BATTLE; ;
                         if (!friends[i].isActorStateQueued(BattleActor.ActorStateType.START_COMMAND_SELECT) &&
                             friends[i].getActorState() != BattleActor.ActorStateType.START_COMMAND_SELECT &&
                             friends[i].getActorState() != BattleActor.ActorStateType.COMMAND_SELECT)
@@ -978,7 +999,6 @@ namespace Yukar.Engine
                     }
                     else
                     {
-                        turnChr[i].hide |= MapCharacter.HideCauses.BY_BATTLE;
                         if (!friends[i].isActorStateQueued(BattleActor.ActorStateType.BACK_TO_WAIT) &&
                             (friends[i].getActorState() == BattleActor.ActorStateType.START_COMMAND_SELECT ||
                             friends[i].getActorState() == BattleActor.ActorStateType.COMMAND_SELECT))
@@ -988,10 +1008,6 @@ namespace Yukar.Engine
                             continue;
                         }
                     }
-                }
-                else
-                {
-                    turnChr[i].hide |= MapCharacter.HideCauses.BY_BATTLE;
                 }
             }
 
@@ -1111,11 +1127,12 @@ namespace Yukar.Engine
                                 //neutralPos.Y = (int)neutralPos.Y;
                                 //skillEffect.setPosition(neutralPos.X, neutralPos.Y);
 
-                                var neutralPos = actor.getPosWithoutOffset();
+                                var neutralPos = actor.getPos();
                                 var state = actor.getActorState();
                                 if (self.isMovableToForward() &&
                                     (state < BattleActor.ActorStateType.SKILL ||
-                                    state > BattleActor.ActorStateType.SKILL_END))
+                                    state > BattleActor.ActorStateType.SKILL_END) &&
+                                    state != BattleActor.ActorStateType.BACK_TO_WAIT)
                                     neutralPos.z -= actor.frontDir;
                                 skillEffect.setPosition(neutralPos.x - 0.5f, neutralPos.z - 0.5f);
                                 skillEffect.forceRestartParticle();

@@ -1,11 +1,12 @@
-﻿using System;
+﻿// Custom overrides description
+// Commented Debug.Log() false messages about specific FBX isn't found
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Yukar.Common.Resource
 {
-    // SelectResourceDialog の InitDirTree でだけ使う
     public enum ResourceType
     {
         RES_NONE,
@@ -16,7 +17,6 @@ namespace Yukar.Common.Resource
         RES_FOLDER_MODEL,
         RES_ROM,    // ".sgr" 参照用
         RES_FOLDER_FACE,
-        RES_MODEL_AND_PARTICLE,
     }
 
     public enum ResourceSource
@@ -147,8 +147,8 @@ namespace Yukar.Common.Resource
                 {
 #if WINDOWS
 #else
-                    UnityEngine.Debug.Log(GetType().Name + " / " + origPath + " is not found.");
-                    UnityEngine.Debug.Log("Dir : " + Util.file.getDirName(origPath) + " / FileName : " + fileName);
+                    // UnityEngine.Debug.Log(GetType().Name + " / " + origPath + " is not found.");
+                    // UnityEngine.Debug.Log("Dir : " + Util.file.getDirName(origPath) + " / FileName : " + fileName);
 #endif
                     throw (new System.IO.FileNotFoundException());
                 }

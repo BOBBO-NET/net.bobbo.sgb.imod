@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Resolution overrides
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,29 +59,51 @@ namespace Yukar.Engine
         private AskWindow ask;
         private ConfigWindow config;
 
-        internal const int BORDER_WIDTH = 2; // 枠を二重に描画しないように少し重ねる
-        internal const int WINDOW_POS_X = 12;
-        internal const int WINDOW_POS_Y = 16;
-        internal const int MAINMENU_POS_X = 60;
-        internal const int MAINMENU_POS_Y = 40;
-        internal const int MAINMENU_WIDTH = 208;
-        internal const int MAINMENU_HEIGHT = 440;
-        internal const int LEFT_WINDOW_WIDTH = 312;
-        internal const int RIGHT_MAINWINDOW_POS_X = LEFT_WINDOW_WIDTH + WINDOW_POS_X - BORDER_WIDTH;
-        internal const int RIGHT_MAINWINDOW_POS_Y = WINDOW_POS_Y + RIGHT_SUBWINDOW_HEIGHT - BORDER_WIDTH;
-        internal const int RIGHT_MAINWINDOW_WIDTH = 624;
-        internal const int RIGHT_MAINWINDOW_HEIGHT = 422;
-        internal const int RIGHT_SUBWINDOW_HEIGHT = 66;
-        internal const int RIGHT_WINDOW_TOTALHEIGHT = RIGHT_MAINWINDOW_HEIGHT + RIGHT_SUBWINDOW_HEIGHT - BORDER_WIDTH;
-        internal const int WINDOW_TOTALWIDTH = LEFT_WINDOW_WIDTH + RIGHT_MAINWINDOW_WIDTH;
-        internal const int ASKWINDOW_WIDTH = 640, ASKWINDOW_HEIGHT = 160;
-
+        // Custom overrides
+        // 960x540 defaults
+        public static int BORDER_WIDTH = 2;
+        public static int WINDOW_POS_X = 12;
+        public static int WINDOW_POS_Y = 16;
+        public static int MAINMENU_POS_X = 60;
+        public static int MAINMENU_POS_Y = 40;
+        public static int MAINMENU_WIDTH = 208;
+        public static int MAINMENU_HEIGHT = 440;
+        public static int LEFT_WINDOW_WIDTH = 312;
+        public static int RIGHT_MAINWINDOW_WIDTH = 624;
+        public static int RIGHT_MAINWINDOW_HEIGHT = 422;
+        public static int RIGHT_SUBWINDOW_HEIGHT = 66;
+        public static int ASKWINDOW_WIDTH = 640;
+        public static int ASKWINDOW_HEIGHT = 160;
+        public static int RIGHT_MAINWINDOW_POS_X;
+        public static int RIGHT_MAINWINDOW_POS_Y;
+        public static int RIGHT_WINDOW_TOTALHEIGHT;
+        public static int WINDOW_TOTALWIDTH;
+        // End of custom overrides
         internal void Initialize(
             Common.Resource.Window winRes, int winImgId,
             Common.Resource.Window selRes, int selImgId,
             Common.Resource.Window unselRes, int unselImgId,
             Common.Resource.Character scrollRes, int scrollImgId)
         {
+            // Custom overrides
+            // 1920/960 resolution
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mResolution == 2)
+                {
+                    WINDOW_POS_X = 12 + 480;
+                    WINDOW_POS_Y = 16 + 280;
+                    MAINMENU_POS_X = 60 + 480;
+                    MAINMENU_POS_Y = 40 + 280;
+                }
+            }
+            // End of custom overrides
+            // Custom overrides
+            RIGHT_MAINWINDOW_POS_X = LEFT_WINDOW_WIDTH + WINDOW_POS_X - BORDER_WIDTH;
+            RIGHT_MAINWINDOW_POS_Y = WINDOW_POS_Y + RIGHT_SUBWINDOW_HEIGHT - BORDER_WIDTH;
+            RIGHT_WINDOW_TOTALHEIGHT = RIGHT_MAINWINDOW_HEIGHT + RIGHT_SUBWINDOW_HEIGHT - BORDER_WIDTH;
+            WINDOW_TOTALWIDTH = LEFT_WINDOW_WIDTH + RIGHT_MAINWINDOW_WIDTH;
+            // End of custom overrides
             gs = parent.owner.catalog.getGameSettings();
             res = new CommonWindow.ParamSet();
             res.gs = gs;

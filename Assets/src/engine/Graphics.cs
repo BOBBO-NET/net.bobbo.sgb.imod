@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Custom overrides description
+// Resolution overrides, remove font borders overrides
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 //using Microsoft.Xna.Framework.Graphics;
@@ -70,11 +72,50 @@ namespace Yukar.Engine
             sInstance.mSpriteBatchMaster = sInstance.mSpriteBatch = new SharpKmyGfx.SpriteBatch();
 
 #if WINDOWS
-            sInstance.mWidth = 960;	//TODO
-            sInstance.mHeight = 544;
+            sInstance.mWidth = 960;	//TODO		            // Custom overrides
+	        sInstance.mHeight = 544;		            
+            if (UnityEntry.mOverridesOn == true)
+            { 
+			    if (UnityEntry.mResolution == 1)
+                {
+			        sInstance.mWidth = 960;
+			        sInstance.mHeight = 544;
+                }
+			    else
+			    {
+			        sInstance.mWidth = 1920;
+			        sInstance.mHeight = 1080;
+                }
+            }
+			else
+			{
+			    // Default
+			    sInstance.mWidth = 960;
+			    sInstance.mHeight = 544;
+            }
+			// End of custom overrides
 #else
-            sInstance.mWidth = 960;	//TODO
+            sInstance.mWidth = 960; //TODO		            // Custom overrides
             sInstance.mHeight = 540;
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mResolution == 1)
+                {
+                    sInstance.mWidth = 960;
+                    sInstance.mHeight = 540;
+                }
+                else
+                {
+                    sInstance.mWidth = 1920;
+                    sInstance.mHeight = 1080;
+                }
+            }
+            else
+            {
+                sInstance.mWidth = 960;
+                sInstance.mHeight = 540;
+            }
+            // End of custom overrides
 #endif
             //sInstance.mWidth = graphics.Viewport.Width;
             //sInstance.mHeight = graphics.Viewport.Height;
@@ -152,21 +193,8 @@ namespace Yukar.Engine
             svr = new SharpKmyBase.StdResourceServer();
         }
 
-        internal static void setCurrentResourceDir(string path, bool addTextureDirPrefix = true)
+        internal static void setCurrentResourceDir(string path)
         {
-            if (!addTextureDirPrefix)
-            {
-                if (path.StartsWith(sCommonPath))
-                {
-                    commonSvr.bringToFront(path);
-                }
-                else
-                {
-                    svr.bringToFront(path);
-                }
-                return;
-            }
-
             if (path.StartsWith(sCommonPath))
             {
                 commonSvr.bringToFront(path + Path.DirectorySeparatorChar + "texture");
@@ -903,11 +931,10 @@ namespace Yukar.Engine
         }
 
 		internal SharpKmyGfx.ParticleInstance LoadParticle(string path)
-        {
-            Graphics.setCurrentResourceDir(Common.Util.file.getDirName(path));
+		{
 
-            if (!mParticleDictionary.ContainsKey(path))
-            {
+			if (!mParticleDictionary.ContainsKey(path))
+			{
                 SharpKmyGfx.ParticleRoot m = SharpKmyGfx.ParticleRoot.load(path);
 				if (m != null)
 				{
@@ -924,7 +951,7 @@ namespace Yukar.Engine
 			if (def != null)
 			{
 				def.refcount++;
-                return new SharpKmyGfx.ParticleInstance(def);
+				return new SharpKmyGfx.ParticleInstance(def);
 			}
 			return null;
 		}
@@ -936,8 +963,7 @@ namespace Yukar.Engine
 
 			if (inst.basedef.refcount == 0 && inst.basedef.path != null)
             {
-                inst.basedef.Release();
-                mParticleDictionary.Remove(inst.basedef.path);
+				mParticleDictionary.Remove(inst.basedef.path);
 			}
 		}
 
@@ -1359,8 +1385,14 @@ namespace Yukar.Engine
             var bytes = System.Text.Encoding.UTF8.GetBytes(text);
 
             // 縁取り
+            // Custom overrides
             int[] offsX = { -1, -1, -1, 0, 0, 1, 1, 1 };
+            int[] offsX0 = { 0, 0, 0, 0, 0, 0, 0, 0 };
             int[] offsY = { -1, 0, 1, -1, 1, -1, 0, 1 };
+            int[] offsY0 = { 0, 0, 0, 0, 0, 0, 0, 0 };
+            offsX = UnityEntry.mOverridesOn == true ? (UnityEntry.mRemoveFontBorders == true ? offsX0 : offsX) : offsX;
+            offsY = UnityEntry.mOverridesOn == true ? (UnityEntry.mRemoveFontBorders == true ? offsY0 : offsY) : offsY;
+            // End of Custom overrides
             float[] alphaScale = { 0.25f, 1.0f, 0.25f, 1.0f, 1.0f, 0.25f, 1.0f, 0.25f };
             for (int i = 0; i < offsX.Length; i++)
             {
@@ -1400,8 +1432,15 @@ namespace Yukar.Engine
             if (!bold)
             {
                 // 縁取り
+                // Custom overrides
                 int[] offsX = { -1, -1, -1, 0, 0, 1, 1, 1 };
+                int[] offsX0 = { 0, 0, 0, 0, 0, 0, 0, 0 };
                 int[] offsY = { -1, 0, 1, -1, 1, -1, 0, 1 };
+                int[] offsY0 = { 0, 0, 0, 0, 0, 0, 0, 0 };
+                offsX = UnityEntry.mOverridesOn == true ? (UnityEntry.mRemoveFontBorders == true ? offsX0 : offsX) : offsX;
+                offsY = UnityEntry.mOverridesOn == true ? (UnityEntry.mRemoveFontBorders == true ? offsY0 : offsY) : offsY;
+                // End of Custom overrides
+
                 float[] alphaScale = { 0.25f, 1.0f, 0.25f, 1.0f, 1.0f, 0.25f, 1.0f, 0.25f };
                 for (int i = 0; i < offsX.Length; i++)
                 {
@@ -1421,8 +1460,14 @@ namespace Yukar.Engine
             else
             {
                 // 縁取り
+                // Custom overrides
                 int[] offsX = { -1, -1, -1, 0, 0, 2, 2, 3, 3, 3 };
+                int[] offsX0 = { 0, 0, 0, 0, 0, 0, 0, 0 };
                 int[] offsY = { -1, 0, 1, -1, 1, -1, 1, -1, 0, 1 };
+                int[] offsY0 = { 0, 0, 0, 0, 0, 0, 0, 0 };
+                offsX = UnityEntry.mOverridesOn == true ? (UnityEntry.mRemoveFontBorders == true ? offsX0 : offsX) : offsX;
+                offsY = UnityEntry.mOverridesOn == true ? (UnityEntry.mRemoveFontBorders == true ? offsY0 : offsY) : offsY;
+                // End of Custom overrides
                 float[] alphaScale = { 0.25f, 1.0f, 0.25f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.25f, 1.0f, 0.25f };
                 for (int i = 0; i < offsX.Length; i++)
                 {

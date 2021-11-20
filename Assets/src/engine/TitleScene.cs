@@ -1,5 +1,8 @@
-﻿using System;
+﻿// Custom overrides description
+// Quit button additions
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Title = Yukar.Common.Rom.GameSettings.TitleScreen;
 
 namespace Yukar.Engine
@@ -322,6 +325,12 @@ namespace Yukar.Engine
                         case TitleDrawer.SelectItemKind.Option:
                             showConfig();
                             break;
+                        // Custom overrides
+                        case TitleDrawer.SelectItemKind.LeaveGame:
+                            Audio.PlaySound(owner.se.decide);
+                            QuitGame();
+                            break;
+                        // End of custom overrides
                     }
                 }
                 else
@@ -330,6 +339,19 @@ namespace Yukar.Engine
                 }
             }
         }
+
+        // Custom overrides
+        public void QuitGame()
+        {
+            #if UNITY_EDITOR
+                // Application.Quit() will not work in the editor, so the following 
+                // needs to set to false to end the game in the editor.
+                UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                Application.Quit();
+            #endif
+        }
+        // End of custom overrides
 
         private void showConfig()
         {

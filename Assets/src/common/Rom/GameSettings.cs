@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿// Custom overrides description
+// Quit button additions, Resolution overrides
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,6 +151,9 @@ namespace Yukar.Common.Rom
             public string selectItemNewGameText = "";
             public string selectItemContinueText = "";
             public string selectItemOptionText = "";
+            // Custom overrides
+            public string selectItemLeaveGameText;
+            // End of custom overrides
             public SelectItemSortOrientation selectItemSortOrientation;
             public ContentAlignment selectItemPosition;
             public Color selectItemTextColor;
@@ -161,6 +166,12 @@ namespace Yukar.Common.Rom
 
             public override void load(System.IO.BinaryReader reader)
             {
+                // Custom overrides
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    selectItemLeaveGameText = "Quit game";
+                }
+                // End of custom overrides                
                 titleLogoDisplayPosition = (ContentAlignment)reader.ReadInt32();
                 titleAnimation = (TitleAnimation)reader.ReadInt32();
 
@@ -760,13 +771,15 @@ namespace Yukar.Common.Rom
         public List<Guid> commonEvents = new List<Guid>();
         public List<Guid> battleEvents = new List<Guid>(); // 複製元イベント
 
-#if WINDOWS
-        public int screenWidth = 960;
-        public int screenHeight = 544;
-#else
-        public int screenWidth = 960;
-        public int screenHeight = 540;
-#endif
+	    #if WINDOWS
+	        // Custom overrides
+	        public int screenWidth = (UnityEntry.mOverridesOn == true) ? (UnityEntry.mResolution == 1 ? 960 : 1920) : 960;
+	        screenHeight = (UnityEntry.mOverridesOn == true) ? (UnityEntry.mResolution == 1 ? 544 : 1080) : 544;
+		#else
+	        // Custom overrides
+	        public int screenWidth = (UnityEntry.mOverridesOn == true) ? (UnityEntry.mResolution == 1 ? 960 : 1920) : 960;
+	        public int screenHeight = (UnityEntry.mOverridesOn == true) ? (UnityEntry.mResolution == 1 ? 540 : 1080) : 540;
+		#endif
 
         public int inventoryMax = 999;
 

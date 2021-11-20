@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Set overrides setting below
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -8,8 +10,19 @@ using Yukar.Engine;
 
 public class UnityEntry : MonoBehaviour
 {
-    public float boundsExtentScale = 1.5f;
-
+    // Custom overrides
+    static public bool mOverridesOn = true;             // Set false to skip all custom overrides and true to apply overrides below
+    static public int  mResolution = 2;                 // Set 1 for 960 x 544 (540) resolution, set 2 for 1920 x 1080 resolution
+    static public bool mMargin = true;                  // Set false to skip margin correction and true to apply margin correction
+    static public bool mRemoveFontBorders = true;       // Set true to remove font borders and false to default font borders
+    static public bool mFlatGauge = true;               // Set true to apply flat gauge styles in the Config windows and false to default
+    static public bool mHeroesNamesDecoration = true;   // Set true to apply custom color and font size to the heroes name labels in Menu
+                                                        // If mHeroesNamesDecoration is true you must set both parameters below
+                                                        // Set custom scale of hero name label font (default not set, used internal font scale)
+    static public float mHeroesNamesDecorationFontScale = 1.2f;
+    // Set custom color of hero name label (default Microsoft.Xna.Framework.Color.White)
+    static public Microsoft.Xna.Framework.Color mHeroesNamesDecorationFontColor = Microsoft.Xna.Framework.Color.DeepPink;
+    // End of custom overrides
     static protected GameMain sGame = null;
     static internal GameMain game { get { return sGame; } }
     static protected UnityEntry sSelf = null;
@@ -38,7 +51,6 @@ public class UnityEntry : MonoBehaviour
     void Start()
     {
         if (game != null) return;
-        SharpKmyGfx.ModelInstance.sBoundsExtentScale = boundsExtentScale;
         SharpKmyGfx.Render.InitializeRender();
         UnityUtil.Initialize();
         sSelf = this;

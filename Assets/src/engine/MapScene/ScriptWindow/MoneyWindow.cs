@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Margin for money window
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -99,9 +101,29 @@ namespace Yukar.Engine
 
                 if (windowState == WindowState.SHOW_WINDOW)
                 {
-                    // 所持金を描画する
-                    textDrawer.DrawString(parent.owner.data.party.GetMoney() + " " + parent.menuWindow.res.gs.glossary.moneyName,
-                        pos + textOffset, areaSize, TextDrawer.HorizontalAlignment.Right, TextDrawer.VerticalAlignment.Center, Color.White);
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mMargin == true)
+                        {
+                            // Draw the money
+                            textDrawer.DrawString(" " + parent.owner.data.party.GetMoney() + " " + parent.menuWindow.res.gs.glossary.moneyName + " ",
+                                pos + textOffset, areaSize, TextDrawer.HorizontalAlignment.Right, TextDrawer.VerticalAlignment.Center, Color.White);
+                        }
+                        else
+                        {
+                            // Draw the money
+                            textDrawer.DrawString(parent.owner.data.party.GetMoney() + " " + parent.menuWindow.res.gs.glossary.moneyName,
+                                pos + textOffset, areaSize, TextDrawer.HorizontalAlignment.Right, TextDrawer.VerticalAlignment.Center, Color.White);
+                        }
+                    }
+                    else
+                    {
+                        // Draw the money
+                        textDrawer.DrawString(parent.owner.data.party.GetMoney() + " " + parent.menuWindow.res.gs.glossary.moneyName,
+                            pos + textOffset, areaSize, TextDrawer.HorizontalAlignment.Right, TextDrawer.VerticalAlignment.Center, Color.White);
+                    }
+                    // End of custom overrides
                 }
             }
         }

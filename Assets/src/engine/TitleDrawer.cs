@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Quit button additions
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Yukar.Common.Rom;
@@ -24,6 +26,7 @@ namespace Yukar.Engine
             NewGame,
             Continue,
             Option,
+            LeaveGame, // Custom overrides
         }
 
         abstract class TitleObjectBase
@@ -275,6 +278,9 @@ namespace Yukar.Engine
             selectItemsData.Add(new SelectItem() { selectItemKind = SelectItemKind.NewGame,  itemText = title.selectItemNewGameText, });
             selectItemsData.Add(new SelectItem() { selectItemKind = SelectItemKind.Continue, itemText = title.selectItemContinueText, });
             selectItemsData.Add(new SelectItem() { selectItemKind = SelectItemKind.Option,   itemText = title.selectItemOptionText, });
+            // Custom overrides
+            selectItemsData.Add(new SelectItem() { selectItemKind = SelectItemKind.LeaveGame, itemText = title.selectItemLeaveGameText, });
+            // End of custom overrides
 
             foreach (var item in selectItemsData)
             {

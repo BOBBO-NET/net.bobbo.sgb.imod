@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿// Custom overrides description
+// Resolution overrides, Margin corrections for the Config window selection options, customized flat Draw Gauge 
+using Microsoft.Xna.Framework;
 using KeyStates = Yukar.Engine.Input.KeyStates;
 using StateType = Yukar.Engine.Input.StateType;
 
@@ -46,7 +48,16 @@ namespace Yukar.Engine
             setColumnNum(1);
             setRowNum(8, true);
             itemOffset = 16;
-
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mResolution == 2)
+                {
+                    windowPos.X = 960;
+                    windowPos.Y = 540;
+                }
+            }
+            // End of custom overrides
             base.Show();
         }
 
@@ -79,7 +90,18 @@ namespace Yukar.Engine
             strs[3] = p.gs.glossary.cursor_position;
             //strs[4] = "操作方法";
             strs[4] = p.gs.glossary.restore_defaults;
-
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mMargin == true)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        strs[i] = " " + strs[i]; // Adding 1 space at left
+                    }
+                }
+            }
+	            // End of custom overrides
             flags = new bool[5];
             flags[0] = flags[1] = flags[2] = flags[3] = flags[4] = true;
 
@@ -248,26 +270,144 @@ namespace Yukar.Engine
                 TextDrawer.HorizontalAlignment.Center,
                 TextDrawer.VerticalAlignment.Top, Color.White, 0.75f);
 
-            // ゲージを書く
-            pos.Y += itemHeight - 24;
-            size.Y = 16;
-            Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 128, 128, 128, 128);
+            // Custom overrides
+            #region <Custom overrides>
+            // Border
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mFlatGauge == true)
+                {
+                    // Gauge height = 24
+                    pos.Y += itemHeight - 24;
+                    size.Y = 24;
+                    // Change 128, 128, 128, 255 to your RGBA values
+                    Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 128, 128, 128, 255);
+                }
+                else
+                {
+                    // Gauge height = 16 (default)
+                    pos.Y += itemHeight - 24;
+                    size.Y = 16;
+                    Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 128, 128, 128, 128);
+                }
+            }
+            else
+            {
+                // Gauge height = 16 (default)
+                pos.Y += itemHeight - 24;
+                size.Y = 16;
+                Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 128, 128, 128, 128);
+            }
 
-            pos.X += 2;
-            pos.Y += 2;
-            size.X -= 4;
-            size.Y -= 4;
-            Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 0, 0, 0, 128);
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mFlatGauge == true)
+                {
+                    // Border width = 1
+                    pos.X += 1;
+                    pos.Y += 1;
+                    size.X -= 2;
+                    size.Y -= 2;
+                }
+                else
+                {
+                    // Border width = 2 (default)
+                    pos.X += 2;
+                    pos.Y += 2;
+                    size.X -= 4;
+                    size.Y -= 4;
+                }
+            }
+            else
+            {
+                // Border width = 2 (default)
+                pos.X += 2;
+                pos.Y += 2;
+                size.X -= 4;
+                size.Y -= 4;
+            }
 
+            // Background
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mFlatGauge == true)
+                {
+                    // Change 0, 0, 0, 224 to your RGBA values
+                    Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 0, 0, 0, 224);
+                }
+                else
+                {
+                    Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 0, 0, 0, 128);
+                }
+            }
+            else
+            {
+                Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 0, 0, 0, 128);
+            }
+
+            // Top part
             size.X = size.X * settings[i] / 100;
-            Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 64, 48, 192, 255);
 
-            size.Y /= 2;
-            pos.Y += size.Y / 2;
-            Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 32, 16, 96, 255);
 
-            pos.Y += size.Y / 2;
-            Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 16, 8, 64, 255);
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mFlatGauge == true)
+                {
+                    // Change 236, 30, 80, 255 to your RGBA values
+                    Graphics.DrawFillRect((int)pos.X + 4, (int)(pos.Y) + 4, (int)size.X - 8, (int)size.Y - 8, 236, 30, 80, 255);
+                }
+                else
+                {
+                    Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 64, 48, 192, 255);
+                }
+            }
+            else
+            {
+                Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 64, 48, 192, 255);
+            }
+
+
+            // Middle part
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mFlatGauge == true)
+                {
+                    // Do nothing because we need only Top part for a flat style
+                }
+                else
+                {
+                    size.Y /= 2;
+                    pos.Y += size.Y / 2;
+                    Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 32, 16, 96, 255);
+                }
+            }
+            else
+            {
+                size.Y /= 2;
+                pos.Y += size.Y / 2;
+                Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 32, 16, 96, 255);
+            }
+
+            // Bottom part
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mFlatGauge == true)
+                {
+                    // Do nothing because we need only Top part for a flat style
+                }
+                else
+                {
+                    pos.Y += size.Y / 2;
+                    Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 16, 8, 64, 255);
+                }
+            }
+            else
+            {
+                pos.Y += size.Y / 2;
+                Graphics.DrawFillRect((int)pos.X, (int)(pos.Y), (int)size.X, (int)size.Y, 16, 8, 64, 255);
+            }
+            #endregion
+            // End of custom overrides
         }
 
         private void DrawString(int i, Vector2 pos, Vector2 size)

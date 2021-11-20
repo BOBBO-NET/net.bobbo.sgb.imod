@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿// Custom overrides description
+// Resolution overrides, Margin corrections for the Save window selection options and message
+using Microsoft.Xna.Framework;
 using Yukar.Common;
 
 namespace Yukar.Engine
@@ -22,6 +24,26 @@ namespace Yukar.Engine
 
         public override void Initialize(CommonWindow.ParamSet pset, int x, int y, int maxWidth, int maxHeight)
         {
+
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mResolution == 1)
+                {
+                    // Do nothing
+                }
+                else
+                {
+                    x = 644;
+                    y = 540;
+                }
+            }
+            else
+            {
+                // Do nothing
+            }
+            // End of custom overrides
+
             base.Initialize(pset, x, y, maxWidth, maxHeight);
 
             saveFileList = new string[maxItems];
@@ -57,15 +79,21 @@ namespace Yukar.Engine
                 totalHeight += (int)(p.textDrawer.MeasureString(str).Y * scale * scale);
             }
 
-            // 日付
-            pos.Y -= totalHeight / 4;
+            // Custom code
+            // Date
+            // pos.Y -= totalHeight / 4;
+            pos.Y -= totalHeight / 4 + 5;
+            // End of custom code
             foreach (var str in strs)
             {
                 var size = new Vector2(innerWidth - TEXT_OFFSET, itemHeight);
                 p.textDrawer.DrawString(str, pos, size,
                     TextDrawer.HorizontalAlignment.Right,
                     TextDrawer.VerticalAlignment.Center, Color.White, scale);
-                pos.Y += totalHeight / 2;
+                // Custom code
+                // pos.Y += totalHeight / 2;
+                pos.Y += totalHeight / 2 + 10;
+                // End of custom code
             }
         }
 
@@ -132,6 +160,26 @@ namespace Yukar.Engine
 
             windowState = WindowState.OPENING_WINDOW;
             frame = 0;
+
+            // 1920/960 resolution
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mResolution == 1)
+                {
+                    // Do nothing
+                }
+                else
+                {
+                    windowPos.X = 1128;
+                    windowPos.Y = 540;
+                }
+            }
+            else
+            {
+                // Do nothing
+            }
+
             p = p.clone();  // パーティ情報を書き換えないといけないので、ParamSet のクローンをもらう
             p.partyChars = null;
 
@@ -244,7 +292,23 @@ namespace Yukar.Engine
         internal void DoSave()
         {
             p.owner.parent.owner.DoSave(currentIndex);
-            p.owner.parent.ShowToast(p.gs.glossary.saved);
+            // Custom code
+            if (UnityEntry.mOverridesOn == true)
+            {
+                if (UnityEntry.mMargin == true)
+                {
+                    p.owner.parent.ShowToast("     " + p.gs.glossary.saved + "     ");
+                }
+                else
+                {
+                    p.owner.parent.ShowToast(p.gs.glossary.saved);
+                }
+            }
+            else
+            {
+                p.owner.parent.ShowToast(p.gs.glossary.saved);
+            }
+            // End of custom code
             refreshInfo(currentIndex);
         }
 

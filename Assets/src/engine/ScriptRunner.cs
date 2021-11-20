@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Resolution overrides
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -830,7 +832,7 @@ namespace Yukar.Engine
                             var posType = (Command.PosType)intAttr.value;
                             switch (posType)
                             {
-                                case Yukar.Common.Rom.Script.Command.PosType.NO_MOVE:   // これには来ない
+                                case Yukar.Common.Rom.Script.Command.PosType.NO_MOVE:
                                     owner.spManager.Move(spIndex, zoom, waitFrame, color);
                                     break;
                                 case Yukar.Common.Rom.Script.Command.PosType.CONSTANT:
@@ -3100,6 +3102,16 @@ namespace Yukar.Engine
                 {
                     int posX = SpriteManager.DIALOGUE_SPRITE_A_POS_X;
                     int posY = SpriteManager.DIALOGUE_SPRITE_A_POS_Y;
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mResolution == 2)
+                        {
+                            posX = posX + 480;
+                            posY = posY + 540;
+                        }
+                    }
+                    // End of custom overrides
                     var color = Color.White;
                     if (owner.spManager.GetImageGuid(SpriteManager.DIALOGUE_SPRITE_A) != guid)
                     {
@@ -3122,6 +3134,16 @@ namespace Yukar.Engine
                     // A 移動処理
                     posX = SpriteManager.DIALOGUE_SPRITE_A_POS_X;
                     posY = SpriteManager.DIALOGUE_SPRITE_A_POS_Y;
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mResolution == 2)
+                        {
+                            posX = posX + 480;
+                            posY = posY + 540;
+                        }
+                    }
+                    // End of custom overrides
                     color = Color.White;
                     if (!activeIsA)
                     {
@@ -3146,6 +3168,16 @@ namespace Yukar.Engine
                 {
                     var posX = SpriteManager.DIALOGUE_SPRITE_B_POS_X;
                     var posY = SpriteManager.DIALOGUE_SPRITE_B_POS_Y;
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mResolution == 2)
+                        {
+                            posX = posX + 480;
+                            posY = posY + 540;
+                        }
+                    }
+                    // End of custom overrides
                     var color = Color.White;
                     if (owner.spManager.GetImageGuid(SpriteManager.DIALOGUE_SPRITE_B) != guid)
                     {
@@ -3168,6 +3200,16 @@ namespace Yukar.Engine
                     // B 移動処理
                     posX = SpriteManager.DIALOGUE_SPRITE_B_POS_X;
                     posY = SpriteManager.DIALOGUE_SPRITE_B_POS_Y;
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mResolution == 2)
+                        {
+                            posX = posX + 480;
+                            posY = posY + 540;
+                        }
+                    }
+                    // End of custom overrides
                     color = Color.White;
                     if (activeIsA)
                     {
@@ -3175,7 +3217,23 @@ namespace Yukar.Engine
                         posY += 20;
                         color = new Color(191, 191, 191, 255);
                     }
-                    owner.spManager.Move(SpriteManager.DIALOGUE_SPRITE_B, scaleX, 100, 15, color, posX, posY);
+                    // Custom overrides
+                    if (UnityEntry.mOverridesOn == true)
+                    {
+                        if (UnityEntry.mResolution == 1)
+                        {
+                            owner.spManager.Move(SpriteManager.DIALOGUE_SPRITE_B, scaleX, 100, 15, color, posX, posY);
+                        }
+                        else
+                        {
+                            owner.spManager.Move(SpriteManager.DIALOGUE_SPRITE_B, scaleX, 100, 1, color, posX, posY);
+                        }
+                    }
+                    else
+                    {
+                        owner.spManager.Move(SpriteManager.DIALOGUE_SPRITE_B, scaleX, 100, 15, color, posX, posY);
+                    }
+                    // End of custom overrides
                 }
                 else
                 {
@@ -3835,7 +3893,6 @@ namespace Yukar.Engine
                 case Command.VarSourceType.KEY_INPUT:
                     {
                         Input.KeyStates key = KeyStates.DECIDE;
-                        bool repeatType = false;
                         switch (curCommand.attrList[curAttr++].GetInt())
                         {
                             case 0: key = KeyStates.UP; break;
@@ -3853,25 +3910,11 @@ namespace Yukar.Engine
                             case 12:key = KeyStates.CAMERA_ZOOM_IN; break;
                             case 13:key = KeyStates.CAMERA_ZOOM_OUT; break;
                             case 14:key = KeyStates.CAMERA_POSITION_RESET; break;
-                            case 15:key = KeyStates.UP; repeatType = true; break;
-                            case 16:key = KeyStates.DOWN; repeatType = true; break;
-                            case 17:key = KeyStates.LEFT; repeatType = true; break;
-                            case 18:key = KeyStates.RIGHT; repeatType = true; break;
                         }
-                        if (!repeatType)
-                        {
-                            // リピートなし
-                            if (Input.KeyTest(StateType.TRIGGER, key)) right = 2;
-                            else if (Input.KeyTest(StateType.TRIGGER_UP, key)) right = -1;
-                            else if (Input.KeyTest(StateType.DIRECT, key)) right = 1;
-                            else right = 0;
-                        }
-                        else
-                        {
-                            // リピートタイプ
-                            if(Input.KeyTest(StateType.REPEAT, key)) right = 1;
-                            else right = 0;
-                        }
+                        if (Input.KeyTest(StateType.TRIGGER, key)) right = 2;
+                        else if (Input.KeyTest(StateType.TRIGGER_UP, key)) right = -1;
+                        else if (Input.KeyTest(StateType.DIRECT, key)) right = 1;
+                        else right = 0;
                     }
                     break;
                 case Command.VarSourceType.CAMERA:
@@ -4020,12 +4063,8 @@ namespace Yukar.Engine
                 case Command.VarHeroSourceType.MAXMAGICPOINT:
                     return battleStatus.maxMagicpoint;
                 case Command.VarHeroSourceType.HP_PERCENT:
-                    if (battleStatus.maxHitpoint == 0)
-                        return 0;
                     return battleStatus.hitpoint * 100 / battleStatus.maxHitpoint;
                 case Command.VarHeroSourceType.MP_PERCENT:
-                    if (battleStatus.maxMagicpoint == 0)
-                        return 0;
                     return battleStatus.magicpoint * 100 / battleStatus.maxMagicpoint;
                 case Command.VarHeroSourceType.ATTACKPOWER:
                     return battleStatus.power + battleStatus.equipmentEffect.attack;
@@ -4055,14 +4094,12 @@ namespace Yukar.Engine
                             return i;
                     }
                     return 0;
-                case Command.VarHeroSourceType.PARTYINDEX:
-                    return GameMain.instance.data.party.members.IndexOf(battleStatus) + 1;
             }
 
             return 0;
         }
 
-        internal static int getBattleStatus(BattleCharacterBase battleStatus, Command.VarHeroSourceType srcTypePlus, List<BattlePlayerData> party)
+        internal static int getBattleStatus(BattleCharacterBase battleStatus, Command.VarHeroSourceType srcTypePlus)
         {
             switch (srcTypePlus)
             {
@@ -4079,12 +4116,8 @@ namespace Yukar.Engine
                 case Command.VarHeroSourceType.MAXMAGICPOINT:
                     return battleStatus.MaxMagicPoint;
                 case Command.VarHeroSourceType.HP_PERCENT:
-                    if (battleStatus.MaxHitPoint == 0)
-                        return 0;
                     return battleStatus.HitPoint * 100 / battleStatus.MaxHitPoint;
                 case Command.VarHeroSourceType.MP_PERCENT:
-                    if (battleStatus.MaxMagicPoint == 0)
-                        return 0;
                     return battleStatus.MagicPoint * 100 / battleStatus.MaxMagicPoint;
                 case Command.VarHeroSourceType.ATTACKPOWER:
                     return battleStatus.Attack;
@@ -4118,8 +4151,6 @@ namespace Yukar.Engine
                             return i;
                     }
                     return 0;
-                case Command.VarHeroSourceType.PARTYINDEX:
-                    return party.IndexOf((BattlePlayerData)battleStatus) + 1;
             }
 
             return 0;

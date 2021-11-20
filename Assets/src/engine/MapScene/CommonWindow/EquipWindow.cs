@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Custom overrides description
+// Margin corrections for Equipment window slot icons
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,7 +67,23 @@ namespace Yukar.Engine
             var iconIndexes = new int[] { 4, 3, 2, 5, 0, 0 };
             for (int i = 0; i < maxItems; i++)
             {
-                Graphics.DrawChipImage(imgId, (int)pos.X, (int)pos.Y, iconIndexes[i], 0);
+                // Custom overrides
+                if (UnityEntry.mOverridesOn == true)
+                {
+                    if (UnityEntry.mMargin == true)
+                    {
+                        Graphics.DrawChipImage(imgId, 7 + (int)pos.X, (int)pos.Y, iconIndexes[i], 0); // Change 7(px) to your own margin
+                    }
+                    else
+                    {
+                        Graphics.DrawChipImage(imgId, (int)pos.X, (int)pos.Y, iconIndexes[i], 0);
+                    }
+                }
+                else
+                {
+                    Graphics.DrawChipImage(imgId, (int)pos.X, (int)pos.Y, iconIndexes[i], 0);
+                }
+                // End of custom overrides
                 pos.Y += LINE_HEIGHT;
             }
         }

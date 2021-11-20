@@ -7,8 +7,8 @@ namespace SharpKmyGfx
 {
     public class SpriteBatch
     {
-        public const int DEFAULT_SCREEN_X = 960;
-        public const int DEFAULT_SCREEN_Y = 540;
+	    public static int DEFAULT_SCREEN_X = 960;
+	    public static int DEFAULT_SCREEN_Y = 540;
         public static float offsetX;
         public static float offsetY;
 
@@ -38,6 +38,30 @@ namespace SharpKmyGfx
 
         public SpriteBatch()
         {
+            // Custom overrides
+            if (UnityEntry.mOverridesOn == true)
+            {
+                // 540p
+                if (UnityEntry.mResolution == 1)
+                {
+                    DEFAULT_SCREEN_X = 960;
+                    DEFAULT_SCREEN_Y = 540;
+                }
+                else
+                // 1080p
+                {
+                    DEFAULT_SCREEN_X = 1920;
+                    DEFAULT_SCREEN_Y = 1080;
+                }
+            }
+            else
+            {
+                // Default
+                DEFAULT_SCREEN_X = 960;
+                DEFAULT_SCREEN_Y = 540;
+            }
+            // End of custom overrides
+
             if (rectTex == null) {
                 rectTex = new Texture2D(1, 1);
                 rectTex.SetPixel(0, 0, new UnityEngine.Color(1, 1, 1, 1));
