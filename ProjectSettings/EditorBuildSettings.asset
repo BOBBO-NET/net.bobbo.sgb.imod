@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/SGB_IMod/TestScene.unity
+    guid: b767c3b7d8e6b8847aafb3664e80aebb
+  - enabled: 1
     path: Assets/Entry.unity
     guid: 2c52f93880602bf4dae700b1544ec46c
   - enabled: 1
@@ -86,7 +89,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/SGB_IMod/IModWorkspace.unity
     guid: 8816862d34bc72d49afadac550cf7d78
-  - enabled: 1
-    path: Assets/SGB_IMod/TestScene.unity
-    guid: b767c3b7d8e6b8847aafb3664e80aebb
   m_configObjects: {}
