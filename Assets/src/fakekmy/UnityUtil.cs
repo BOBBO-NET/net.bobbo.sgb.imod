@@ -199,6 +199,8 @@ namespace Yukar.Common
         {
             var obj = parents[(int)inType];
             var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByBuildIndex(inBuildIndex);
+
+            Debug.Log(obj.gameObject.name);
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(obj.gameObject, scene);
         }
 

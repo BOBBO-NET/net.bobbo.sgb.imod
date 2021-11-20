@@ -9,6 +9,7 @@ namespace SGB_IMod
         [Header("Settings")]
         public string gameResourceLocation = "none lmao";
 
+        [ContextMenu("Debug Load Smile Game")]
         public void LoadIntoGame()
         {
             SGBManager.LoadSmileGame(gameResourceLocation);
