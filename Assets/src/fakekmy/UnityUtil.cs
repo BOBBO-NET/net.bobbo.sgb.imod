@@ -58,6 +58,22 @@ namespace Yukar.Common
             }
         }
 
+        // Icy Override Start
+        internal static void DeInit()
+        {
+            // Re-initialize variables to their default states
+            currentScene = SceneType.MAP;
+            parents = new Transform[(int)ParentType.COUNT];
+            sSceneBuildIndexList = new int[(int)SceneType.COUNT] { -1, -1 };
+            sSceneAsyncOperation = null;
+
+            // Un-Hook from any Unity Events
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        }
+        // Icy Override End
+
         internal static GameObject findPlacedModelObject(string path)
         {
             var list = GameObject.FindObjectsOfType<ObjectInfo>();
