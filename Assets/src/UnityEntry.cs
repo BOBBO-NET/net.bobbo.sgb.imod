@@ -55,7 +55,7 @@ public class UnityEntry : MonoBehaviour
         UnityUtil.Initialize();
         sSelf = this;
 #if !UNITY_EDITOR
-        Debug.logger.logEnabled = false;
+        Debug.unityLogger.logEnabled = false;
 #endif
 #if UNITY_IOS || UNITY_ANDROID
         UnityResolution.Start();
