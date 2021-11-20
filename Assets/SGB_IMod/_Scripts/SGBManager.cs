@@ -39,9 +39,24 @@ namespace SGB_IMod
         public static void LoadSmileGame(string smileResourceLocation)
         {
             var asyncLoadScene = EnterWorkspaceScene();
+
+
             asyncLoadScene.completed += delegate {
                 CreateSGBRequiredGameObjects();
                 CreateCustomRequiredGameObjects();
+            };
+        }
+
+        // Unload from current Smile Builder Game, and load into a specific scene
+        public static void UnloadSmileGame(string sceneToLoadTo)
+        {
+            var asyncLoadScene = EnterWorkspaceScene();
+
+
+            asyncLoadScene.completed += delegate {
+                DestroyCustomRequiredGameObjects();
+
+                asyncLoadScene = SceneManager.LoadSceneAsync(sceneToLoadTo);
             };
         }
 

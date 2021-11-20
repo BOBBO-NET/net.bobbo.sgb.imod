@@ -3,41 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IModOverlay : MonoBehaviour
+namespace SGB_IMod
 {
-    [Header("Required References")]
-    public Button buttonWindowToggle;
-    public Button buttonReturnToTestScene;
-    public CanvasGroup canvasGroupPopoutWindow;
-
-    private bool windowIsOpen = false;
-
-
-    private void Awake()
+    public class IModOverlay : MonoBehaviour
     {
-        SetupEvents();
-        SetWindowOpen(windowIsOpen);
-    }
+        [Header("Required References")]
+        public Button buttonWindowToggle;
+        public Button buttonReturnToTestScene;
+        public CanvasGroup canvasGroupPopoutWindow;
 
-    private void SetupEvents()
-    {
-        buttonWindowToggle.onClick.AddListener(delegate ()
+        private bool windowIsOpen = false;
+
+
+        private void Awake()
         {
-            SetWindowOpen(!windowIsOpen);
-        });
+            SetupEvents();
+            SetWindowOpen(windowIsOpen);
+        }
 
-        buttonReturnToTestScene.onClick.AddListener(delegate ()
+        private void SetupEvents()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("SGB_IMod/TestScene");
-        });
-    }
+            buttonWindowToggle.onClick.AddListener(delegate ()
+            {
+                SetWindowOpen(!windowIsOpen);
+            });
+
+            buttonReturnToTestScene.onClick.AddListener(delegate ()
+            {
+                SGBManager.UnloadSmileGame("SGB_IMod/TestScene");
+            });
+        }
 
 
-    private void SetWindowOpen(bool isOpen)
-    {
-        windowIsOpen = isOpen;
-        canvasGroupPopoutWindow.alpha = isOpen ? 1 : 0;
-        canvasGroupPopoutWindow.interactable = isOpen;
-        canvasGroupPopoutWindow.blocksRaycasts = isOpen;
+        private void SetWindowOpen(bool isOpen)
+        {
+            windowIsOpen = isOpen;
+            canvasGroupPopoutWindow.alpha = isOpen ? 1 : 0;
+            canvasGroupPopoutWindow.interactable = isOpen;
+            canvasGroupPopoutWindow.blocksRaycasts = isOpen;
+        }
     }
 }
