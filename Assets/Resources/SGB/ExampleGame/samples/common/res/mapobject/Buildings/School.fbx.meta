@@ -9,7 +9,17 @@ ModelImporter:
   - first:
       74: -8091818277465903447
     second: lightON
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bd_010_School_mat
+    second: {fileID: 2100000, guid: b374b6819dc75e04a8269c095417bf46, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: add_mat
+    second: {fileID: 2100000, guid: 8d4c3953c0e300c4b9a743528f43dd96, type: 2}
   materials:
     materialImportMode: 1
     materialName: 2

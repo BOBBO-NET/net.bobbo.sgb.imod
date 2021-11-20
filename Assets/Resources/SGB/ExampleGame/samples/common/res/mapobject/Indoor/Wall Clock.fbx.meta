@@ -1,15 +1,22 @@
 fileFormatVersion: 2
-guid: 50ee4f95cd06fed409954d5430d6bf56
+guid: 1fa1cce1cb0fbcc4eae28a307c73bf33
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
   - first:
-      74: 6877555944380016328
-    second: lightOff
+      74: 4873981333490874974
+    second: open
+  externalObjects:
   - first:
-      74: -8091818277465903447
-    second: lightON
-  externalObjects: {}
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: add_mat
+    second: {fileID: 2100000, guid: c053643aef3956541a599f71e3a0c4c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wallclock_mat
+    second: {fileID: 2100000, guid: da2e74f1d89cc364584c8787f837f405, type: 2}
   materials:
     materialImportMode: 1
     materialName: 2
@@ -38,40 +45,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: lightOff
+      name: open
       takeName: Take 001
-      internalID: 6877555944380016328
-      firstFrame: 0.1
-      lastFrame: 0
-      wrapMode: 8
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 0
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: lightON
-      takeName: Take 001
-      internalID: -8091818277465903447
-      firstFrame: 1.1
-      lastFrame: 1
+      internalID: 4873981333490874974
+      firstFrame: 0.4
+      lastFrame: 24
       wrapMode: 2
       orientationOffsetY: 0
       level: 0

@@ -10,6 +10,14 @@ using Yukar.Engine;
 
 public class UnityEntry : MonoBehaviour
 {
+    // Icy Override Start
+
+    // When loading Catalog content, this flag will be used to determine where to load it from.
+    public static string gameSubpathName = "ExampleGame";
+
+    // Icy Override End
+
+
     // Custom overrides
     static public bool mOverridesOn = true;             // Set false to skip all custom overrides and true to apply overrides below
     static public int  mResolution = 2;                 // Set 1 for 960 x 544 (540) resolution, set 2 for 1920 x 1080 resolution
@@ -33,18 +41,28 @@ public class UnityEntry : MonoBehaviour
     int mUpdateSkipCount = 2;//解像度変更のため２フレーム待つ
 #endif
 
+
     internal static void InitializeDir()
     {
+        // Icy Override Start
 #if UNITY_SWITCH && !UNITY_EDITOR
-        Catalog.sCommonResourceDir = Application.dataPath + "/Resources/samples/common/";
-        Catalog.sResourceDir = Application.dataPath + "/Resources/";
-        Catalog.sDlcDir = Application.dataPath + "/Resources/samples/";
+        Catalog.sInResourceDir = Path.Combine("SGB", gameSubpathName).Replace("\\", "/");
+        string assetPath = Path.Combine(Application.dataPath, "Resources", Catalog.sInResourceDir);
+
+        // Converted below syntax to use path.combine for better cross platform support
+        Catalog.sCommonResourceDir = (Path.Combine(assetPath, "samples", "common") + Path.DirectorySeparatorChar).Replace("\\", "/");
+        Catalog.sResourceDir = (assetPath + Path.DirectorySeparatorChar).Replace("\\", "/");
+        Catalog.sDlcDir = (Path.Combine(assetPath, "samples") + Path.DirectorySeparatorChar).Replace("\\", "/");
 #else
-        var assetPath = "assets/resources";	// 実際の所なんでもいい
-        Catalog.sCommonResourceDir = assetPath + "/samples/common/";
-        Catalog.sResourceDir = assetPath + "/";
-        Catalog.sDlcDir = assetPath + "/samples/";
+        Catalog.sInResourceDir = Path.Combine("SGB", gameSubpathName).Replace("\\", "/");
+        string assetPath = Path.Combine("Assets", "Resources", Catalog.sInResourceDir);	// 実際の所なんでもいい (It doesn't matter what the actual place is)
+
+        // Converted below syntax to use path.combine for better cross platform support
+        Catalog.sCommonResourceDir = (Path.Combine(assetPath, "samples", "common") + Path.DirectorySeparatorChar).Replace("\\", "/");
+        Catalog.sResourceDir = (assetPath + Path.DirectorySeparatorChar).Replace("\\", "/");
+        Catalog.sDlcDir = (Path.Combine(assetPath, "samples") + Path.DirectorySeparatorChar).Replace("\\", "/");
 #endif
+        // Icy Override End
     }
 
     // Use this for initialization

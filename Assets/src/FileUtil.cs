@@ -204,13 +204,19 @@ namespace Yukar.Common
         static public void initialize()
         {
             // 言語フォルダ存在チェック
-            if(Resources.Load(language + "/assets") as TextAsset == null)
+            if(Resources.Load(Path.Combine(Catalog.sInResourceDir, "language", "assets").Replace("\\", "/")) as TextAsset == null)
             {
                 language = null;
             }
 
             entryList = new List<AssetEntry>();
-            var list = Resources.Load("assets") as TextAsset;
+
+            // Icy Override Start
+            // Use the currently set resource directory to find the asset path
+            string sgbAssetFolderLocation = Path.Combine(Catalog.sInResourceDir, "assets").Replace("\\", "/");
+            var list = Resources.Load(sgbAssetFolderLocation) as TextAsset;
+            // Icy Override End
+
             var entries = list.text.Split('\n');
             foreach (var line in entries)
             {
@@ -226,6 +232,7 @@ namespace Yukar.Common
                 else
                     entry.dir = toLower(entry.path.Substring(0, entry.path.LastIndexOf("/") + 1));
                 entry.name = entry.path.Substring(entry.dir.Length, entry.path.Length - entry.dir.Length);
+
 
                 if (words.Length > count)
                 {
@@ -404,7 +411,9 @@ namespace Yukar.Common
 #else
             path = removeRelativePathElement(path);
             path = UnityUtil.pathConvertToUnityResource(path, false);
-            
+
+
+
             if (language != null && path.EndsWith(".sgr"))
             {
                 var appendPath = language + "/" + path;

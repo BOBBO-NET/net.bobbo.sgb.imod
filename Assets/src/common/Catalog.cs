@@ -91,6 +91,9 @@ namespace Yukar.Common
         public int lastUsedSwitch;
         public static string sResourceDir = ".\\";
         public static string sCommonResourceDir;
+        // Icy Override Start
+        public static string sInResourceDir = "";
+        // Icy Override End
         public static Func<int, int, string, bool> sProgressListener;
         public static bool sEngineMode;   // ロムへの強制的な変更の影響をひとまずエンジンでのみ見たい等の場合の緊急用。なるべく使わない。
 

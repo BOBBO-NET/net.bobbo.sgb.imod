@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 911993e12be7f3848839f115dd4f2071
+guid: ff627b0a675e8ab4ea22a5d83108fc31
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
@@ -15,7 +15,12 @@ ModelImporter:
   - first:
       74: -6817860978217929835
     second: close
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: It_071_door_iron_mat
+    second: {fileID: 2100000, guid: d119cb2e25e07414ab716d00305e1242, type: 2}
   materials:
     materialImportMode: 1
     materialName: 2

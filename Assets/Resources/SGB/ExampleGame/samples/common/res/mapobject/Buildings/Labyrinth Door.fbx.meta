@@ -1,12 +1,26 @@
 fileFormatVersion: 2
-guid: 1fa1cce1cb0fbcc4eae28a307c73bf33
+guid: 9745683e4d284fd4a81de082c6fd2650
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
   - first:
+      74: -2456847655064877345
+    second: keepClose
+  - first:
       74: 4873981333490874974
     second: open
-  externalObjects: {}
+  - first:
+      74: 8633608407199025835
+    second: keepOpen
+  - first:
+      74: -6817860978217929835
+    second: close
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: door_mat
+    second: {fileID: 2100000, guid: 742f668ef7978b54dba5e6c066e85f52, type: 2}
   materials:
     materialImportMode: 1
     materialName: 2
@@ -35,12 +49,99 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
+      name: keepClose
+      takeName: Take 001
+      internalID: -2456847655064877345
+      firstFrame: 1.1
+      lastFrame: 1
+      wrapMode: 8
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
       name: open
       takeName: Take 001
       internalID: 4873981333490874974
-      firstFrame: 0.4
-      lastFrame: 24
-      wrapMode: 2
+      firstFrame: 1
+      lastFrame: 120
+      wrapMode: 8
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: keepOpen
+      takeName: Take 001
+      internalID: 8633608407199025835
+      firstFrame: 121.1
+      lastFrame: 121
+      wrapMode: 8
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: close
+      takeName: Take 001
+      internalID: -6817860978217929835
+      firstFrame: 131
+      lastFrame: 250
+      wrapMode: 8
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ff627b0a675e8ab4ea22a5d83108fc31
+guid: 6604f2347252f1845865eac16bb3cdd6
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
@@ -15,7 +15,12 @@ ModelImporter:
   - first:
       74: -6817860978217929835
     second: close
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: It_051_Coffin_mat
+    second: {fileID: 2100000, guid: e020bd649ca58cb48b4e277afb03e578, type: 2}
   materials:
     materialImportMode: 1
     materialName: 2
@@ -77,7 +82,7 @@ ModelImporter:
       takeName: Take 001
       internalID: 4873981333490874974
       firstFrame: 1
-      lastFrame: 60
+      lastFrame: 70
       wrapMode: 8
       orientationOffsetY: 0
       level: 0
@@ -105,8 +110,8 @@ ModelImporter:
       name: keepOpen
       takeName: Take 001
       internalID: 8633608407199025835
-      firstFrame: 61.1
-      lastFrame: 61
+      firstFrame: 71.1
+      lastFrame: 71
       wrapMode: 8
       orientationOffsetY: 0
       level: 0
@@ -134,8 +139,8 @@ ModelImporter:
       name: close
       takeName: Take 001
       internalID: -6817860978217929835
-      firstFrame: 71
-      lastFrame: 110
+      firstFrame: 81
+      lastFrame: 140
       wrapMode: 8
       orientationOffsetY: 0
       level: 0

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 42677017adec9a54ea244491712f2711
+guid: 50ee4f95cd06fed409954d5430d6bf56
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
@@ -9,7 +9,17 @@ ModelImporter:
   - first:
       74: -8091818277465903447
     second: lightON
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bd_011_mat
+    second: {fileID: 2100000, guid: 2a995c43ee5b773419135b26bac24193, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: add_mat
+    second: {fileID: 2100000, guid: 05789f69ae6a89343ae30646ed9cd161, type: 2}
   materials:
     materialImportMode: 1
     materialName: 2

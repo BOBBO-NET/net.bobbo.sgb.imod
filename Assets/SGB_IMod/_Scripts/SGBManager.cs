@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -36,11 +37,21 @@ namespace SGB_IMod
 
 
         // Load into a Smile Game Builder game, given the location of it's assets
-        public static void LoadSmileGame(string smileResourceLocation)
+        public static void LoadSmileGame(string smileGameName)
         {
+            // Check to see if there's a smile game by this name
+            if(!DoesSGBSubpathExist(smileGameName))
+            {
+                throw new System.Exception("No Smile Game Builder game with this subpath could be found!");
+            }
+
+            // Set the game subpath we want to load
+            UnityEntry.gameSubpathName = smileGameName;
+
+            // Start async loading the scene
             var asyncLoadScene = EnterWorkspaceScene();
 
-
+            // When the scene is done loading...
             asyncLoadScene.completed += delegate {
                 CreateSGBRequiredGameObjects();
                 CreateCustomRequiredGameObjects();
@@ -50,12 +61,14 @@ namespace SGB_IMod
         // Unload from current Smile Builder Game, and load into a specific scene
         public static void UnloadSmileGame(string sceneToLoadTo)
         {
+            // Start Async re-loading into the empty workspace scene
             var asyncLoadScene = EnterWorkspaceScene();
 
-
+            // When the scene is done loading...
             asyncLoadScene.completed += delegate {
                 DestroyCustomRequiredGameObjects();
 
+                // Load into the scene we want to return to.
                 asyncLoadScene = SceneManager.LoadSceneAsync(sceneToLoadTo);
             };
         }
@@ -139,6 +152,20 @@ namespace SGB_IMod
         {
             // Destroy the dev UI
             GameObject.Destroy(instanceDevOverlay);
+        }
+
+
+
+
+        private static bool DoesSGBSubpathExist(string gameSubpath)
+        {
+            string potentialAssetPath = Path.Combine("SGB", gameSubpath, "assets");
+
+            // Try and load the file
+            var assetFile = Resources.Load(potentialAssetPath);
+
+            // If it has been loaded correctly, it shouldn't be null.
+            return assetFile != null;
         }
     }
 }

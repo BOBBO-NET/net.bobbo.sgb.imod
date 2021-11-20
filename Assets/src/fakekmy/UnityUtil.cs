@@ -355,6 +355,7 @@ namespace Yukar.Common
             if(removeExtension)
                 path = GetPathWithoutExtension(path);
             path = FileUtil.toLower(path.Replace("\\", "/"));
+
             var resPattern = FileUtil.toLower(Catalog.sResourceDir);
             var resIndex = path.LastIndexOf(resPattern);
             if (resIndex >= 0)
@@ -362,7 +363,16 @@ namespace Yukar.Common
                 resIndex += resPattern.Length;
                 path = path.Substring(resIndex, path.Length - resIndex);
             }
+
             path = path.Replace("./", "");
+
+            // Icy Override Start
+
+            // Once we're done with the initial conversion, convert this too our new subpath
+            path = Path.Combine(Catalog.sInResourceDir, path);
+
+            // Icy Override End
+
             return path;
         }
 

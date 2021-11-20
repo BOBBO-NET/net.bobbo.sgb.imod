@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 859b4bb7ba42ff24780eee36c77afa2b
+guid: 7db695c3d21b8b74e81b563fc538bd33
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
@@ -15,7 +15,12 @@ ModelImporter:
   - first:
       74: -6817860978217929835
     second: close
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IronFence_mat
+    second: {fileID: 2100000, guid: f01c75ca18fcd554da1a175817af7fe8, type: 2}
   materials:
     materialImportMode: 1
     materialName: 2
