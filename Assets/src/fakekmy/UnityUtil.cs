@@ -33,9 +33,21 @@ namespace Yukar.Common
         private static int[] sSceneBuildIndexList = new int[(int)SceneType.COUNT] { -1, -1};
         private static AsyncOperation sSceneAsyncOperation = null;
 
+        // Icy Override Start
+
+        // The scene representing the entry scene. Set on init
+        private static UnityEngine.SceneManagement.Scene sceneEntry = default;
+
+        // Icy Override End
+
 
         internal static void Initialize()
         {
+            // Icy Override Start
+            sceneEntry = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            // Icy Override End
+
+
             if (GameObject.Find("MapScene") == null)
                 return;
 
@@ -68,6 +80,7 @@ namespace Yukar.Common
             sSceneAsyncOperation = null;
             children = new List<Transform>();
             result = new List<GameObject>();
+            sceneEntry = default;
 
             // Un-Hook from any Unity Events
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnActiveSceneChanged;
@@ -169,8 +182,11 @@ namespace Yukar.Common
         
         internal static int getEntryScene()
         {
-            var entryScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName("Entry");
-            return entryScene.buildIndex;
+            // Icy Override Start
+            Debug.Log($"Is this valid? {sceneEntry.IsValid()}");
+
+            return sceneEntry.buildIndex;
+            // Icy Override End
         }
 
         internal static int getCurrentScene()
