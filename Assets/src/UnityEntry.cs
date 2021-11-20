@@ -81,6 +81,19 @@ public class UnityEntry : MonoBehaviour
         UnityAdsManager.Initialize(game);
     }
 
+    // Icy Override Start
+    private void OnDestroy()
+    {
+        // Deinit everything we can
+        // FOR THE FUTURE - fix a case here where we create a deinit for the UnityResolution class
+        game.finalize();
+        sGame = null;
+        UnityUtil.DeInit();
+        sSelf = null;
+    }
+    // Icy Override End
+
+
     // Update is called once per frame
     void Update()
     {

@@ -66,6 +66,8 @@ namespace Yukar.Common
             parents = new Transform[(int)ParentType.COUNT];
             sSceneBuildIndexList = new int[(int)SceneType.COUNT] { -1, -1 };
             sSceneAsyncOperation = null;
+            children = new List<Transform>();
+            result = new List<GameObject>();
 
             // Un-Hook from any Unity Events
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnActiveSceneChanged;

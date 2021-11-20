@@ -132,6 +132,13 @@ namespace Yukar.Engine
             return sInstance;
         }
 
+        // Icy Override Start
+        public static void DeInit()
+        {
+            Destroy();
+        }
+        // Icy Override End
+
         public static void AddResourceDir(string prefix)
         {
             if (svr == null)

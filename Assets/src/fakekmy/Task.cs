@@ -8,7 +8,10 @@ namespace SharpKmyBase
 
         protected static void shutdown()
         {
-            throw new NotImplementedException();
+            // Icy Override Start
+            UnityEngine.Debug.LogWarning("Heads up... This method isn't implemented, but I don't think it's an issue. ~Icy");
+            // throw new NotImplementedException();
+            // Icy Override End
         }
 
         public virtual void update(float elapsed)
