@@ -1,0 +1,7 @@
+anim
+open 1 60 loop
+
+mtl Material::add_mat
+shader legacy_tex
+depthwrite false
+blend add
