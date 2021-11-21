@@ -265,7 +265,9 @@ namespace Yukar.Common
             var sceneName = inMap.mapSceneName;
             if (string.IsNullOrEmpty(sceneName))
                 sceneName = inMap.guId.ToString();
-            var scenePath = "Assets/map/" + sceneName + ".unity";
+            // Icy Override Start
+            var scenePath = $"Assets/SGB/Maps/{UnityEntry.gameSubpathName}/{sceneName}.unity"; //"Assets/map/" + sceneName + ".unity";
+            // Icy Override End
             var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scenePath);
 
             //すでにシーンが読み込まれているのであれば抜ける
