@@ -1,0 +1,5 @@
+1. Make sure SGB IMod Engine is installed
+2. Ask for Game Subpath Name
+3. Copy contents of "Assets/Resources/" to "Assets/SGB/Resources/SGB/$GAMESUBPATH/"
+4. Copy contents of "Assets/map/" to "Assets/SGB/Maps/$GAMESUBPATH/"
+5. Add each scene inside of "Assets/SGB/Maps/$GAMESUBPATH/" to the scene list
