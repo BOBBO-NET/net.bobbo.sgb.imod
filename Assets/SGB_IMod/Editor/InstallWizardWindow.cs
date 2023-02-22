@@ -264,6 +264,10 @@ namespace SGB_IMod
             for (int i = 0; i < mapPaths.Length; i++)
             {
                 string sceneAssetPath = "Assets" + mapPaths[i].Substring(Application.dataPath.Length);
+
+                // If this is already in the scene list, then move on
+                if (editorSceneList.Find(scene => scene.path == sceneAssetPath) != null) continue;
+
                 EditorUtility.DisplayProgressBar("SGB_IMOD Install Wizard [SCENES]", $"Adding scene '{sceneAssetPath}'...", (float)i / (float)mapPaths.Length);
                 editorSceneList.Add(new EditorBuildSettingsScene(sceneAssetPath, true));
             }
@@ -341,6 +345,8 @@ namespace SGB_IMod
 
         private bool CheckProjectNameValidity()
         {
+            if (projectName == null) return false;
+            if (projectName.Length < 1) return false;
             return true;
         }
 
