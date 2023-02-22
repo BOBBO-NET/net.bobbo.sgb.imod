@@ -81,26 +81,27 @@ namespace SGB_IMod
             GUILayout.FlexibleSpace();
 
             int stateTransitionDirection = 0;
-
-            // Draw the back & next buttons
-            using (new EditorGUILayout.HorizontalScope())
+            if (state != WizardState.COMPLETE)
             {
-                using (new EditorGUI.DisabledScope(!CanStateGoBackward()))
+                // Draw the back & next buttons
+                using (new EditorGUILayout.HorizontalScope())
                 {
-                    if (GUILayout.Button("Back", EditorStyles.miniButtonLeft))
+                    using (new EditorGUI.DisabledScope(!CanStateGoBackward()))
                     {
-                        stateTransitionDirection = -1;
+                        if (GUILayout.Button("Back", EditorStyles.miniButtonLeft))
+                        {
+                            stateTransitionDirection = -1;
+                        }
                     }
-                }
-                using (new EditorGUI.DisabledScope(!CanStateGoForward()))
-                {
-                    if (GUILayout.Button("Next", EditorStyles.miniButtonRight))
+                    using (new EditorGUI.DisabledScope(!CanStateGoForward()))
                     {
-                        stateTransitionDirection = 1;
+                        if (GUILayout.Button("Next", EditorStyles.miniButtonRight))
+                        {
+                            stateTransitionDirection = 1;
+                        }
                     }
                 }
             }
-
             // If the user pressed back or next, try to change the state
             if (stateTransitionDirection != 0)
             {
@@ -226,9 +227,11 @@ namespace SGB_IMod
                 }
                 CopyDirectoryOperation(sourceMapPath, newMapPath, "SGB_IMOD Install Wizard [Maps]", "Copying maps");
 
+                // Refresh the asset database now that we have new files
+                AssetDatabase.Refresh();
 
                 EditorUtility.ClearProgressBar();
-                ChangeState(WizardState.START);
+                ChangeState(WizardState.ADD_SCENES);
             }
             catch (System.Exception exception)
             {
@@ -253,12 +256,33 @@ namespace SGB_IMod
 
         private void DrawStateAddScenes()
         {
+            string newMapPath = ConstructProjectMapsPathFromName(projectName);
+            string[] mapPaths = Directory.GetFiles(newMapPath, "*.unity");
 
+            // Add the scenes to the list
+            List<EditorBuildSettingsScene> editorSceneList = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+            for (int i = 0; i < mapPaths.Length; i++)
+            {
+                string sceneAssetPath = "Assets" + mapPaths[i].Substring(Application.dataPath.Length);
+                EditorUtility.DisplayProgressBar("SGB_IMOD Install Wizard [SCENES]", $"Adding scene '{sceneAssetPath}'...", (float)i / (float)mapPaths.Length);
+                editorSceneList.Add(new EditorBuildSettingsScene(sceneAssetPath, true));
+            }
+
+            EditorUtility.ClearProgressBar();
+            EditorBuildSettings.scenes = editorSceneList.ToArray();
+            ChangeState(WizardState.COMPLETE);
         }
 
         private void DrawStateComplete()
         {
+            EditorGUILayout.LabelField("Nice!", EditorStyles.whiteLargeLabel);
+            GUILayout.Box("Everything is imported.", EditorStyles.wordWrappedLabel);
 
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Done"))
+            {
+                this.Close();
+            }
         }
 
         private bool CanStateGoForward()
@@ -329,6 +353,8 @@ namespace SGB_IMod
 
         private string ConvertToPathFriendly(string path)
         {
+            if (path == null) return "";
+
             foreach (char c in Path.GetInvalidPathChars())
             {
                 path.Replace(c, '_');
