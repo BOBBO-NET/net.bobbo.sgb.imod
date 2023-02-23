@@ -37,11 +37,11 @@ namespace SGB_IMod
         private bool confirmCopying;
 
 
-        [MenuItem("SGB_IMod/Install SGB Project")]
-        private static void Init()
+        // [MenuItem("SGB_IMod/Install SGB Project")]
+        public static void Init()
         {
             // Get existing open window (Or make a new one if there is none)
-            InstallWizardWindow window = EditorWindow.GetWindow<InstallWizardWindow>();
+            InstallWizardWindow window = EditorWindow.GetWindow<InstallWizardWindow>("SGB Import Wizard");
             window.Show();
         }
 
