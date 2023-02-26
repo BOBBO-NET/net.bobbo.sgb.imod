@@ -59,10 +59,6 @@ namespace SGB_IMod
                     {
                         SGBEditorManager.GetSingleton().DeleteImportedSGBGame(game);
                     }
-                    if (GUILayout.Button("Locate", EditorStyles.toolbarButton, GUILayout.MaxWidth(80)))
-                    {
-                        SGBEditorManager.GetSingleton().LocateImportedSGBGame(game);
-                    }
                     if (GUILayout.Button("Re-Import", EditorStyles.toolbarButton))
                     {
                         SGBEditorManager.GetSingleton().ReimportSGBGame(game);

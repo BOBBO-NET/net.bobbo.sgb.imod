@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
+using System.Text;
+using System;
 
 public class SGBEditorManager : ScriptableObject
 {
@@ -75,15 +78,12 @@ public class SGBEditorManager : ScriptableObject
         AssetDatabase.SaveAssets();
     }
 
-    public void LocateImportedSGBGame(ImportedGame game)
-    {
-        Debug.Log("yo?");
-
-    }
-
     public void ReimportSGBGame(ImportedGame game)
     {
-        Debug.Log("yo....");
+        CopySGBFilesIntoProject(game);      // Copy all of the correct files over
+        StoreSGBScenes(game);               // Scan through the map files & keep track of the new scenes
+        RemoveSGBScenesFromSceneList(game); // Remove any scenes that already exist from this SGB project in the scene list (to prevent dupes)
+        AddSGBScenesToSceneList(game);      // Add new scenes from this SGB project
 
         EditorUtility.SetDirty(this);
         AssetDatabase.SaveAssets();
@@ -172,7 +172,7 @@ public class SGBEditorManager : ScriptableObject
         List<string> scenePaths = new List<string>();
         foreach (string mapPath in Directory.GetFiles(game.pathImportedMaps, "*.unity"))
         {
-            scenePaths.Add("Assets" + mapPath.Substring(Application.dataPath.Length));
+            scenePaths.Add("Assets" + mapPath.Substring(Application.dataPath.Length).Replace('\\', '/'));
         }
         game.scenes = scenePaths;
     }
@@ -181,19 +181,32 @@ public class SGBEditorManager : ScriptableObject
     {
         EditorUtility.DisplayProgressBar("SGB_IMOD", $"Removing {game.scenes.Count} scenes...", 1);
 
-        // Go through the editor scene list and remove all scenes relating to this SGB game
-        List<EditorBuildSettingsScene> newEditorSceneList = new List<EditorBuildSettingsScene>();
+        StringBuilder sb = new StringBuilder();
         foreach (var scene in EditorBuildSettings.scenes)
         {
-            // If this scene is part of the SGB game's scenes, skip it
-            if (game.scenes.Find(scenePath => scenePath == scene.path) != null) continue;
-
-            // OTHERWISE - add it to the list
-            newEditorSceneList.Add(scene);
+            sb.AppendLine(scene.path);
         }
+        Debug.Log(sb.ToString());
+
+        sb.Clear();
+        foreach (var scene in game.scenes)
+        {
+            sb.AppendLine(scene);
+        }
+        Debug.Log("EEE\n" + sb.ToString());
+
+        // Go through the editor scene list and remove all scenes relating to this SGB game
+        EditorBuildSettings.scenes = EditorBuildSettings.scenes.Where(scene => !game.scenes.Contains(scene.path)).ToArray();
+        EditorBuildSettings.scenes = EditorBuildSettings.scenes.Where(scene => !String.IsNullOrWhiteSpace(scene.path)).ToArray();
+
+        sb.Clear();
+        foreach (var scene in EditorBuildSettings.scenes)
+        {
+            sb.AppendLine(scene.path);
+        }
+        Debug.Log(sb.ToString());
 
         EditorUtility.ClearProgressBar();
-        EditorBuildSettings.scenes = newEditorSceneList.ToArray();
     }
 
     private static void AddSGBScenesToSceneList(ImportedGame game)

@@ -220,14 +220,7 @@ namespace SGB_IMod
 
         private void DrawStateComplete()
         {
-            EditorGUILayout.LabelField("Nice!", EditorStyles.whiteLargeLabel);
-            GUILayout.Box("Everything is imported.", EditorStyles.wordWrappedLabel);
-
-            EditorGUILayout.Space();
-            if (GUILayout.Button("Done"))
-            {
-                this.Close();
-            }
+            this.Close();
         }
 
         private bool CanStateGoForward()
