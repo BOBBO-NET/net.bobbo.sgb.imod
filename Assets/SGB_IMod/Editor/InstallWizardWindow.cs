@@ -14,8 +14,7 @@ namespace SGB_IMod
             START,
             NAME_GAME,
             CONFIRM,
-            COPY_FILES,
-            ADD_SCENES,
+            IMPORTING,
             COMPLETE
         }
 
@@ -66,11 +65,8 @@ namespace SGB_IMod
                 case WizardState.CONFIRM:
                     DrawStateConfirm();
                     break;
-                case WizardState.COPY_FILES:
-                    DrawStateCopyFiles();
-                    break;
-                case WizardState.ADD_SCENES:
-                    DrawStateAddScenes();
+                case WizardState.IMPORTING:
+                    DrawStateImporting();
                     break;
                 case WizardState.COMPLETE:
                     DrawStateComplete();
@@ -204,77 +200,22 @@ namespace SGB_IMod
             }
         }
 
-        private void DrawStateCopyFiles()
+        private void DrawStateImporting()
         {
-            string sourceResourcePath = Path.Combine(pathSGBUnityExport, "Assets", "Resources");
             string newResourcePath = ConstructProjectResourcesPathFromName(projectName);
-            string sourceMapPath = Path.Combine(pathSGBUnityExport, "Assets", "map");
             string newMapPath = ConstructProjectMapsPathFromName(projectName);
 
             try
             {
-                if (Directory.Exists(newResourcePath))
-                {
-                    EditorUtility.DisplayProgressBar("SGB_IMOD Install Wizard [Resources]", "Removing old resources...", 0);
-                    Directory.Delete(newResourcePath, true);
-                }
-                CopyDirectoryOperation(sourceResourcePath, newResourcePath, "SGB_IMOD Install Wizard [Resources]", "Copying resources");
-
-                if (Directory.Exists(newMapPath))
-                {
-                    EditorUtility.DisplayProgressBar("SGB_IMOD Install Wizard [Maps]", "Removing old maps...", 0);
-                    Directory.Delete(newMapPath, true);
-                }
-                CopyDirectoryOperation(sourceMapPath, newMapPath, "SGB_IMOD Install Wizard [Maps]", "Copying maps");
-
-                // Refresh the asset database now that we have new files
-                AssetDatabase.Refresh();
-
-                EditorUtility.ClearProgressBar();
-                ChangeState(WizardState.ADD_SCENES);
+                SGBEditorManager.GetSingleton().ImportSGBUnityExport(projectName, pathSGBUnityExport, newResourcePath, newMapPath);
+                EditorUtility.DisplayDialog("SGB_IMOD", $"Successfully imported SGB project '{projectName}'!", "yum YUM");
+                ChangeState(WizardState.COMPLETE);
             }
             catch (System.Exception exception)
             {
-                EditorUtility.DisplayDialog("SGB_IMOD Install Wizard [ERROR]", $"Failed to copy files: {exception}", "aw...");
-                EditorUtility.DisplayProgressBar("SGB_IMOD Install Wizard [ERROR]", "Cleaning up...", 0);
-
-                try
-                {
-                    Directory.Delete(newResourcePath, true);
-                }
-                catch (System.Exception) { /* swallow any errors */ }
-                try
-                {
-                    Directory.Delete(newMapPath, true);
-                }
-                catch (System.Exception) { /* swallow any errors */ }
-
-                EditorUtility.ClearProgressBar();
+                EditorUtility.DisplayDialog("SGB_IMOD", $"Failed to import SGB project '{projectName}': {exception}", "awww NUTS...");
                 ChangeState(WizardState.START);
             }
-        }
-
-        private void DrawStateAddScenes()
-        {
-            string newMapPath = ConstructProjectMapsPathFromName(projectName);
-            string[] mapPaths = Directory.GetFiles(newMapPath, "*.unity");
-
-            // Add the scenes to the list
-            List<EditorBuildSettingsScene> editorSceneList = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
-            for (int i = 0; i < mapPaths.Length; i++)
-            {
-                string sceneAssetPath = "Assets" + mapPaths[i].Substring(Application.dataPath.Length);
-
-                // If this is already in the scene list, then move on
-                if (editorSceneList.Find(scene => scene.path == sceneAssetPath) != null) continue;
-
-                EditorUtility.DisplayProgressBar("SGB_IMOD Install Wizard [SCENES]", $"Adding scene '{sceneAssetPath}'...", (float)i / (float)mapPaths.Length);
-                editorSceneList.Add(new EditorBuildSettingsScene(sceneAssetPath, true));
-            }
-
-            EditorUtility.ClearProgressBar();
-            EditorBuildSettings.scenes = editorSceneList.ToArray();
-            ChangeState(WizardState.COMPLETE);
         }
 
         private void DrawStateComplete()
