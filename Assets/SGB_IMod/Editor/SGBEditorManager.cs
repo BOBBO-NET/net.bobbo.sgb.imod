@@ -181,31 +181,9 @@ public class SGBEditorManager : ScriptableObject
     {
         EditorUtility.DisplayProgressBar("SGB_IMOD", $"Removing {game.scenes.Count} scenes...", 1);
 
-        StringBuilder sb = new StringBuilder();
-        foreach (var scene in EditorBuildSettings.scenes)
-        {
-            sb.AppendLine(scene.path);
-        }
-        Debug.Log(sb.ToString());
-
-        sb.Clear();
-        foreach (var scene in game.scenes)
-        {
-            sb.AppendLine(scene);
-        }
-        Debug.Log("EEE\n" + sb.ToString());
-
         // Go through the editor scene list and remove all scenes relating to this SGB game
         EditorBuildSettings.scenes = EditorBuildSettings.scenes.Where(scene => !game.scenes.Contains(scene.path)).ToArray();
         EditorBuildSettings.scenes = EditorBuildSettings.scenes.Where(scene => !String.IsNullOrWhiteSpace(scene.path)).ToArray();
-
-        sb.Clear();
-        foreach (var scene in EditorBuildSettings.scenes)
-        {
-            sb.AppendLine(scene.path);
-        }
-        Debug.Log(sb.ToString());
-
         EditorUtility.ClearProgressBar();
     }
 
