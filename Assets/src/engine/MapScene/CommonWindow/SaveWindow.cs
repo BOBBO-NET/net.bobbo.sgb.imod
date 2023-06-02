@@ -116,7 +116,11 @@ namespace Yukar.Engine
 #if WINDOWS
 #else
             if (p.owner.parent.owner.nowScene != GameMain.Scenes.TITLE) return;
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+#else
             if (UnityEngine.Input.GetMouseButtonDown(0))
+#endif
             {
                 var touchPos = InputCore.getTouchPos(0);
                 var offsetX = (int)windowPos.X - innerWidth / 2;

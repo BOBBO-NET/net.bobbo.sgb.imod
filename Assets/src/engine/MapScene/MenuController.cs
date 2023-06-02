@@ -806,7 +806,12 @@ namespace Yukar.Engine
                     SharpKmyMath.Vector2 touchPos = new SharpKmyMath.Vector2();
 #if WINDOWS
 #else
+
+#if IMOD
+                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) {
+#else
                     if (UnityEngine.Input.GetMouseButtonDown(0)) {
+#endif
                         touchPos = InputCore.getTouchPos(0);
                     }
 #endif

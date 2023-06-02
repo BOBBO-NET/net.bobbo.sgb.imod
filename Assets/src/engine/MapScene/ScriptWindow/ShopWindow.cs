@@ -933,8 +933,13 @@ namespace Yukar.Engine
             }
 
             // 購入数のタッチ選択
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.isPressed && !GameMain.IsPushedAndroidBackButton()) ChangeConfirmNumByTouch(pos, size);
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasReleasedThisFrame)
+#else
             if (UnityEngine.Input.GetMouseButton(0) && !GameMain.IsPushedAndroidBackButton()) ChangeConfirmNumByTouch(pos, size);
             if (UnityEngine.Input.GetMouseButtonUp(0))
+#endif
             {
                 SharpKmyIO.Controller.repeatTouchUp = false;
                 SharpKmyIO.Controller.repeatTouchDown = false;

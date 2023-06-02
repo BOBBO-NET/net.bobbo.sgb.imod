@@ -60,7 +60,11 @@ namespace Yukar.Engine
 
 #if WINDOWS
 #else
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) clickSelect(InputCore.getTouchPos(0));
+#else
             if (UnityEngine.Input.GetMouseButtonDown(0)) clickSelect(InputCore.getTouchPos(0));
+#endif
             //if (InputCore.isTouchDown(0)) clickSelect(InputCore.getTouchPos(0));
 #endif
         }
@@ -607,7 +611,11 @@ namespace Yukar.Engine
             blinker.update();
 #if WINDOWS
 #else
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) clickSelect(InputCore.getTouchPos(0));
+#else
             if (UnityEngine.Input.GetMouseButtonDown(0)) clickSelect(InputCore.getTouchPos(0));
+#endif
             //if (InputCore.isTouchDown(0)) clickSelect(InputCore.getTouchPos(0));
 #endif       
         }

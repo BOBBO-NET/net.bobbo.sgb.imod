@@ -1148,6 +1148,67 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Window",
+            "id": "0e60b003-334a-4aaa-bd45-26284ac9d2bd",
+            "actions": [
+                {
+                    "name": "ToggleFullscreen",
+                    "type": "Button",
+                    "id": "78ab6236-0a28-496f-bd7f-40b6d4f872b4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "AltEnter",
+                    "id": "7d535e70-0c23-4a93-83df-d8a99fb69050",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleFullscreen",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "binding",
+                    "id": "12130f06-309c-4006-9690-5bb382475ee2",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ToggleFullscreen",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier",
+                    "id": "0473ce66-dffb-496e-9eb7-1db00a28d9c2",
+                    "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ToggleFullscreen",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "33dfa57f-224b-4bb6-a97d-4a31176c998c",
+                    "path": "<Keyboard>/f4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ToggleFullscreen",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

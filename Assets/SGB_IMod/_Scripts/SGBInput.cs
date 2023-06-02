@@ -1172,6 +1172,67 @@ namespace SGB_IMod
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Window"",
+            ""id"": ""0e60b003-334a-4aaa-bd45-26284ac9d2bd"",
+            ""actions"": [
+                {
+                    ""name"": ""ToggleFullscreen"",
+                    ""type"": ""Button"",
+                    ""id"": ""78ab6236-0a28-496f-bd7f-40b6d4f872b4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""AltEnter"",
+                    ""id"": ""7d535e70-0c23-4a93-83df-d8a99fb69050"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleFullscreen"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""12130f06-309c-4006-9690-5bb382475ee2"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ToggleFullscreen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""0473ce66-dffb-496e-9eb7-1db00a28d9c2"",
+                    ""path"": ""<Keyboard>/alt"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ToggleFullscreen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33dfa57f-224b-4bb6-a97d-4a31176c998c"",
+                    ""path"": ""<Keyboard>/f4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ToggleFullscreen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1264,6 +1325,9 @@ namespace SGB_IMod
             m_VR = asset.FindActionMap("VR", throwIfNotFound: true);
             m_VR_VRCalibrate = m_VR.FindAction("VRCalibrate", throwIfNotFound: true);
             m_VR_VRSyncCamera = m_VR.FindAction("VRSyncCamera", throwIfNotFound: true);
+            // Window
+            m_Window = asset.FindActionMap("Window", throwIfNotFound: true);
+            m_Window_ToggleFullscreen = m_Window.FindAction("ToggleFullscreen", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -1603,6 +1667,52 @@ namespace SGB_IMod
             }
         }
         public VRActions @VR => new VRActions(this);
+
+        // Window
+        private readonly InputActionMap m_Window;
+        private List<IWindowActions> m_WindowActionsCallbackInterfaces = new List<IWindowActions>();
+        private readonly InputAction m_Window_ToggleFullscreen;
+        public struct WindowActions
+        {
+            private @SGBIModInput m_Wrapper;
+            public WindowActions(@SGBIModInput wrapper) { m_Wrapper = wrapper; }
+            public InputAction @ToggleFullscreen => m_Wrapper.m_Window_ToggleFullscreen;
+            public InputActionMap Get() { return m_Wrapper.m_Window; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(WindowActions set) { return set.Get(); }
+            public void AddCallbacks(IWindowActions instance)
+            {
+                if (instance == null || m_Wrapper.m_WindowActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_WindowActionsCallbackInterfaces.Add(instance);
+                @ToggleFullscreen.started += instance.OnToggleFullscreen;
+                @ToggleFullscreen.performed += instance.OnToggleFullscreen;
+                @ToggleFullscreen.canceled += instance.OnToggleFullscreen;
+            }
+
+            private void UnregisterCallbacks(IWindowActions instance)
+            {
+                @ToggleFullscreen.started -= instance.OnToggleFullscreen;
+                @ToggleFullscreen.performed -= instance.OnToggleFullscreen;
+                @ToggleFullscreen.canceled -= instance.OnToggleFullscreen;
+            }
+
+            public void RemoveCallbacks(IWindowActions instance)
+            {
+                if (m_Wrapper.m_WindowActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            public void SetCallbacks(IWindowActions instance)
+            {
+                foreach (var item in m_Wrapper.m_WindowActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_WindowActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        public WindowActions @Window => new WindowActions(this);
         private int m_KeyboardMouseSchemeIndex = -1;
         public InputControlScheme KeyboardMouseScheme
         {
@@ -1677,6 +1787,10 @@ namespace SGB_IMod
         {
             void OnVRCalibrate(InputAction.CallbackContext context);
             void OnVRSyncCamera(InputAction.CallbackContext context);
+        }
+        public interface IWindowActions
+        {
+            void OnToggleFullscreen(InputAction.CallbackContext context);
         }
     }
 }

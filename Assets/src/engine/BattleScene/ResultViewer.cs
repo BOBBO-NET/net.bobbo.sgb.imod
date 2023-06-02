@@ -779,7 +779,11 @@ namespace Yukar.Engine
 #else
                     if (this.owner.IsBattle2D == false)
                     {
+#if IMOD
+                        if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) clickCloseButton(InputCore.getTouchPos(0), buttonPosition, buttonSize);
+#else
                         if (UnityEngine.Input.GetMouseButtonDown(0)) clickCloseButton(InputCore.getTouchPos(0), buttonPosition, buttonSize);
+#endif
                     }
 #endif
                 }

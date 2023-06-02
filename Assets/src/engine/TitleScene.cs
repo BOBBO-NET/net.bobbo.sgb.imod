@@ -244,7 +244,11 @@ namespace Yukar.Engine
             var decidedByTouch = false;
 #if WINDOWS
 #else
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+#else
             if (UnityEngine.Input.GetMouseButtonDown(0))
+#endif
             {
                 var touchPos = InputCore.getTouchPos(0);
                 int x0 = 0, y0 = 0, x1 = 0, y1 = 0;

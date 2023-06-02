@@ -150,7 +150,11 @@ namespace Yukar.Engine
             var offsetX = (int)windowPos.X - innerWidth / 2;
             int imgWidth = Graphics.GetImageWidth(cursorImgId);
             int imgHeight = Graphics.GetImageHeight(cursorImgId);
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.isPressed)
+#else
             if (UnityEngine.Input.GetMouseButton(0))
+#endif
             {
                 var touchPos = InputCore.getTouchPos(0);
                 SharpKmyIO.Controller.repeatTouchLeft = false;
@@ -198,7 +202,11 @@ namespace Yukar.Engine
                     }
                 }
             }
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasReleasedThisFrame)
+#else
             if (UnityEngine.Input.GetMouseButtonUp(0))
+#endif
             {
                 SharpKmyIO.Controller.repeatTouchLeft = false;
                 SharpKmyIO.Controller.repeatTouchRight = false;
