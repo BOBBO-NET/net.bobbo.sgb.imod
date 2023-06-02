@@ -174,7 +174,11 @@ namespace Yukar.Engine
 #if WINDOWS
 #else
                         // タッチ選択
+#if IMOD
+                        if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame && !GameMain.IsPushedAndroidBackButton())
+#else
                         if (UnityEngine.Input.GetMouseButtonDown(0) && !GameMain.IsPushedAndroidBackButton())
+#endif
                         {
                             var touchPos = InputCore.getTouchPos(0);
                             var x0 = selectionPos.X - maxWindowSize.X / 2 + window.paddingLeft;

@@ -115,7 +115,12 @@ public class UnityEntry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-#if UNITY_STANDALONE_WIN
+#if IMOD
+        if(Yukar.Engine.Input.IModInput.Window.ToggleFullscreen.WasPressedThisFrame()) 
+        {
+            Screen.fullScreen = !Screen.fullScreen;
+        }
+#elif UNITY_STANDALONE_WIN
         if (UnityEngine.Input.GetKeyDown(KeyCode.F4))
         {
             Screen.fullScreen = !Screen.fullScreen;

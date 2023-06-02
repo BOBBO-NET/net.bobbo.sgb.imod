@@ -119,6 +119,10 @@ namespace Yukar.Engine
         {
             sInstance.ChangeKeyStates(keyStates);
         }
+
+#if IMOD
+        public static SGB_IMod.SGBIModInput IModInput { get => sInstance.IModInput; }
+#endif
     }
 
     class InputCore
@@ -173,6 +177,10 @@ namespace Yukar.Engine
         public bool vPadEnable = true;
         static SharpKmyIO.Controller controller = null;
         public SharpKmyMath.Vector2 touchPos = new SharpKmyMath.Vector2();
+
+#if IMOD
+        public SGB_IMod.SGBIModInput IModInput { get => controller.IModInput; }
+#endif
 
         public InputCore(GameMain inGameMain)
         {

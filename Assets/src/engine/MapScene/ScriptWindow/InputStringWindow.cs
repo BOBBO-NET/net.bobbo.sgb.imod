@@ -814,7 +814,11 @@ namespace Yukar.Engine
         /// </summary>
         private void UpdateSelectRowColumnByTouch()
         {
+#if IMOD
+            if (!UnityEngine.InputSystem.Mouse.current.leftButton.isPressed)
+#else
             if (!UnityEngine.Input.GetMouseButton(0))
+#endif
             {
                 return;
             }
@@ -1007,7 +1011,11 @@ namespace Yukar.Engine
         private void UpdateInputByTounch()
         {
             // 範囲内をタッチしてるか
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasReleasedThisFrame)
+#else
             if (UnityEngine.Input.GetMouseButtonUp(0))
+#endif
             {
                 if (canExecute)
                 {

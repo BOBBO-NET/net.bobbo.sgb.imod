@@ -760,8 +760,14 @@ namespace Yukar.Engine
                 oldPos = new Point(pos.X, pos.Y);
 #else
                 var power = 10.0f;
+#if IMOD
+                var x = UnityEngine.InputSystem.Mouse.current.position.value.x * power;
+                var y = UnityEngine.InputSystem.Mouse.current.position.value.y * power;
+#else
                 var x = UnityEngine.Input.GetAxis("Mouse X") * power;
                 var y = UnityEngine.Input.GetAxis("Mouse Y") * power;
+#endif
+                
                 var diff = new Point((int)-x, (int)y);
 #endif //WINDOWS
 

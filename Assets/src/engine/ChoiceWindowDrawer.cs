@@ -582,7 +582,11 @@ namespace Yukar.Engine
 #else
                 if (this.owner.IsBattle2D == false)
                 {
+#if IMOD
+                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) clickPageCursor(InputCore.getTouchPos(0), windowPosition, size + new Vector2(0, BaseWindowDrawer.paddingTop));
+#else
                     if (UnityEngine.Input.GetMouseButtonDown(0)) clickPageCursor(InputCore.getTouchPos(0), windowPosition, size + new Vector2(0, BaseWindowDrawer.paddingTop));
+#endif
                 }
 #endif
             }
@@ -634,7 +638,11 @@ namespace Yukar.Engine
 #else
                 if (this.owner.IsBattle2D == false)
                 {
+#if IMOD
+                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) clickSelect(InputCore.getTouchPos(0), displayItemIndex, windowPosition, itemDrawPosition, new Vector2(itemWidth, itemHeight));
+#else
                     if (UnityEngine.Input.GetMouseButtonDown(0)) clickSelect(InputCore.getTouchPos(0), displayItemIndex, windowPosition, itemDrawPosition, new Vector2(itemWidth, itemHeight));
+#endif
                 }
 #endif
 
@@ -711,7 +719,11 @@ namespace Yukar.Engine
 #else
                 if (this.owner.IsBattle2D == false)
                 {
+#if IMOD
+                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) clickCancelSelect(InputCore.getTouchPos(0), windowPosition, pos, cancelButtonSize);
+#else
                     if (UnityEngine.Input.GetMouseButtonDown(0)) clickCancelSelect(InputCore.getTouchPos(0), windowPosition, pos, cancelButtonSize);
+#endif
                 }
 #endif
                 textDrawer.DrawString(CancelButtonText, pos, cancelButtonSize, TextDrawer.HorizontalAlignment.Center, TextDrawer.VerticalAlignment.Center, EnableItemTextColor);

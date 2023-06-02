@@ -609,7 +609,7 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
   scriptingDefineSymbols:
-    1: UNITY
+    1: UNITY;IMOD
     4: UNITY
   platformArchitecture:
     iPhone: 2
@@ -707,6 +707,6 @@ PlayerSettings:
   projectName: SGB RPG Engine for Unity
   organizationId: 
   cloudEnabled: 0
-  enableNativePlatformBackendsForNewInputSystem: 0
+  enableNativePlatformBackendsForNewInputSystem: 1
   disableOldInputManagerSupport: 0
   legacyClampBlendShapeWeights: 1

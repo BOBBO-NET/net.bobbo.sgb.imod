@@ -286,7 +286,11 @@ namespace Yukar.Engine
 #if WINDOWS
 #else
             //タッチ判定
+#if IMOD
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+#else
             if (UnityEngine.Input.GetMouseButtonDown(0))
+#endif
             {
                 if (owner.IsBattle2D)
                 {
@@ -339,7 +343,12 @@ namespace Yukar.Engine
                 }
                 else
                 {
+#if IMOD
+                    var rawMousePos = UnityEngine.InputSystem.Mouse.current.position.value;
+                    var mousPos = new UnityEngine.Vector3(rawMousePos.x, rawMousePos.y, 0);
+#else
                     var mousPos = UnityEngine.Input.mousePosition;
+#endif
                     UnityEngine.Ray ray = UnityEngine.Camera.main.ScreenPointToRay(mousPos);
                     var bv3d = battleViewer as BattleViewer3D;
 

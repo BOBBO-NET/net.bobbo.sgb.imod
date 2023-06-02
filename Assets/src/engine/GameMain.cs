@@ -329,7 +329,11 @@ namespace Yukar.Engine
             this.mExitConfirmAsk.Update();
 
             // Androidの戻るボタン
+#if IMOD
+            if (UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
+#else
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Escape))
+#endif
             {
                 if (nowScene == Scenes.TITLE)
                 {
