@@ -21,7 +21,7 @@ namespace SharpKmyIO
         static public int elapsedFramesDuringEvent = 0;
 
 #if IMOD
-        SGB_IMod.SGBIModInput imodInput = new SGB_IMod.SGBIModInput();
+        public SGB_IMod.SGBIModInput IModInput { get; private set; } = new SGB_IMod.SGBIModInput();
 #elif UNITY_SWITCH && !UNITY_EDITOR
         ControllerSwitch mSwitch = new ControllerSwitch();
 #endif
@@ -44,7 +44,7 @@ namespace SharpKmyIO
         {
             this.mControllerVirtual.initialize();
 #if IMOD
-            this.imodInput.Enable();
+            this.IModInput.Enable();
 #elif UNITY_SWITCH && !UNITY_EDITOR
             this.mSwitch.initialize();
 #endif
@@ -242,7 +242,7 @@ namespace SharpKmyIO
         internal void Release()
         {
 #if IMOD
-            this.imodInput.Enable();
+            this.IModInput.Enable();
 #else
             // Dummy
 #endif
@@ -257,7 +257,7 @@ namespace SharpKmyIO
                 // ゲームパッド
                 case "PAD_X":
 #if IMOD
-                    axis = this.imodInput.Player.Move.ReadValue<Vector2>().x;
+                    axis = this.IModInput.Player.Move.ReadValue<Vector2>().x;
 #else
                     axis = Input.GetAxis("Horizontal");
 #endif
@@ -268,7 +268,7 @@ namespace SharpKmyIO
                     return virtualPadAxis.x;
                 case "PAD_Y":
 #if IMOD
-                    axis = this.imodInput.Player.Move.ReadValue<Vector2>().y;
+                    axis = this.IModInput.Player.Move.ReadValue<Vector2>().y;
 #else
                     axis = Input.GetAxis("Vertical");
 #endif
@@ -304,9 +304,9 @@ namespace SharpKmyIO
             const float axisThreshold = 0.5f;
 
             // Store inputs from Unity to reference in the below switch tree
-            Vector2 playerMovement = this.imodInput.Player.Move.ReadValue<Vector2>();
-            Vector2 cameraLook = this.imodInput.Player.CameraLook.ReadValue<Vector2>();
-            float cameraZoom = this.imodInput.Player.CameraZoom.ReadValue<float>();
+            Vector2 playerMovement = this.IModInput.Player.Move.ReadValue<Vector2>();
+            Vector2 cameraLook = this.IModInput.Player.CameraLook.ReadValue<Vector2>();
+            float cameraZoom = this.IModInput.Player.CameraZoom.ReadValue<float>();
 
             // Translate requested inputs into Unity Input System calls
             switch (keyType)
@@ -332,17 +332,17 @@ namespace SharpKmyIO
 
                 case "PAD_DASH":
                 case "DASH_0":
-                    return this.imodInput.Player.Dash.IsPressed() ? 1 : 0;
+                    return this.IModInput.Player.Dash.IsPressed() ? 1 : 0;
                     
                 // Menus
                 case "PAD_DECIDE":
                 case "DECIDE_0":
-                    return this.imodInput.Player.Decide.IsPressed() ? 1 : 0;
+                    return this.IModInput.Player.Decide.IsPressed() ? 1 : 0;
                 case "PAD_CANCEL":
                 case "CANCEL_0":
-                    return this.imodInput.Player.Cancel.IsPressed() ? 1 : 0;
+                    return this.IModInput.Player.Cancel.IsPressed() ? 1 : 0;
                 case "MENU_0":
-                    return this.imodInput.Player.Menu.IsPressed() ? 1 : 0;
+                    return this.IModInput.Player.Menu.IsPressed() ? 1 : 0;
 
                 case "TOUCH":
                     if (this.mGameMain == null) return 0;
@@ -372,10 +372,10 @@ namespace SharpKmyIO
                     return (cameraZoom < -axisThreshold) ? 1 : 0;
                 case "PAD_CAMERA_POSITION_RESET":
                 case "CAMERA_POSITION_RESET":
-                    return this.imodInput.Player.CameraReset.IsPressed() ? 1 : 0;
+                    return this.IModInput.Player.CameraReset.IsPressed() ? 1 : 0;
                 case "PAD_CAMERA_CONTROL_MODE_CHANGE":
                 case "CAMERA_CONTROL_MODE_CHANGE":
-                    return this.imodInput.Player.CameraMode.IsPressed() ? 1 : 0;
+                    return this.IModInput.Player.CameraMode.IsPressed() ? 1 : 0;
 
                 default:
                     break;
@@ -1173,6 +1173,29 @@ namespace SharpKmyIO
             // アス比の違いに対応するため
             var offsetX = SharpKmyGfx.SpriteBatch.offsetX;
             var offsetY = SharpKmyGfx.SpriteBatch.offsetY;
+
+#if IMOD
+            bool supportsTouchScreen = UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.enabled;
+            int touchCount = supportsTouchScreen ? (UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count) : (0);
+
+            // If we want to get a touchscreen touch (iOS / Android)
+            if(touchCount > inIndex)
+            {
+                var myTouch = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches[inIndex];
+                pos.x = (int)((myTouch.screenPosition.x - offsetX) / (Screen.width - offsetX * 2) * (screenSize.x));
+                pos.y = (int)((myTouch.screenPosition.y - offsetY) / (Screen.height - offsetY * 2) * (screenSize.y));
+                res.Id = myTouch.finger.index + 1;
+            }
+            // If we just want the mouse position
+            else
+            {
+                // Windows
+                pos.x = (int)((UnityEngine.InputSystem.Mouse.current.position.value.x - offsetX) / (Screen.width - offsetX * 2) * (screenSize.x));
+                pos.y = (int)((UnityEngine.InputSystem.Mouse.current.position.value.y - offsetY) / (Screen.height - offsetY * 2) * (screenSize.y));
+                res.Id = 0;
+                //UnityEngine.Debug.Log("touchPos : " + pos.x + " " + pos.y);
+            }
+#else
             if (Input.touchCount > inIndex)
             {
                 // iOS / Android
@@ -1190,6 +1213,8 @@ namespace SharpKmyIO
                 res.Id = 0;
                 //UnityEngine.Debug.Log("touchPos : " + pos.x + " " + pos.y);
             }
+#endif
+            
             if (pos.x < 0) pos.x = 0;
             if (pos.x > screenSize.x) pos.x = screenSize.x;
             if (pos.y < 0) pos.y = 0;
@@ -1202,6 +1227,19 @@ namespace SharpKmyIO
 
         public bool isTouchPressedFromIndex(int inIndex = 0)
         {
+#if IMOD
+            bool supportsTouchScreen = UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.enabled;
+            int touchCount = supportsTouchScreen ? (UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count) : (0);
+
+            // If we have touch support, the touch is not negative, and someone is touching, return true.
+            if(supportsTouchScreen && inIndex >= 0 && inIndex < touchCount) return true;
+
+            // If there are no touches, and we only want the first one, and we're pressing left mouse, return true.
+            if(touchCount == 0 && inIndex == 0 && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed) return true;
+
+            // OTHERWISE - return false
+            return false;
+#else
             if (0 <= inIndex && inIndex < Input.touchCount)
                 return true;
 
@@ -1211,6 +1249,7 @@ namespace SharpKmyIO
                 return true;
 
             return false;
+#endif
         }
 
         public bool isTouchPressed()
