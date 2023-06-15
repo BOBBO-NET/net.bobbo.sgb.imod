@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace SGB_IMod
+namespace BobboNet.SGB.IMod
 {
     public static class SGBManager
     {

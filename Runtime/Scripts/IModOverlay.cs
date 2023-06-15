@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SGB_IMod
+namespace BobboNet.SGB.IMod
 {
     public class IModOverlay : MonoBehaviour
     {

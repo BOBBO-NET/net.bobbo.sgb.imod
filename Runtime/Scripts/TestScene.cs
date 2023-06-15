@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SGB_IMod
+namespace BobboNet.SGB.IMod
 {
     public class TestScene : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace SGB_IMod
+namespace BobboNet.Editor.SGB.IMod
 {
     public class SGBEditorManagerWindow : EditorWindow
     {

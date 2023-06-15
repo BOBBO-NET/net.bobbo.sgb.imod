@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace SGB_IMod
+namespace BobboNet.SGB.IMod
 {
     public partial class @SGBIModInput: IInputActionCollection2, IDisposable
     {

@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Text;
 using System.IO;
 
-namespace SGB_IMod
+namespace BobboNet.Editor.SGB.IMod
 {
     public class InstallWizardWindow : EditorWindow
     {
