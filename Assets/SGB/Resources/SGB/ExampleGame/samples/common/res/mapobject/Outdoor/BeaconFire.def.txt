@@ -1,6 +1,0 @@
-mtl Material::add_mat
-shader legacy_tex
-depthwrite false
-blend add
-
-texstopanim 4 4 16 0.3

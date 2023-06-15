@@ -1,0 +1,10 @@
+{
+  "name": "net.bobbo.sgb.imod",
+  "version": "0.0.1",
+  "displayName": "Smile Game Builder IMod",
+  "author": {
+    "name": "BOBBO-NET",
+    "url": "https://bobbo.net"
+  },
+  "dependencies": {}
+}

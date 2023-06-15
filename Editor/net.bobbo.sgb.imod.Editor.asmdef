@@ -1,0 +1,21 @@
+{
+    "name": "BobboNet.Editor.SGB.IMod",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "net.bobbo.sgb.imod",
+            "expression": "0",
+            "define": "IMOD"
+        }
+    ],
+    "noEngineReferences": false
+}
