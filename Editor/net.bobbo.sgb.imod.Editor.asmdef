@@ -1,6 +1,9 @@
 {
     "name": "BobboNet.Editor.SGB.IMod",
-    "references": [],
+    "references": [
+        "BobboNet.SGB.IMod",
+        "Unity.InputSystem"
+    ],
     "includePlatforms": [
         "Editor"
     ],
