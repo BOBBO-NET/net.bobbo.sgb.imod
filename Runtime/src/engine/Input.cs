@@ -121,7 +121,7 @@ namespace Yukar.Engine
         }
 
 #if IMOD
-        public static SGB_IMod.SGBIModInput IModInput { get => sInstance.IModInput; }
+        public static BobboNet.SGB.IMod.SGBIModInput IModInput { get => sInstance.IModInput; }
 #endif
     }
 
@@ -179,7 +179,7 @@ namespace Yukar.Engine
         public SharpKmyMath.Vector2 touchPos = new SharpKmyMath.Vector2();
 
 #if IMOD
-        public SGB_IMod.SGBIModInput IModInput { get => controller.IModInput; }
+        public BobboNet.SGB.IMod.SGBIModInput IModInput { get => controller.IModInput; }
 #endif
 
         public InputCore(GameMain inGameMain)

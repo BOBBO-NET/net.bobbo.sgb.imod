@@ -21,7 +21,7 @@ namespace SharpKmyIO
         static public int elapsedFramesDuringEvent = 0;
 
 #if IMOD
-        public SGB_IMod.SGBIModInput IModInput { get; private set; } = new SGB_IMod.SGBIModInput();
+        public BobboNet.SGB.IMod.SGBIModInput IModInput { get; private set; } = new BobboNet.SGB.IMod.SGBIModInput();
 #elif UNITY_SWITCH && !UNITY_EDITOR
         ControllerSwitch mSwitch = new ControllerSwitch();
 #endif
