@@ -9,10 +9,17 @@ namespace BobboNet.SGB.IMod
     public class IModOverlay : MonoBehaviour
     {
         //
+        //  Types
+        //
+
+        private delegate void ButtonActionAdded(string text, Action action);
+
+        //
         //  Static Variables
         //
 
         private static Dictionary<string, Action> buttonActions = new Dictionary<string, Action>();
+        private static event ButtonActionAdded onButtonActionAdded;
 
         //
         //  Static Methods
@@ -21,16 +28,16 @@ namespace BobboNet.SGB.IMod
         static IModOverlay()
         {
             // Supply a button by default that lets the user print hello world to the console.
-            buttonActions.Add("Log 'Hello World!'", delegate()
+            AddButtonAction("Log 'Hello World!'", delegate ()
             {
                 Debug.Log("Hello World!");
             });
+        }
 
-            // Supply a button by default that lets the user return to the test scene.
-            // buttonActions.Add("Return to Test Scene", delegate() 
-            // {
-            //     SGBManager.UnloadSmileGame("SGB_IMod/TestScene");
-            // });
+        public static void AddButtonAction(string buttonText, Action buttionAction)
+        {
+            buttonActions.Add(buttonText, buttionAction);
+            onButtonActionAdded?.Invoke(buttonText, buttionAction);
         }
 
 
@@ -55,19 +62,31 @@ namespace BobboNet.SGB.IMod
             {
                 SetWindowOpen(!windowIsOpen);
             });
-            
+
             SetWindowOpen(windowIsOpen);
 
             // Create a button for every button action!
-            foreach(var entry in buttonActions)
+            foreach (var entry in buttonActions)
             {
                 CreateButton(entry.Key, entry.Value);
             }
+
+            onButtonActionAdded += OnNewButtonActionAdded;
+        }
+
+        private void OnDestroy()
+        {
+            onButtonActionAdded -= OnNewButtonActionAdded;
         }
 
         //
         //  Private Methods
         //
+
+        private void OnNewButtonActionAdded(string text, Action action)
+        {
+            CreateButton(text, action);
+        }
 
         private Button CreateButton(string buttonText, Action buttonAction)
         {
@@ -80,7 +99,7 @@ namespace BobboNet.SGB.IMod
             Button newButton = newButtonObject.AddComponent<Button>();
 
             RectTransform newButtonRect = newButtonObject.GetComponent<RectTransform>();
-            
+
             // Create an object for the button's text, and populate it with all required components.
             GameObject newTextObject = new GameObject("Text");
             newTextObject.transform.SetParent(newButtonObject.transform, false);
@@ -103,7 +122,7 @@ namespace BobboNet.SGB.IMod
             newText.fontStyle = FontStyle.Italic;
 
             // Set it so that when this button is clicked, it invokes the given action
-            newButton.onClick.AddListener( () => buttonAction.Invoke() );
+            newButton.onClick.AddListener(() => buttonAction.Invoke());
 
             return newButton;
         }
