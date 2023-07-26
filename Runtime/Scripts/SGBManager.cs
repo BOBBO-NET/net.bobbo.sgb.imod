@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -37,10 +39,10 @@ namespace BobboNet.SGB.IMod
 
 
         // Load into a Smile Game Builder game, given the location of it's assets
-        public static void LoadSmileGame(string smileGameName)
+        public static async Task LoadSmileGameAsync(string smileGameName)
         {
             // Check to see if there's a smile game by this name
-            if(!DoesSGBSubpathExist(smileGameName))
+            if (!DoesSGBSubpathExist(smileGameName))
             {
                 throw new System.Exception("No Smile Game Builder game with this subpath could be found!");
             }
@@ -49,36 +51,39 @@ namespace BobboNet.SGB.IMod
             UnityEntry.gameSubpathName = smileGameName;
 
             // Start async loading the scene
-            var asyncLoadScene = EnterWorkspaceScene();
+            await EnterWorkspaceSceneAsync();
 
             // When the scene is done loading...
-            asyncLoadScene.completed += delegate {
-                CreateSGBRequiredGameObjects();
-                CreateCustomRequiredGameObjects();
-            };
+            CreateSGBRequiredGameObjects();
+            CreateCustomRequiredGameObjects();
         }
 
         // Unload from current Smile Builder Game, and load into a specific scene
-        public static void UnloadSmileGame(string sceneToLoadTo)
+        public static async Task UnloadSmileGameAsync()
         {
             // Start Async re-loading into the empty workspace scene
-            var asyncLoadScene = EnterWorkspaceScene();
+            await EnterWorkspaceSceneAsync();
 
-            // When the scene is done loading...
-            asyncLoadScene.completed += delegate {
-                DestroyCustomRequiredGameObjects();
-
-                // Load into the scene we want to return to.
-                asyncLoadScene = SceneManager.LoadSceneAsync(sceneToLoadTo);
-            };
+            // ...and when the scene is done loading, fix up our required objects.
+            DestroyCustomRequiredGameObjects();
         }
 
 
 
         // Asynchronously load into the workspace scene
-        private static AsyncOperation EnterWorkspaceScene()
+        private static async Task EnterWorkspaceSceneAsync() => await LoadSceneTrueAsync(sceneNameWorkspace);
+
+        private static async Task LoadSceneTrueAsync(string sceneName)
         {
-            return SceneManager.LoadSceneAsync(sceneNameWorkspace);
+            // Start loading the workspace scene
+            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName);
+            loadOperation.allowSceneActivation = true;
+
+            // Loop forever until the scene is ready to go
+            while (!loadOperation.isDone)
+            {
+                await Task.Yield();
+            }
         }
 
         // Construct the GameObjects that SGB needs to initialize

@@ -10,14 +10,14 @@ namespace BobboNet.SGB.IMod
         public string gameResourceLocation = "ExampleGame";
 
         [ContextMenu("Debug Load Smile Game")]
-        public void LoadIntoGame()
+        public async void LoadIntoGame()
         {
-            SGBManager.LoadSmileGame(gameResourceLocation);
+            await SGBManager.LoadSmileGameAsync(gameResourceLocation);
         }
 
-        public void LoadIntoGame(string subpath)
+        public async void LoadIntoGame(string subpath)
         {
-            SGBManager.LoadSmileGame(subpath);
+            await SGBManager.LoadSmileGameAsync(subpath);
         }
     }
 }
