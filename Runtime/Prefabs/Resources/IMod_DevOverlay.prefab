@@ -778,6 +778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonWindowToggle: {fileID: 5350617295266164086}
+  transformButtonParent: {fileID: 5350617294937880796}
   buttonReturnToTestScene: {fileID: 5350617294305139283}
   canvasGroupPopoutWindow: {fileID: 5350617296047519135}
 --- !u!1 &5350617296047519123
