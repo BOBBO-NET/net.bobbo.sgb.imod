@@ -41,7 +41,6 @@ namespace BobboNet.SGB.IMod
         [Header("Required References")]
         public Button buttonWindowToggle;
         public RectTransform transformButtonParent;
-        public Button buttonReturnToTestScene;
         public CanvasGroup canvasGroupPopoutWindow;
 
         private bool windowIsOpen = false;
