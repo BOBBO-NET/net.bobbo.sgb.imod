@@ -101,7 +101,7 @@ namespace Yukar.Engine
                     }
                 }
             }
-	            // End of custom overrides
+            // End of custom overrides
             flags = new bool[5];
             flags[0] = flags[1] = flags[2] = flags[3] = flags[4] = true;
 
@@ -427,8 +427,13 @@ namespace Yukar.Engine
 
         internal void Apply()
         {
+#if !IMOD
             p.owner.parent.owner.data.system.bgmVolume = settings[0];
             p.owner.parent.owner.data.system.seVolume = settings[1];
+#else
+            BobboNet.SGB.IMod.SGBAudioSettings.SetBackgroundMusicVolumeRaw(settings[0]);
+            BobboNet.SGB.IMod.SGBAudioSettings.SetSoundEffectsVolumeRaw(settings[1]);
+#endif
             p.owner.parent.owner.data.system.messageSpeed = (Common.GameData.SystemData.MessageSpeed)settings[2];
             p.owner.parent.owner.data.system.cursorPosition = (Common.GameData.SystemData.CursorPosition)settings[3];
             //p.owner.parent.owner.data.system.controlType = (Common.GameData.SystemData.ControlType)settings[4];
@@ -436,9 +441,17 @@ namespace Yukar.Engine
 
         internal void Reset()
         {
+#if !IMOD
             settings[0] = p.owner.parent.owner.data.system.bgmVolume;
+#else
+            settings[0] = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolumeRaw();
+#endif
             maxIndexes[0] = 100;
+#if !IMOD
             settings[1] = p.owner.parent.owner.data.system.seVolume;
+#else
+            settings[1] = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolumeRaw();
+#endif
             maxIndexes[1] = 100;
             settings[2] = (int)p.owner.parent.owner.data.system.messageSpeed;
             maxIndexes[2] = (int)Common.GameData.SystemData.MessageSpeed.SLOW;
@@ -452,8 +465,13 @@ namespace Yukar.Engine
         {
             p.owner.parent.owner.data.system.restoreDefaults();
 
+#if !IMOD
             settings[0] = p.owner.parent.owner.data.system.bgmVolume;
             settings[1] = p.owner.parent.owner.data.system.seVolume;
+#else
+            settings[0] = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolumeRaw();
+            settings[1] = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolumeRaw();
+#endif
             settings[2] = (int)p.owner.parent.owner.data.system.messageSpeed;
             settings[3] = (int)p.owner.parent.owner.data.system.cursorPosition;
             //settings[4] = (int)p.owner.parent.owner.data.system.controlType;

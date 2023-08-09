@@ -20,10 +20,12 @@ namespace Yukar.Common.GameData
         public bool encountAvailable = true;
         public bool saveAvailable = true;
         public bool dashAvailable = true;
+#if !IMOD
         public static int sDefaultBgmVolume;
         public static int sDefaultSeVolume;
         public int bgmVolume = sDefaultBgmVolume;
         public int seVolume = sDefaultSeVolume;
+#endif
         public float playTime = 0;
         public const int MAX_LOCAL_VARIABLE = 10;
         public const int MAX_STRING_VARIABLE = 256;
@@ -76,7 +78,7 @@ namespace Yukar.Common.GameData
                 index < Rom.GameSettings.LOCAL_SWITCH_OFFSET + MAX_LOCAL_VARIABLE)
             {
                 // ローカル変数
-                if(index < Rom.GameSettings.LOCAL_SWITCH_OFFSET + MAX_LOCAL_VARIABLE)
+                if (index < Rom.GameSettings.LOCAL_SWITCH_OFFSET + MAX_LOCAL_VARIABLE)
                     LocalVariables[new Tuple<Guid, int>(eventGuid, index)] = value;
             }
             else if (index >= 0 && index < Rom.GameSettings.MAX_VARIABLE)
@@ -92,7 +94,7 @@ namespace Yukar.Common.GameData
             {
                 // ローカルスイッチ
                 var key = new Tuple<Guid, int>(eventGuid, index);
-                if(LocalSwitches.ContainsKey(key))
+                if (LocalSwitches.ContainsKey(key))
                     return LocalSwitches[key];
 
                 return false;
@@ -116,7 +118,7 @@ namespace Yukar.Common.GameData
 
                 return 0;
             }
-            else if(index >= 0 && index < Rom.GameSettings.MAX_VARIABLE)
+            else if (index >= 0 && index < Rom.GameSettings.MAX_VARIABLE)
             {
                 return Variables[index];
             }
@@ -139,8 +141,14 @@ namespace Yukar.Common.GameData
             writer.Write(menuAvailable);
             writer.Write(encountAvailable);
 
+#if !IMOD
             writer.Write(bgmVolume);
             writer.Write(seVolume);
+#else
+            // Pad with default bytes, so that the save files are compatible between imod and non imod
+            writer.Write(50);
+            writer.Write(50);
+#endif
             writer.Write((int)messageSpeed);
             writer.Write((int)cursorPosition);
             writer.Write((int)controlType);
@@ -197,8 +205,14 @@ namespace Yukar.Common.GameData
             menuAvailable = reader.ReadBoolean();
             encountAvailable = reader.ReadBoolean();
 
+#if !IMOD
             bgmVolume = reader.ReadInt32();
             seVolume = reader.ReadInt32();
+#else
+            // Read dummy bytes to make sure that we're compatible with non-imod saves
+            reader.ReadInt32();
+            reader.ReadInt32();
+#endif
             messageSpeed = (MessageSpeed)reader.ReadInt32();
             cursorPosition = (CursorPosition)reader.ReadInt32();
             controlType = (ControlType)reader.ReadInt32();
@@ -247,6 +261,7 @@ namespace Yukar.Common.GameData
 
         public void adjustVolume()
         {
+#if !IMOD
             if (bgmVolume > sDefaultBgmVolume)
             {
                 bgmVolume = sDefaultBgmVolume;
@@ -256,12 +271,18 @@ namespace Yukar.Common.GameData
             {
                 seVolume = sDefaultSeVolume;
             }
+#else
+            // Do nothing here, for IMod
+#endif
         }
 
         public void restoreDefaults()
         {
+#if !IMOD
             bgmVolume = sDefaultBgmVolume;
             seVolume = sDefaultSeVolume;
+#endif
+
             messageSpeed = MessageSpeed.FAST;
             cursorPosition = CursorPosition.KEEP;
             controlType = ControlType.KEYBOARD_AND_GAMEPAD;
@@ -300,8 +321,11 @@ namespace Yukar.Common.GameData
             messageSpeed = old.messageSpeed;
             cursorPosition = old.cursorPosition;
             controlType = old.controlType;
+
+#if !IMOD
             bgmVolume = old.bgmVolume;
             seVolume = old.seVolume;
+#endif
         }
     }
 }

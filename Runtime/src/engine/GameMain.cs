@@ -46,9 +46,9 @@ namespace Yukar.Engine
         private BattleTestScene battleTestScene;
 
         internal Common.DebugSettings debugSettings;
-        
+
         private DebugDialog debugDialog;
-        
+
         public static Vector2 halfOffset = new Vector2(0.5f, 0.5f);
 
         private bool isDrawInitializeLoadingText = false;
@@ -66,7 +66,7 @@ namespace Yukar.Engine
         }
 
         public enum Scenes
-//		internal enum Scenes
+        //		internal enum Scenes
         {
             NONE,
             LOGO,
@@ -124,10 +124,10 @@ namespace Yukar.Engine
         public override void initialize()
         {
             catalog = Common.Catalog.sInstance; //既に読み込んでいる。
-            
+
             Common.GameDataManager.InititalizeAccount();
             Graphics.Initialize(catalog.getGameSettings().gameFont, false, catalog.getGameSettings().gameFontUseOldMethod);
-            
+
 #if !(WINDOWS)
             ResourceManager.Image.initialize();
 #endif
@@ -173,7 +173,7 @@ namespace Yukar.Engine
 
             //SharpKmyMath.Matrix4 ortho = SharpKmyMath.Matrix4.ortho(0, 960, 0, 544, -1000, 1000);
 #if ENABLE_VR
-            if( SharpKmyVr.Func.IsReady() )
+            if (SharpKmyVr.Func.IsReady())
             {
                 // ビューポート設定
                 SharpKmyGfx.Render.getDefaultRender().setViewport(0, 0, (int)SharpKmy.Entry.getMainWindowWidth(), (int)SharpKmy.Entry.getMainWindowHeight());
@@ -436,7 +436,7 @@ namespace Yukar.Engine
                         debugDialog.Activate();
                     }
                     else
-                    { 
+                    {
                         debugDialog.Show();
                         mapScene.mapEngine.setCursorVisibility(true);
                     }
@@ -454,7 +454,7 @@ namespace Yukar.Engine
                 // Ctrl + Cキーでタイトル画面に戻る / バトルテストだったらバトルテストをやり直す
                 if (controller.isUp("ReturnTitle") && (controller.isHold("ControlLeft") || controller.isHold("ControlRight")))
                 {
-                    if(nowScene == Scenes.BATTLE_TEST)
+                    if (nowScene == Scenes.BATTLE_TEST)
                     {
                         battleTestScene.Restart();
                     }
@@ -464,35 +464,37 @@ namespace Yukar.Engine
                     }
                 }
             }
-            
+
 #if ENABLE_VR
-            if( SharpKmyVr.Func.IsReady() )
+            if (SharpKmyVr.Func.IsReady())
             {
                 // カメラリセット
-                if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_POSITION_RESET) )
+                if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_POSITION_RESET))
                 {
                     switch (nowScene)
                     {
-//					case Scenes.LOGO:			logoScene.							break;
-//					case Scenes.TITLE:			titleScene.							break;
-                    case Scenes.MAP:			mapScene.SetupVrCameraData( true );	break;
-//					case Scenes.BATTLE_TEST:	battleTestScene.					break;
+                        //					case Scenes.LOGO:			logoScene.							break;
+                        //					case Scenes.TITLE:			titleScene.							break;
+                        case Scenes.MAP: mapScene.SetupVrCameraData(true); break;
+                            //					case Scenes.BATTLE_TEST:	battleTestScene.					break;
                     }
                 }
 
                 // VRキャリブレーション
-                if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.VR_CALIBRATION) )
+                if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.VR_CALIBRATION))
                 {
                     VrCameraData vrCameraData = GetCurrentVrCameraData();
-                    if( vrCameraData != null ) {
+                    if (vrCameraData != null)
+                    {
                         vrCameraData.Calibration();
                     }
                 }
 
                 // VRカメラ同期
-                if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.VR_SYNC_CAMERA) )
+                if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.VR_SYNC_CAMERA))
                 {
-                    if( nowScene == Scenes.MAP ) {
+                    if (nowScene == Scenes.MAP)
+                    {
                         mapScene.SyncCamera();
                     }
                 }
@@ -500,18 +502,22 @@ namespace Yukar.Engine
                 // カメラ回転（VR箱庭視点用）
                 {
                     int val = 0;
-                    
-                    if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_HORIZONTAL_ROT_CLOCKWISE) ) {
+
+                    if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_HORIZONTAL_ROT_CLOCKWISE))
+                    {
                         val--;
-                    } else if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_HORIZONTAL_ROT_COUNTER_CLOCKWISE) ) {
+                    }
+                    else if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_HORIZONTAL_ROT_COUNTER_CLOCKWISE))
+                    {
                         val++;
                     }
 
-                    if( val != 0 )
+                    if (val != 0)
                     {
                         VrCameraData vrCameraData = GetCurrentVrCameraData();
-                        if( vrCameraData != null ) {
-                            vrCameraData.ChangeRotateY( val );
+                        if (vrCameraData != null)
+                        {
+                            vrCameraData.ChangeRotateY(val);
                         }
                     }
                 }
@@ -520,17 +526,21 @@ namespace Yukar.Engine
                 {
                     int val = 0;
 
-                    if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_VERTICAL_ROT_DOWN) ) {
+                    if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_VERTICAL_ROT_DOWN))
+                    {
                         val--;
-                    } else if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_VERTICAL_ROT_UP) ) {
+                    }
+                    else if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_VERTICAL_ROT_UP))
+                    {
                         val++;
                     }
 
-                    if( val != 0 )
+                    if (val != 0)
                     {
                         VrCameraData vrCameraData = GetCurrentVrCameraData();
-                        if( vrCameraData != null ) {
-                            vrCameraData.ChangeHeight( val );
+                        if (vrCameraData != null)
+                        {
+                            vrCameraData.ChangeHeight(val);
                         }
                     }
                 }
@@ -539,17 +549,21 @@ namespace Yukar.Engine
                 {
                     int val = 0;
 
-                    if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_ZOOM_IN) ) {
+                    if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_ZOOM_IN))
+                    {
                         val--;
-                    } else if( Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_ZOOM_OUT) ) {
+                    }
+                    else if (Input.KeyTest(Input.StateType.TRIGGER, Input.KeyStates.CAMERA_ZOOM_OUT))
+                    {
                         val++;
                     }
 
-                    if( val != 0 )
+                    if (val != 0)
                     {
                         VrCameraData vrCameraData = GetCurrentVrCameraData();
-                        if( vrCameraData != null ) {
-                            vrCameraData.ChangeDistance( val );
+                        if (vrCameraData != null)
+                        {
+                            vrCameraData.ChangeDistance(val);
                         }
                     }
                 }
@@ -603,7 +617,8 @@ namespace Yukar.Engine
                                     string enemies = options.Length > 2 ? options[2] : "";
                                     string layoutStr = null;
                                     string battleBgStr = null;
-                                    for (int i = 3; i < options.Length; i++) {
+                                    for (int i = 3; i < options.Length; i++)
+                                    {
                                         if (options[i].StartsWith("POS:"))
                                             layoutStr = options[i];
                                         else if (options[i].StartsWith("BG:"))
@@ -713,7 +728,7 @@ namespace Yukar.Engine
                                         {
                                             if (count >= monstersGuid.Count)
                                                 break;
-                                            string[] paramsStr = layoutEntry.Split(new char[]{' ', ':'});
+                                            string[] paramsStr = layoutEntry.Split(new char[] { ' ', ':' });
                                             layout[count] = new Microsoft.Xna.Framework.Point(int.Parse(paramsStr[1]), int.Parse(paramsStr[2]));
                                             count++;
                                         }
@@ -843,8 +858,9 @@ namespace Yukar.Engine
             */
 
 #if ENABLE_VR
-            if ( SharpKmyVr.Func.IsReady() ) {
-                DrawVr( nowScene );
+            if (SharpKmyVr.Func.IsReady())
+            {
+                DrawVr(nowScene);
             }
 #endif  // #if ENABLE_VR
 
@@ -859,7 +875,8 @@ namespace Yukar.Engine
 
 #if ENABLE_VR
             // 2D描画
-            if( SharpKmyVr.Func.IsReady() ) {
+            if (SharpKmyVr.Func.IsReady())
+            {
                 SharpKmyGfx.Render.getRender2D().addDrawable(spdrawer);
             }
 #endif  // #if ENABLE_VR
@@ -883,7 +900,7 @@ namespace Yukar.Engine
                 var size = Graphics.MeasureString(loadingFont, text);
 
                 size.Y *= 0.75f;
-                
+
                 Graphics.DrawStringSoloColor(loadingFont, text,
                     new Vector2(Graphics.ScreenWidth - size.X - 18,
                     Graphics.ScreenHeight - size.Y - 18 - posY), Color.White);
@@ -955,7 +972,7 @@ namespace Yukar.Engine
 
             if (scene == Scenes.TITLE)
             {
-                if(mapScene.menuWindow.isVisible())
+                if (mapScene.menuWindow.isVisible())
                     mapScene.menuWindow.goToClose();
                 mapScene.mapEngine.setCursorVisibility(true);  // カーソルを表示する
                 titleScene.initialize();
@@ -983,7 +1000,19 @@ namespace Yukar.Engine
         internal void DoLoad(int index)
         {
             data = Yukar.Common.GameDataManager.Load(catalog, index);
-            Audio.setMasterVolume((float)data.system.bgmVolume / 100, (float)data.system.seVolume / 100);
+            float bgmVolume = 0.5f;
+            float seVolume = 0.5f;
+
+#if !IMOD
+            bgmVolume = (float)data.system.bgmVolume / 100;
+            seVolume = (float)data.system.seVolume / 100;            
+#else
+            // When using IMOD, get volume levels from the SGB audio settings
+            bgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolume();
+            seVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolume();
+#endif
+            Audio.setMasterVolume(bgmVolume, seVolume);
+
             DoReset(false); // データがもうあるので初期化しない
         }
 
@@ -1007,10 +1036,10 @@ namespace Yukar.Engine
             data.start.currentBgm.currentBgm = Guid.Empty;
             if (sound != null)
             {
-                if(sound.rom != null)
+                if (sound.rom != null)
                     data.start.currentBgm.currentBgm = sound.rom.guId;
                 data.start.currentBgm.pan = sound.sound.getPan();
-                if(Audio.getMasterBgmVolume() > 0)
+                if (Audio.getMasterBgmVolume() > 0)
                     data.start.currentBgm.volume = sound.sound.getVolume() / Audio.getMasterBgmVolume();
                 data.start.currentBgm.tempo = sound.sound.getTempo();
             }
@@ -1085,7 +1114,7 @@ namespace Yukar.Engine
                     return data.party.getHeroName(list[index].guId);
                 // 数値型変数の名前指定
                 case "#":
-                    foreach(var name in gs.variableNames)
+                    foreach (var name in gs.variableNames)
                     {
                         if (name == match.Groups[2].Value)
                             break;
@@ -1150,14 +1179,15 @@ namespace Yukar.Engine
         /**
          *	VR描画
          */
-        public static void DrawVr( Scenes scene )
+        public static void DrawVr(Scenes scene)
         {
-            if( scene == Scenes.NONE ) {
+            if (scene == Scenes.NONE)
+            {
                 return;
             }
 
             // VR有効時のみの描画処理
-            if( SharpKmyVr.Func.IsReady() )
+            if (SharpKmyVr.Func.IsReady())
             {
                 Graphics.BeginDraw();
 
@@ -1177,7 +1207,7 @@ namespace Yukar.Engine
 #endif  // #if VR_SIDE_BY_SIDE
 
                 // 2D
-                Graphics.DrawImageVr( SharpKmyGfx.Render.getRender2D().getColorTexture(), 0, 0, Graphics.ViewportWidth, Graphics.ViewportHeight );
+                Graphics.DrawImageVr(SharpKmyGfx.Render.getRender2D().getColorTexture(), 0, 0, Graphics.ViewportWidth, Graphics.ViewportHeight);
 
                 Graphics.EndDraw();
             }
@@ -1191,12 +1221,12 @@ namespace Yukar.Engine
         {
             VrCameraData vrCameraData = null;
 
-            switch( nowScene )
+            switch (nowScene)
             {
-//			case Scenes.LOGO:			vrCameraData = logoScene.GetVrCameraData();			break;
-//			case Scenes.TITLE:			vrCameraData = titleScene.GetVrCameraData();		break;
-            case Scenes.MAP:			vrCameraData = mapScene.GetVrCameraData();			break;
-//			case Scenes.BATTLE_TEST:	vrCameraData = battleTestScene.GetVrCameraData();	break;
+                //			case Scenes.LOGO:			vrCameraData = logoScene.GetVrCameraData();			break;
+                //			case Scenes.TITLE:			vrCameraData = titleScene.GetVrCameraData();		break;
+                case Scenes.MAP: vrCameraData = mapScene.GetVrCameraData(); break;
+                    //			case Scenes.BATTLE_TEST:	vrCameraData = battleTestScene.GetVrCameraData();	break;
             }
 
             return vrCameraData;

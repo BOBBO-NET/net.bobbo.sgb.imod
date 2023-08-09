@@ -20,7 +20,7 @@ public class UnityEntry : MonoBehaviour
 
     // Custom overrides
     static public bool mOverridesOn = true;             // Set false to skip all custom overrides and true to apply overrides below
-    static public int  mResolution = 2;                 // Set 1 for 960 x 544 (540) resolution, set 2 for 1920 x 1080 resolution
+    static public int mResolution = 2;                 // Set 1 for 960 x 544 (540) resolution, set 2 for 1920 x 1080 resolution
     static public bool mMargin = true;                  // Set false to skip margin correction and true to apply margin correction
     static public bool mRemoveFontBorders = true;       // Set true to remove font borders and false to default font borders
     static public bool mFlatGauge = true;               // Set true to apply flat gauge styles in the Config windows and false to default
@@ -90,8 +90,11 @@ public class UnityEntry : MonoBehaviour
         Catalog.createDlcList(false);
         Catalog catalog = new Catalog();
         catalog.load(false);
+
+#if !IMOD
         Yukar.Common.GameData.SystemData.sDefaultBgmVolume = catalog.getGameSettings().defaultBgmVolume;
         Yukar.Common.GameData.SystemData.sDefaultSeVolume = catalog.getGameSettings().defaultSeVolume;
+#endif
 
         sGame = new GameMain();
         game.initialize();
@@ -116,7 +119,7 @@ public class UnityEntry : MonoBehaviour
     void Update()
     {
 #if IMOD
-        if(Yukar.Engine.Input.IModInput.Window.ToggleFullscreen.WasPressedThisFrame()) 
+        if (Yukar.Engine.Input.IModInput.Window.ToggleFullscreen.WasPressedThisFrame())
         {
             Screen.fullScreen = !Screen.fullScreen;
         }
