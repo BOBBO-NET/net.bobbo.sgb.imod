@@ -15,6 +15,18 @@ namespace BobboNet.SGB.IMod
         private static int currentVolumeSoundEffects = DefaultVolume;
 
         //
+        //  Constructor
+        //
+
+        static SGBAudioSettings()
+        {
+            IModOverlay.AddButtonAction("SGB BGM Volume +", () => SetBackgroundMusicVolumeRaw(currentVolumeBackgroundMusic + 5));
+            IModOverlay.AddButtonAction("SGB BGM Volume -", () => SetBackgroundMusicVolumeRaw(currentVolumeBackgroundMusic - 5));
+            IModOverlay.AddButtonAction("SGB SFX Volume +", () => SetBackgroundMusicVolumeRaw(currentVolumeSoundEffects + 5));
+            IModOverlay.AddButtonAction("SGB SFX Volume -", () => SetBackgroundMusicVolumeRaw(currentVolumeSoundEffects - 5));
+        }
+
+        //
         //  Public Methods
         //
 
@@ -25,8 +37,8 @@ namespace BobboNet.SGB.IMod
 
         public static void SetBackgroundMusicVolumeRaw(int volume)
         {
-            Debug.LogWarning($"Set max bgm to {volume}");
             currentVolumeBackgroundMusic = Mathf.Clamp(volume, MinVolume, MaxVolume);
+            Debug.LogWarning($"Set bgm to {currentVolumeBackgroundMusic}");
         }
 
         public static float GetBackgroundMusicVolume() => ConvertVolumeToFloat(currentVolumeBackgroundMusic);
@@ -40,6 +52,7 @@ namespace BobboNet.SGB.IMod
         public static void SetSoundEffectsVolumeRaw(int volume)
         {
             currentVolumeSoundEffects = Mathf.Clamp(volume, MinVolume, MaxVolume);
+            Debug.LogWarning($"Set sfx to {currentVolumeSoundEffects}");
         }
 
         public static float GetSoundEffectsVolume() => ConvertVolumeToFloat(currentVolumeSoundEffects);
