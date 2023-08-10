@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Yukar.Engine;
+using UnityEngine.Audio;
 
 namespace BobboNet.SGB.IMod
 {
@@ -11,8 +12,11 @@ namespace BobboNet.SGB.IMod
         private const int MaxVolume = 100;
         private const int DefaultVolume = 50;
 
-        private static int volumeBGM = DefaultVolume;
-        private static int volumeSFX = DefaultVolume;
+        private static int volumeBGM = DefaultVolume; // The current background music volume (0 - 100)
+        private static int volumeSFX = DefaultVolume; // The current sound effect volume (0 - 100)
+
+        private static AudioMixerGroup mixerGroupBGM = null; // (optional) The current mixer group to route BGM through
+        private static AudioMixerGroup mixerGroupSFX = null; // (optional) The current mixer group to route SFX through
 
         //
         //  Constructor
@@ -28,7 +32,43 @@ namespace BobboNet.SGB.IMod
         }
 
         //
-        //  Public Methods
+        //  Mixer Methods
+        //
+
+        /// <summary>
+        /// Update what audio mixer group all SGB background music should be routed through.
+        /// </summary>
+        /// <param name="mixerGroup">The group to route all BGM through. If null, unroutes all BGM.</param>
+        public static void SetMixerGroupBGM(AudioMixerGroup mixerGroup)
+        {
+            mixerGroupBGM = mixerGroup;         // Update the internal mixer group...
+            Audio.SetMixerGroupBGM(mixerGroup); // ...and apply it to SGB
+        }
+
+        /// <summary>
+        /// Get the active audio mixer group that all SGB background music is being routed through.
+        /// </summary>
+        /// <returns>The current BGM mixer group. Is null if unrouted.</returns>
+        public static AudioMixerGroup GetMixerGroupBGM() => mixerGroupBGM;
+
+        /// <summary>
+        /// Update what audio mixer group all SGB sound effects should be routed through.
+        /// </summary>
+        /// <param name="mixerGroup">The group to route all SFX through. If null, unroutes all SFX.</param>
+        public static void SetMixerGroupSFX(AudioMixerGroup mixerGroup)
+        {
+            mixerGroupSFX = mixerGroup;         // Update the internal mixer group...
+            Audio.SetMixerGroupSFX(mixerGroup); // ...and apply it to SGB
+        }
+
+        /// <summary>
+        /// Get the active audio mixer group that all SGB sound effects are being routed through.
+        /// </summary>
+        /// <returns>The current SFX mixer group. Is null if unrouted.</returns>
+        public static AudioMixerGroup GetMixerGroupSFX() => mixerGroupSFX;
+
+        //
+        //  Volume Methods
         //
 
         /// <summary>

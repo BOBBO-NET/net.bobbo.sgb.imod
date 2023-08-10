@@ -16,7 +16,7 @@ namespace SharpKmyAudio
 
         private int mSourceLoopBufPlayIndex = -1;
         private double mSourceLoopEndDpsTime = 0;
-        private bool mLooped; // ˆê“x‚Å‚àƒ‹[ƒv‚µ‚½‚©‚Ç‚¤‚©
+        private bool mLooped; // ï¿½ï¿½xï¿½Å‚ï¿½ï¿½ï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½
         private AudioSource[] mSourceLoopBuf = null;
 
         private int mPauseSamples = -1;
@@ -68,7 +68,7 @@ namespace SharpKmyAudio
             if (this.mAudioClip.loadState != AudioDataLoadState.Loaded) return;
             if (this.isPlaying(false) == false) return;
 
-            //ÄƒXƒPƒWƒ…[ƒ‹ˆ—
+            //ï¿½ÄƒXï¿½Pï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (this.mIsLoad == false
             && this.mSourceIntro.timeSamples != this.mSourceIntroStartSamples)
             {
@@ -76,30 +76,30 @@ namespace SharpKmyAudio
                 var tmeSamples = this.mSourceIntro.timeSamples;
                 if (this.mLoopEndSamples <= this.mSourceIntro.timeSamples)
                 {
-                    //1Frame‚ÅÄ¶I—¹ˆÊ’u‚ğ’´‚¦‚éê‡‚Í‚·‚®‚ÉÄ¶‚·‚é‚æ‚¤‚ÉÄƒXƒPƒWƒ…[ƒ‹
+                    //1Frameï¿½ÅÄï¿½ï¿½Iï¿½ï¿½ï¿½Ê’uï¿½ğ’´‚ï¿½ï¿½ï¿½ê‡ï¿½Í‚ï¿½ï¿½ï¿½ï¿½ÉÄï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½ÉÄƒXï¿½Pï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½
                     this.mSourceIntro.Stop();
                     this.ResetLoopBuf(AudioSettings.dspTime);
                 }
                 else
                 {
-                    //Ä¶ˆÊ’u‚©‚çI‚í‚éŠÔ‚ğŠ„‚èo‚µ‚ÄÄƒXƒPƒWƒ…[ƒ‹
+                    //ï¿½Äï¿½ï¿½Ê’uï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½éï¿½Ô‚ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ÄÄƒXï¿½Pï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½
                     var startDpsTime = AudioSettings.dspTime + ((double)(this.mLoopEndSamples - this.mSourceIntro.timeSamples) / (double)this.mAudioClip.frequency);
 #if !UNITY_WEBGL
                     this.mSourceIntro.SetScheduledEndTime(startDpsTime);
 #endif
                     this.ResetLoopBuf(startDpsTime);
                 }
-                
+
                 return;
             }
 
-            //ƒ‹[ƒvƒoƒbƒtƒ@‚Ìˆ—
+            //ï¿½ï¿½ï¿½[ï¿½vï¿½oï¿½bï¿½tï¿½@ï¿½Ìï¿½ï¿½ï¿½
             if (this.mSourceLoopBufPlayIndex < 0) return;
 
             if (!mLooped && !mSourceIntro.isPlaying)
                 mLooped = true;
 
-            //ŸÄ¶‚³‚ê‚éƒoƒbƒtƒ@‚ÌƒCƒ“ƒfƒbƒNƒX
+            //ï¿½ï¿½ï¿½Äï¿½ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½bï¿½tï¿½@ï¿½ÌƒCï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½X
             var nextLoopBufPlayIndex = this.mSourceLoopBufPlayIndex + 1;
             if (this.mSourceLoopBuf.Length <= nextLoopBufPlayIndex)
             {
@@ -109,7 +109,7 @@ namespace SharpKmyAudio
 
 #if UNITY_WEBGL
             var nextLoopBuf = this.mSourceLoopBuf[nextLoopBufPlayIndex];
-            //WEBGL‚ÍSetScheduledEndTime‚ª“®ì‚µ‚È‚¢‚Ì‚ÅAÄ¶E’â~•”‚Í“Á•Ê‘Î‰
+            //WEBGLï¿½ï¿½SetScheduledEndTimeï¿½ï¿½ï¿½ï¿½ï¿½ì‚µï¿½È‚ï¿½ï¿½Ì‚ÅAï¿½Äï¿½ï¿½Eï¿½ï¿½~ï¿½ï¿½ï¿½Í“ï¿½ï¿½Ê‘Î‰ï¿½
             if (0 <= this.mSourceLoopBufPlayIndex)
             {
 
@@ -139,14 +139,14 @@ namespace SharpKmyAudio
             }
 #endif
 
-            //ƒCƒ“ƒgƒÄ¶’†Eƒoƒbƒtƒ@‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡Eæ“ªƒoƒbƒtƒ@g—p’†‚ÍAÄg—p‰Â”\‚Èƒoƒbƒtƒ@‚Ìİ’è‚ğ‚µ‚È‚¢
+            //ï¿½Cï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Äï¿½ï¿½ï¿½ï¿½Eï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½İ’è‚³ï¿½ï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Eï¿½æ“ªï¿½oï¿½bï¿½tï¿½@ï¿½gï¿½pï¿½ï¿½ï¿½ÍAï¿½Ägï¿½pï¿½Â”\ï¿½Èƒoï¿½bï¿½tï¿½@ï¿½Ìİ’ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½
             if (this.mSourceIntro.isPlaying) return;
             if (curLoopBuf.isPlaying) return;
 
-            //Ä¶‚³‚ê‚Ä‚¢‚éƒoƒbƒtƒ@‚ÉƒCƒ“ƒfƒbƒNƒX‚ğ‚Á‚Ä‚¢‚­
+            //ï¿½Äï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½oï¿½bï¿½tï¿½@ï¿½ÉƒCï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
             this.mSourceLoopBufPlayIndex = nextLoopBufPlayIndex;
 
-            //‹ó‚¢‚½ƒoƒbƒtƒ@‚ÍÄ“xÄ¶ˆÊ’u‚ğİ’è
+            //ï¿½ó‚¢‚ï¿½ï¿½oï¿½bï¿½tï¿½@ï¿½ÍÄ“xï¿½Äï¿½ï¿½Ê’uï¿½ï¿½İ’ï¿½
             this.UpdateLoopBuf(curLoopBuf);
         }
 
@@ -166,6 +166,10 @@ namespace SharpKmyAudio
             inBuf.volume = this.mVolume;
 #endif
             inBuf.panStereo = this.mPan;
+
+#if IMOD
+            if (inBuf.outputAudioMixerGroup != this.mixerGroup) inBuf.outputAudioMixerGroup = this.mixerGroup;
+#endif
         }
 
         private void ResetLoopBuf(double inStartDpsTime)
@@ -182,13 +186,13 @@ namespace SharpKmyAudio
 
         public static Sound load(string path)
         {
-            // ƒ‹[ƒvƒ|ƒCƒ“ƒg‚ÌŠÄ‹‚Ì‚½‚ß‚ÉUpdate()‚ªg‚¦‚é‚æ‚¤MonoBehaviourƒNƒ‰ƒX‚ğŒp³‚µ‚Ä‚¢‚é
-            // ‚µ‚©‚µ‚»‚Ìê‡‚Ínew‚É‚æ‚é‰Šú‰»‚ğ‚·‚é‚Æ³‚µ‚­“®ì‚µ‚È‚¢‚½‚ßˆÈ‰º‚Ì‚æ‚¤‚É‰Šú‰»‚µ‚Ä‚¢‚é
+            // ï¿½ï¿½ï¿½[ï¿½vï¿½|ï¿½Cï¿½ï¿½ï¿½gï¿½ÌŠÄï¿½ï¿½Ì‚ï¿½ï¿½ß‚ï¿½Update()ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½æ‚¤MonoBehaviourï¿½Nï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìê‡ï¿½ï¿½newï¿½É‚ï¿½é‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì‚µï¿½È‚ï¿½ï¿½ï¿½ï¿½ßˆÈ‰ï¿½ï¿½Ì‚æ‚¤ï¿½Éï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
 
-            // 1. Unity‚Å‚ÍƒI[ƒfƒBƒI‚ğ“Ç‚İ‚ŞÛ‚ÉResourcesƒtƒHƒ‹ƒ_‰º‚É‚ ‚éƒtƒ@ƒCƒ‹‚ğw’è‚·‚é•K—v‚ª‚ ‚é‚½‚ß‚»‚Ì‚½‚ß‚Ìƒtƒ@ƒCƒ‹ƒpƒXˆ—
+            // 1. Unityï¿½Å‚ÍƒIï¿½[ï¿½fï¿½Bï¿½Iï¿½ï¿½Ç‚İï¿½ï¿½ŞÛ‚ï¿½Resourcesï¿½tï¿½Hï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½É‚ï¿½ï¿½ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½wï¿½è‚·ï¿½ï¿½Kï¿½vï¿½ï¿½ï¿½ï¿½ï¿½é‚½ï¿½ß‚ï¿½ï¿½Ì‚ï¿½ï¿½ß‚Ìƒtï¿½@ï¿½Cï¿½ï¿½ï¿½pï¿½Xï¿½ï¿½ï¿½ï¿½
             path = Yukar.Common.UnityUtil.pathConvertToUnityResource(path);
 
-            // 2. ƒNƒŠƒbƒv‚ÖƒI[ƒfƒBƒI‚ğƒ[ƒh
+            // 2. ï¿½Nï¿½ï¿½ï¿½bï¿½vï¿½ÖƒIï¿½[ï¿½fï¿½Bï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½h
             AudioClip clip = null;
             clip = Resources.Load<AudioClip>(path);
 
@@ -198,7 +202,7 @@ namespace SharpKmyAudio
                 return null;
             }
 
-            // 3. ƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚Æ‚µ‚Ä’Ç‰Á‚·‚éÛ‚Ì–¼‘O‚ğİ’è(‚Æ‚è‚ ‚¦‚¸ƒNƒŠƒbƒv‚Ì–¼‘O‚ğ“ü‚ê‚Ä‚¨‚­)
+            // 3. ï¿½Qï¿½[ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Æ‚ï¿½ï¿½Ä’Ç‰ï¿½ï¿½ï¿½ï¿½ï¿½Û‚Ì–ï¿½ï¿½Oï¿½ï¿½İ’ï¿½(ï¿½Æ‚è‚ ï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½bï¿½vï¿½Ì–ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½)
             var obj = Yukar.Common.UnityUtil.createObject(Yukar.Common.UnityUtil.ParentType.SOUND, clip.name);
 
             Sound sound = obj.AddComponent<Sound>();
@@ -282,11 +286,11 @@ namespace SharpKmyAudio
         internal void play(bool isLoop = false)
         {
             this.mIsLoad = false;
-            if (this.isPlaying(false))this.stop();
+            if (this.isPlaying(false)) this.stop();
 
             if (0 <= this.mPauseSamples)
             {
-                //ƒ‹[ƒvŠÔ‚ª1ƒtƒŒ[ƒ€‚Å’´‚¦‚é‚æ‚¤‚Å‚ ‚ê‚Îƒ‹[ƒvƒXƒ^[ƒgˆÊ’u‚©‚çÄ¶
+                //ï¿½ï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½Ô‚ï¿½1ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Å’ï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½Å‚ï¿½ï¿½ï¿½Îƒï¿½ï¿½[ï¿½vï¿½Xï¿½^ï¿½[ï¿½gï¿½Ê’uï¿½ï¿½ï¿½ï¿½Äï¿½
                 if (this.mIsLoop)
                 {
                     if (this.mLoopEndSamples < this.mPauseSamples + (this.mAudioClip.frequency * 2.0 / 30.0))
@@ -324,7 +328,7 @@ namespace SharpKmyAudio
             this.mIsLoop = true;
             this.mLoopStartSamples = to;
             this.mLoopEndSamples = from;
-            
+
             if (this.mLoopStartSamples < 0) this.mLoopStartSamples = 0;
             if (this.mLoopEndSamples < 0) this.mLoopEndSamples = this.mSourceIntro.clip.samples;
             if (this.mAudioClip.samples < this.mLoopStartSamples) this.mLoopStartSamples = this.mAudioClip.samples;
@@ -340,6 +344,9 @@ namespace SharpKmyAudio
                     src.playOnAwake = false;
                     src.clip = this.mAudioClip;
                     src.loop = false;
+#if IMOD
+                    src.outputAudioMixerGroup = this.mixerGroup;
+#endif
                 }
             }
 
@@ -404,5 +411,32 @@ namespace SharpKmyAudio
         {
             return mTempo;
         }
+
+#if IMOD
+        //
+        //  Audio Mixer Group Implementation
+        //
+
+        private UnityEngine.Audio.AudioMixerGroup mixerGroup = null;
+
+        public void SetMixerGroup(UnityEngine.Audio.AudioMixerGroup group)
+        {
+            mixerGroup = group;
+
+            // If there's an intro source, apply the mixer group
+            if (mSourceIntro != null) mSourceIntro.outputAudioMixerGroup = group;
+
+            // If there are loop sources, apply the mixer group to each one
+            if (mSourceLoopBuf != null)
+            {
+                foreach (AudioSource source in mSourceLoopBuf)
+                {
+                    source.outputAudioMixerGroup = group;
+                }
+            }
+        }
+
+        public UnityEngine.Audio.AudioMixerGroup GetMixerGroup() => mixerGroup;
+#endif
     }
 }

@@ -19,6 +19,22 @@ namespace Yukar.Engine
             sInstance = null;
         }
 
+#if IMOD
+        //
+        //  Audio Mixer Group
+        //
+
+        public static void SetMixerGroupSFX(UnityEngine.Audio.AudioMixerGroup group)
+        {
+            sInstance?.mBgsSound?.sound.SetMixerGroup(group);
+        }
+
+        public static void SetMixerGroupBGM(UnityEngine.Audio.AudioMixerGroup group)
+        {
+            sInstance?.mBgmSound?.sound.SetMixerGroup(group);
+        }
+#endif
+
         public static void PlayBgm(Common.Resource.Bgm rom, float volume = 1.0f, float tempo = 1.0f)
         {
             if (rom == null || !Common.Util.file.exists(rom.path))
@@ -227,6 +243,24 @@ namespace Yukar.Engine
                 }
 #endif
             }
+
+#if IMOD
+            // Apply the mixer group, depending on the resource type
+            if (def.sound != null)
+            {
+                switch (def.rom)
+                {
+                    case Common.Resource.Se romSFX:
+                    case Common.Resource.Bgs romBGS:
+                        def.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupSFX());
+                        break;
+
+                    case Common.Resource.Bgm romBGM:
+                        def.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupBGM());
+                        break;
+                }
+            }
+#endif
         }
 
         internal static bool getLoopPoint(ref SoundDef def)
@@ -417,6 +451,7 @@ namespace Yukar.Engine
             {
 #if IMOD
                 float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+                mBgmSound.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupSFX());
 #endif
                 mBgsSound.sound.setVolume(masterSeVolume * volume);
                 mBgsSound.sound.setTempo(tempo);
@@ -447,6 +482,10 @@ namespace Yukar.Engine
 
             if (mBgmSound.sound != null)
             {
+#if IMOD
+                mBgmSound.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupBGM());
+#endif
+
                 mBgmSound.sound.setVolume(masterBgmVolume * volume);
                 mBgmSound.sound.setTempo(tempo);
                 mBgmSound.sound.play(rom.isLoop);
@@ -491,6 +530,9 @@ namespace Yukar.Engine
                 if (sound.sound.isAvailable())
                 {
                     mBgmSound = sound;
+#if IMOD
+                    mBgmSound.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupBGM());
+#endif
                     mBgmSound.sound.play(((Common.Resource.Bgm)mBgmSound.rom).isLoop);
                 }
                 else
