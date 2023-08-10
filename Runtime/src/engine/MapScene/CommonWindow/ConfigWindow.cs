@@ -431,8 +431,8 @@ namespace Yukar.Engine
             p.owner.parent.owner.data.system.bgmVolume = settings[0];
             p.owner.parent.owner.data.system.seVolume = settings[1];
 #else
-            BobboNet.SGB.IMod.SGBAudioSettings.SetBackgroundMusicVolumeRaw(settings[0]);
-            BobboNet.SGB.IMod.SGBAudioSettings.SetSoundEffectsVolumeRaw(settings[1]);
+            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeBGMRaw(settings[0]);
+            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeSFXRaw(settings[1]);
 #endif
             p.owner.parent.owner.data.system.messageSpeed = (Common.GameData.SystemData.MessageSpeed)settings[2];
             p.owner.parent.owner.data.system.cursorPosition = (Common.GameData.SystemData.CursorPosition)settings[3];
@@ -444,13 +444,13 @@ namespace Yukar.Engine
 #if !IMOD
             settings[0] = p.owner.parent.owner.data.system.bgmVolume;
 #else
-            settings[0] = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolumeRaw();
+            settings[0] = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGMRaw();
 #endif
             maxIndexes[0] = 100;
 #if !IMOD
             settings[1] = p.owner.parent.owner.data.system.seVolume;
 #else
-            settings[1] = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolumeRaw();
+            settings[1] = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFXRaw();
 #endif
             maxIndexes[1] = 100;
             settings[2] = (int)p.owner.parent.owner.data.system.messageSpeed;
@@ -469,8 +469,8 @@ namespace Yukar.Engine
             settings[0] = p.owner.parent.owner.data.system.bgmVolume;
             settings[1] = p.owner.parent.owner.data.system.seVolume;
 #else
-            settings[0] = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolumeRaw();
-            settings[1] = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolumeRaw();
+            settings[0] = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGMRaw();
+            settings[1] = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFXRaw();
 #endif
             settings[2] = (int)p.owner.parent.owner.data.system.messageSpeed;
             settings[3] = (int)p.owner.parent.owner.data.system.cursorPosition;

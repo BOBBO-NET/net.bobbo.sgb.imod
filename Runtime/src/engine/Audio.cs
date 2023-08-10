@@ -101,8 +101,8 @@ namespace Yukar.Engine
             sInstance.masterSeVolume = se;
             sInstance.changeVolume();
 #else
-            BobboNet.SGB.IMod.SGBAudioSettings.SetBackgroundMusicVolume(bgm);
-            BobboNet.SGB.IMod.SGBAudioSettings.SetSoundEffectsVolume(bgm);
+            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeBGM(bgm);
+            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeSFX(bgm);
 #endif
         }
 
@@ -118,7 +118,7 @@ namespace Yukar.Engine
 #if !IMOD
             return sInstance.masterBgmVolume;
 #else
-            return BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolume();
+            return BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
 #endif
         }
 
@@ -127,7 +127,7 @@ namespace Yukar.Engine
 #if !IMOD
             return sInstance.masterSeVolume;
 #else
-            return BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolume();
+            return BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
 #endif
         }
 
@@ -416,7 +416,7 @@ namespace Yukar.Engine
             if (mBgsSound.sound != null)
             {
 #if IMOD
-                float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolume();
+                float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
 #endif
                 mBgsSound.sound.setVolume(masterSeVolume * volume);
                 mBgsSound.sound.setTempo(tempo);
@@ -427,7 +427,7 @@ namespace Yukar.Engine
         internal void PlayBgm(Common.Resource.Bgm rom, float volume, float tempo)
         {
 #if IMOD
-            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolume();
+            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
 #endif
 
             if (mBgmSound != null && mBgmSound.rom == rom && mBgmSound.sound != null)
@@ -604,7 +604,7 @@ namespace Yukar.Engine
         internal void PlaySound(int id, float pan, float volume, float tempo)
         {
 #if IMOD
-            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolume();
+            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
 #endif
 
             if (!mSoundDictionary.ContainsKey(id))
@@ -647,8 +647,8 @@ namespace Yukar.Engine
         internal void changeVolume()
         {
 #if IMOD
-            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolume();
-            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolume();
+            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
 #endif
 
             if (mBgmSound != null && mBgmSound.sound != null)

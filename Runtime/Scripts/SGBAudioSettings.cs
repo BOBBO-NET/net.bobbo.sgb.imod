@@ -11,8 +11,8 @@ namespace BobboNet.SGB.IMod
         private const int MaxVolume = 100;
         private const int DefaultVolume = 50;
 
-        private static int currentVolumeBackgroundMusic = DefaultVolume;
-        private static int currentVolumeSoundEffects = DefaultVolume;
+        private static int volumeBGM = DefaultVolume;
+        private static int volumeSFX = DefaultVolume;
 
         //
         //  Constructor
@@ -20,54 +20,45 @@ namespace BobboNet.SGB.IMod
 
         static SGBAudioSettings()
         {
-            IModOverlay.AddButtonAction("SGB BGM Volume +", () => SetBackgroundMusicVolumeRaw(currentVolumeBackgroundMusic + 5));
-            IModOverlay.AddButtonAction("SGB BGM Volume -", () => SetBackgroundMusicVolumeRaw(currentVolumeBackgroundMusic - 5));
-            IModOverlay.AddButtonAction("SGB SFX Volume +", () => SetBackgroundMusicVolumeRaw(currentVolumeSoundEffects + 5));
-            IModOverlay.AddButtonAction("SGB SFX Volume -", () => SetBackgroundMusicVolumeRaw(currentVolumeSoundEffects - 5));
+            // Add debug buttons to overlay that allow BGM and SFX volume adjustment
+            IModOverlay.AddButtonAction("SGB BGM Volume +", () => SetVolumeBGMRaw(volumeBGM + 5));
+            IModOverlay.AddButtonAction("SGB BGM Volume -", () => SetVolumeBGMRaw(volumeBGM - 5));
+            IModOverlay.AddButtonAction("SGB SFX Volume +", () => SetVolumeSFXRaw(volumeSFX + 5));
+            IModOverlay.AddButtonAction("SGB SFX Volume -", () => SetVolumeSFXRaw(volumeSFX - 5));
         }
 
         //
         //  Public Methods
         //
 
-        public static void SetBackgroundMusicVolume(float volume)
+        public static void SetVolumeBGMRaw(int volume)
         {
-            SetBackgroundMusicVolumeRaw(ConvertVolumeToInt(volume));
-        }
-
-        public static void SetBackgroundMusicVolumeRaw(int volume)
-        {
-            currentVolumeBackgroundMusic = Mathf.Clamp(volume, MinVolume, MaxVolume);
+            volumeBGM = Mathf.Clamp(volume, MinVolume, MaxVolume);
             UpdateVolumeState();
         }
 
-        public static float GetBackgroundMusicVolume() => ConvertVolumeToFloat(currentVolumeBackgroundMusic);
-        public static int GetBackgroundMusicVolumeRaw() => currentVolumeBackgroundMusic;
+        public static void SetVolumeBGM(float volume) => SetVolumeBGMRaw(ConvertVolumeToInt(volume));
+        public static float GetVolumeBGM() => ConvertVolumeToFloat(volumeBGM);
+        public static int GetVolumeBGMRaw() => volumeBGM;
 
-        public static void SetSoundEffectsVolume(float volume)
-        {
-            SetSoundEffectsVolumeRaw(ConvertVolumeToInt(volume));
-        }
 
-        public static void SetSoundEffectsVolumeRaw(int volume)
+
+        public static void SetVolumeSFXRaw(int volume)
         {
-            currentVolumeSoundEffects = Mathf.Clamp(volume, MinVolume, MaxVolume);
+            volumeSFX = Mathf.Clamp(volume, MinVolume, MaxVolume);
             UpdateVolumeState();
         }
 
-        public static float GetSoundEffectsVolume() => ConvertVolumeToFloat(currentVolumeSoundEffects);
-        public static int GetSoundEffectsVolumeRaw() => currentVolumeSoundEffects;
+        public static void SetVolumeSFX(float volume) => SetVolumeSFXRaw(ConvertVolumeToInt(volume));
+        public static float GetVolumeSFX() => ConvertVolumeToFloat(volumeSFX);
+        public static int GetVolumeSFXRaw() => volumeSFX;
 
 
         //
         //  Private Methods
         //
 
-        private static void UpdateVolumeState()
-        {
-            Audio.updateVolume();
-        }
-
+        private static void UpdateVolumeState() => Audio.updateVolume();
         private static int ConvertVolumeToInt(float volumeAsFloat) => Mathf.Clamp(Mathf.RoundToInt(volumeAsFloat * 100), MinVolume, MaxVolume);
         private static float ConvertVolumeToFloat(int volumeAsInt) => Mathf.Clamp(volumeAsInt / 100.0f, MinVolume, MaxVolume);
     }

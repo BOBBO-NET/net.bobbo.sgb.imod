@@ -1010,8 +1010,8 @@ namespace Yukar.Engine
             seVolume = (float)data.system.seVolume / 100;            
 #else
             // When using IMOD, get volume levels from the SGB audio settings
-            bgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetBackgroundMusicVolume();
-            seVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetSoundEffectsVolume();
+            bgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
+            seVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
 #endif
             Audio.setMasterVolume(bgmVolume, seVolume);
 
