@@ -31,26 +31,62 @@ namespace BobboNet.SGB.IMod
         //  Public Methods
         //
 
+        /// <summary>
+        /// Set the RAW volume for SGB's background music.
+        /// </summary>
+        /// <param name="volume">Volume as an integer, from 0 - 100 (inclusive).</param>
         public static void SetVolumeBGMRaw(int volume)
         {
             volumeBGM = Mathf.Clamp(volume, MinVolume, MaxVolume);
             UpdateVolumeState();
         }
 
+        /// <summary>
+        /// Set the volume for SGB's background music.
+        /// </summary>
+        /// <param name="volume">Volume as a float, from 0.0 - 1.0 (inclusive).</param>
         public static void SetVolumeBGM(float volume) => SetVolumeBGMRaw(ConvertVolumeToInt(volume));
+
+        /// <summary>
+        /// Get the volume of SGB's background music.
+        /// </summary>
+        /// <returns>Volume as a float, from 0.0 - 1.0 (inclusive).</returns>
         public static float GetVolumeBGM() => ConvertVolumeToFloat(volumeBGM);
+
+        /// <summary>
+        /// Get the RAW volume of SGB's background music.
+        /// </summary>
+        /// <returns>Volume as an integer, from 0 - 100 (inclusive).</returns>
         public static int GetVolumeBGMRaw() => volumeBGM;
 
 
-
+        /// <summary>
+        /// Set the RAW volume for SGB's sound effects.
+        /// </summary>
+        /// <param name="volume">Volume as an integer, from 0 - 100 (inclusive).</param>
         public static void SetVolumeSFXRaw(int volume)
         {
             volumeSFX = Mathf.Clamp(volume, MinVolume, MaxVolume);
             UpdateVolumeState();
         }
 
+        /// <summary>
+        /// Set the volume for SGB's sound effects.
+        /// </summary>
+        /// <param name="volume">Volume as a float, from 0.0 - 1.0 (inclusive).</param>
+        /// 
         public static void SetVolumeSFX(float volume) => SetVolumeSFXRaw(ConvertVolumeToInt(volume));
+
+        /// <summary>
+        /// Get the volume of SGB's sound effects.
+        /// </summary>
+        /// <returns>Volume as a float, from 0.0 - 1.0 (inclusive).</returns>
         public static float GetVolumeSFX() => ConvertVolumeToFloat(volumeSFX);
+
+        /// <summary>
+        /// Get the RAW volume of SGB's sound effects.
+        /// </summary>
+        /// <returns>Volume as an integer, from 0 - 100 (inclusive).</returns>
         public static int GetVolumeSFXRaw() => volumeSFX;
 
 
@@ -58,7 +94,7 @@ namespace BobboNet.SGB.IMod
         //  Private Methods
         //
 
-        private static void UpdateVolumeState() => Audio.updateVolume();
+        private static void UpdateVolumeState() => Audio.updateVolume(); // Update the volume in SGB
         private static int ConvertVolumeToInt(float volumeAsFloat) => Mathf.Clamp(Mathf.RoundToInt(volumeAsFloat * 100), MinVolume, MaxVolume);
         private static float ConvertVolumeToFloat(int volumeAsInt) => Mathf.Clamp(volumeAsInt / 100.0f, MinVolume, MaxVolume);
     }
