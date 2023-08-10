@@ -96,19 +96,39 @@ namespace Yukar.Engine
 
         internal static void setMasterVolume(float bgm, float se)
         {
+#if !IMOD
             sInstance.masterBgmVolume = bgm;
             sInstance.masterSeVolume = se;
             sInstance.changeVolume();
+#else
+            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeBGM(bgm);
+            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeSFX(bgm);
+#endif
         }
+
+#if IMOD
+        public static void updateVolume()
+        {
+            sInstance.changeVolume();
+        }
+#endif
 
         internal static float getMasterBgmVolume()
         {
+#if !IMOD
             return sInstance.masterBgmVolume;
+#else
+            return BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
+#endif
         }
 
         internal static float getMasterSeVolume()
         {
+#if !IMOD
             return sInstance.masterSeVolume;
+#else
+            return BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+#endif
         }
 
         internal static bool IsSePlaying(int seId)
@@ -176,8 +196,10 @@ namespace Yukar.Engine
 
     internal class AudioCore
     {
+#if !IMOD
         internal float masterBgmVolume = 1.0f;
         internal float masterSeVolume = 1.0f;
+#endif
 
         static void loadSoundImpl(SoundDef def)
         {
@@ -393,6 +415,9 @@ namespace Yukar.Engine
 
             if (mBgsSound.sound != null)
             {
+#if IMOD
+                float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+#endif
                 mBgsSound.sound.setVolume(masterSeVolume * volume);
                 mBgsSound.sound.setTempo(tempo);
                 mBgsSound.sound.play(true);
@@ -401,6 +426,10 @@ namespace Yukar.Engine
 
         internal void PlayBgm(Common.Resource.Bgm rom, float volume, float tempo)
         {
+#if IMOD
+            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
+#endif
+
             if (mBgmSound != null && mBgmSound.rom == rom && mBgmSound.sound != null)
             {
                 mBgmSound.sound.setVolume(masterBgmVolume * volume);
@@ -416,12 +445,12 @@ namespace Yukar.Engine
             mBgmSound.rom = rom;
             loadSoundImpl(mBgmSound);
 
-			if (mBgmSound.sound != null)
-			{
-				mBgmSound.sound.setVolume(masterBgmVolume * volume);
-				mBgmSound.sound.setTempo(tempo);
-				mBgmSound.sound.play(rom.isLoop);
-			}
+            if (mBgmSound.sound != null)
+            {
+                mBgmSound.sound.setVolume(masterBgmVolume * volume);
+                mBgmSound.sound.setTempo(tempo);
+                mBgmSound.sound.play(rom.isLoop);
+            }
         }
 
         internal void StopBgs()
@@ -456,7 +485,7 @@ namespace Yukar.Engine
                 return;
 
             DestroyBgm();
-            
+
             if (sound != null && sound.sound != null)
             {
                 if (sound.sound.isAvailable())
@@ -483,7 +512,7 @@ namespace Yukar.Engine
 
         internal void DestroyBgm()
         {
-			if (mBgmSound != null && mBgmSound.sound != null)
+            if (mBgmSound != null && mBgmSound.sound != null)
             {
                 mBgmSound.sound.stop();
                 mBgmSound.sound.Release();
@@ -510,8 +539,8 @@ namespace Yukar.Engine
             def.refCount = 1;
             def.rom = rom;
             loadSoundImpl(def);
-			
-			if(def.sound != null)mSoundDictionary.Add(def.id, def);//読めなかったら加えない
+
+            if (def.sound != null) mSoundDictionary.Add(def.id, def);//読めなかったら加えない
 
             return def.id;
         }
@@ -561,39 +590,43 @@ namespace Yukar.Engine
                 return;
 
             // 先にPlayerを解放する
-            if(def.sound != null)def.sound.stop();
+            if (def.sound != null) def.sound.stop();
 
             // 既に参照カウントがゼロなので解放する
             // TODO : 頻繁に使われる場合を想定して、少し解放を保留にする仕組みを入れたい
-			if (def.sound != null)
-			{
-				def.sound.Release();
-			}
-			mSoundDictionary.Remove(def.id);
-		}
+            if (def.sound != null)
+            {
+                def.sound.Release();
+            }
+            mSoundDictionary.Remove(def.id);
+        }
 
         internal void PlaySound(int id, float pan, float volume, float tempo)
         {
-            if(!mSoundDictionary.ContainsKey(id))
+#if IMOD
+            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+#endif
+
+            if (!mSoundDictionary.ContainsKey(id))
                 return;
 
 
             // 再生する
             var def = mSoundDictionary[id];
-			if (def.sound != null)
-			{
-				def.sound.setVolume(masterSeVolume * volume);
-				def.sound.setPan(pan);
-				def.sound.setTempo(tempo);
-				def.sound.play();
-			}
+            if (def.sound != null)
+            {
+                def.sound.setVolume(masterSeVolume * volume);
+                def.sound.setPan(pan);
+                def.sound.setTempo(tempo);
+                def.sound.play();
+            }
         }
 
         internal bool IsBgmPlaying()
         {
-            if(mBgmSound == null)
+            if (mBgmSound == null)
                 return false;
-			if (mBgmSound.sound == null) return false;
+            if (mBgmSound.sound == null) return false;
 
             return mBgmSound.sound.isPlaying();
         }
@@ -613,6 +646,11 @@ namespace Yukar.Engine
 
         internal void changeVolume()
         {
+#if IMOD
+            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
+#endif
+
             if (mBgmSound != null && mBgmSound.sound != null)
                 mBgmSound.sound.setVolume(masterBgmVolume);
             if (mBgsSound != null && mBgsSound.sound != null)
