@@ -41,8 +41,8 @@ namespace BobboNet.SGB.IMod
         /// <param name="mixerGroup">The group to route all BGM through. If null, unroutes all BGM.</param>
         public static void SetMixerGroupBGM(AudioMixerGroup mixerGroup)
         {
-            mixerGroupBGM = mixerGroup;
-            // TODO - Update the mixer group on all SGB audio sources?
+            mixerGroupBGM = mixerGroup;         // Update the internal mixer group...
+            Audio.SetMixerGroupBGM(mixerGroup); // ...and apply it to SGB
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace BobboNet.SGB.IMod
         /// <param name="mixerGroup">The group to route all SFX through. If null, unroutes all SFX.</param>
         public static void SetMixerGroupSFX(AudioMixerGroup mixerGroup)
         {
-            mixerGroupSFX = mixerGroup;
-            // TODO - Update the mixer group on all SGB audio sources?
+            mixerGroupSFX = mixerGroup;         // Update the internal mixer group...
+            Audio.SetMixerGroupSFX(mixerGroup); // ...and apply it to SGB
         }
 
         /// <summary>

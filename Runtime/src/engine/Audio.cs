@@ -19,6 +19,22 @@ namespace Yukar.Engine
             sInstance = null;
         }
 
+#if IMOD
+        //
+        //  Audio Mixer Group
+        //
+
+        public static void SetMixerGroupSFX(UnityEngine.Audio.AudioMixerGroup group)
+        {
+            sInstance.mBgsSound.sound.SetMixerGroup(group);
+        }
+
+        public static void SetMixerGroupBGM(UnityEngine.Audio.AudioMixerGroup group)
+        {
+            sInstance.mBgmSound.sound.SetMixerGroup(group);
+        }
+#endif
+
         public static void PlayBgm(Common.Resource.Bgm rom, float volume = 1.0f, float tempo = 1.0f)
         {
             if (rom == null || !Common.Util.file.exists(rom.path))
