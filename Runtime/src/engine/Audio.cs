@@ -122,7 +122,7 @@ namespace Yukar.Engine
             sInstance.changeVolume();
 #else
             SGBAudioSettings.SetVolumeBGM(bgm);
-            SGBAudioSettings.SetVolumeSFX(bgm);
+            SGBAudioSettings.SetVolumeSFX(se);
 #endif
         }
 
