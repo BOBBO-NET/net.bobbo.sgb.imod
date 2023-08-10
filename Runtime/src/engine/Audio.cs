@@ -26,12 +26,12 @@ namespace Yukar.Engine
 
         public static void SetMixerGroupSFX(UnityEngine.Audio.AudioMixerGroup group)
         {
-            sInstance.mBgsSound.sound.SetMixerGroup(group);
+            sInstance?.mBgsSound?.sound.SetMixerGroup(group);
         }
 
         public static void SetMixerGroupBGM(UnityEngine.Audio.AudioMixerGroup group)
         {
-            sInstance.mBgmSound.sound.SetMixerGroup(group);
+            sInstance?.mBgmSound?.sound.SetMixerGroup(group);
         }
 #endif
 

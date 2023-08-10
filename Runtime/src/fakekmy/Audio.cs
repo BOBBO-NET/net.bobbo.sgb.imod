@@ -166,6 +166,10 @@ namespace SharpKmyAudio
             inBuf.volume = this.mVolume;
 #endif
             inBuf.panStereo = this.mPan;
+
+#if IMOD
+            if (inBuf.outputAudioMixerGroup != this.mixerGroup) inBuf.outputAudioMixerGroup = this.mixerGroup;
+#endif
         }
 
         private void ResetLoopBuf(double inStartDpsTime)
@@ -340,6 +344,9 @@ namespace SharpKmyAudio
                     src.playOnAwake = false;
                     src.clip = this.mAudioClip;
                     src.loop = false;
+#if IMOD
+                    src.outputAudioMixerGroup = this.mixerGroup;
+#endif
                 }
             }
 
@@ -415,7 +422,18 @@ namespace SharpKmyAudio
         public void SetMixerGroup(UnityEngine.Audio.AudioMixerGroup group)
         {
             mixerGroup = group;
-            // TODO
+
+            // If there's an intro source, apply the mixer group
+            if (mSourceIntro != null) mSourceIntro.outputAudioMixerGroup = group;
+
+            // If there are loop sources, apply the mixer group to each one
+            if (mSourceLoopBuf != null)
+            {
+                foreach (AudioSource source in mSourceLoopBuf)
+                {
+                    source.outputAudioMixerGroup = group;
+                }
+            }
         }
 
         public UnityEngine.Audio.AudioMixerGroup GetMixerGroup() => mixerGroup;
