@@ -129,7 +129,7 @@ namespace Yukar.Engine
 #if IMOD
         public static void updateVolume()
         {
-            sInstance.changeVolume();
+            sInstance?.changeVolume();
         }
 #endif
 
