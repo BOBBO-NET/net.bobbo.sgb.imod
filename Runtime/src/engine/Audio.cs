@@ -99,12 +99,19 @@ namespace Yukar.Engine
 #if !IMOD
             sInstance.masterBgmVolume = bgm;
             sInstance.masterSeVolume = se;
+            sInstance.changeVolume();
 #else
             BobboNet.SGB.IMod.SGBAudioSettings.SetBackgroundMusicVolume(bgm);
             BobboNet.SGB.IMod.SGBAudioSettings.SetSoundEffectsVolume(bgm);
 #endif
+        }
+
+#if IMOD
+        public static void updateVolume()
+        {
             sInstance.changeVolume();
         }
+#endif
 
         internal static float getMasterBgmVolume()
         {

@@ -38,7 +38,7 @@ namespace BobboNet.SGB.IMod
         public static void SetBackgroundMusicVolumeRaw(int volume)
         {
             currentVolumeBackgroundMusic = Mathf.Clamp(volume, MinVolume, MaxVolume);
-            Debug.LogWarning($"Set bgm to {currentVolumeBackgroundMusic}");
+            UpdateVolumeState();
         }
 
         public static float GetBackgroundMusicVolume() => ConvertVolumeToFloat(currentVolumeBackgroundMusic);
@@ -52,7 +52,7 @@ namespace BobboNet.SGB.IMod
         public static void SetSoundEffectsVolumeRaw(int volume)
         {
             currentVolumeSoundEffects = Mathf.Clamp(volume, MinVolume, MaxVolume);
-            Debug.LogWarning($"Set sfx to {currentVolumeSoundEffects}");
+            UpdateVolumeState();
         }
 
         public static float GetSoundEffectsVolume() => ConvertVolumeToFloat(currentVolumeSoundEffects);
@@ -62,6 +62,11 @@ namespace BobboNet.SGB.IMod
         //
         //  Private Methods
         //
+
+        private static void UpdateVolumeState()
+        {
+            Audio.updateVolume();
+        }
 
         private static int ConvertVolumeToInt(float volumeAsFloat) => Mathf.Clamp(Mathf.RoundToInt(volumeAsFloat * 100), MinVolume, MaxVolume);
         private static float ConvertVolumeToFloat(int volumeAsInt) => Mathf.Clamp(volumeAsInt / 100.0f, MinVolume, MaxVolume);
