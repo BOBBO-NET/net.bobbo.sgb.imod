@@ -160,34 +160,13 @@ namespace BobboNet.SGB.IMod
         private static void UpdateVolumeState() => Audio.updateVolume(); // Update the volume in SGB
         private static int ConvertVolumeToInt(float volumeAsFloat) => Mathf.Clamp(Mathf.RoundToInt(volumeAsFloat * 100), MinVolume, MaxVolume);
         private static float ConvertVolumeToFloat(int volumeAsInt) => Mathf.Clamp(volumeAsInt / 100.0f, MinVolume, MaxVolume);
-        private static int ConvertDecibelsToInt(float volumeAsDb) => ConvertVolumeToInt(DbToVolumeFloat(volumeAsDb));
+        private static int ConvertDecibelsToInt(float volumeAsDb) => ConvertVolumeToInt(VolumeUtils.DbToVolumeFloat(volumeAsDb));
 
         private static void SetMixerVolumeIfNecessary(AudioMixerGroup mixerGroup, string handleName, int rawVolume)
         {
             if (mixerGroup == null || handleName == null) return;
 
-            mixerGroup.audioMixer.SetFloat(handleName, VolumeFloatToDb(ConvertVolumeToFloat(rawVolume)));
-        }
-
-        private static float VolumeFloatToDb(float volumeFloat)
-        {
-            // Ty Liandur for the implementation: 
-            // (https://discussions.unity.com/t/how-to-convert-decibel-db-number-to-audio-source-volume-number-0to1/46543)
-            if (volumeFloat != 0)
-            {
-                return 20f * Mathf.Log10(volumeFloat);
-            }
-            else
-            {
-                return -144.0f;
-            }
-        }
-
-        private static float DbToVolumeFloat(float volumeDb)
-        {
-            // Ty Liandur for the implementation: 
-            // (https://discussions.unity.com/t/how-to-convert-decibel-db-number-to-audio-source-volume-number-0to1/46543)
-            return Mathf.Pow(10.0f, volumeDb / 20.0f);
+            mixerGroup.audioMixer.SetFloat(handleName, VolumeUtils.VolumeFloatToDb(ConvertVolumeToFloat(rawVolume)));
         }
     }
 }
