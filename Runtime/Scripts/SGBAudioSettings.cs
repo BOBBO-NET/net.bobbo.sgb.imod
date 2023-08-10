@@ -97,6 +97,12 @@ namespace BobboNet.SGB.IMod
         public static void SetVolumeBGM(float volume) => SetVolumeBGMRaw(ConvertVolumeToInt(volume));
 
         /// <summary>
+        /// Set the volume for SGB's backround music using decibels.
+        /// </summary>
+        /// <param name="volumeDb">Volume as decibels.</param>
+        public static void SetVolumeBGMDecibels(float volumeDb) => SetVolumeBGMRaw(ConvertDecibelsToInt(volumeDb));
+
+        /// <summary>
         /// Get the volume of SGB's background music.
         /// </summary>
         /// <returns>Volume as a float, from 0.0 - 1.0 (inclusive).</returns>
@@ -129,6 +135,12 @@ namespace BobboNet.SGB.IMod
         public static void SetVolumeSFX(float volume) => SetVolumeSFXRaw(ConvertVolumeToInt(volume));
 
         /// <summary>
+        /// Set the volume for SGB's sound effects using decibels.
+        /// </summary>
+        /// <param name="volumeDb">Volume as decibels.</param>
+        public static void SetVolumeSFXDecibels(float volumeDb) => SetVolumeSFXRaw(ConvertDecibelsToInt(volumeDb));
+
+        /// <summary>
         /// Get the volume of SGB's sound effects.
         /// </summary>
         /// <returns>Volume as a float, from 0.0 - 1.0 (inclusive).</returns>
@@ -148,6 +160,7 @@ namespace BobboNet.SGB.IMod
         private static void UpdateVolumeState() => Audio.updateVolume(); // Update the volume in SGB
         private static int ConvertVolumeToInt(float volumeAsFloat) => Mathf.Clamp(Mathf.RoundToInt(volumeAsFloat * 100), MinVolume, MaxVolume);
         private static float ConvertVolumeToFloat(int volumeAsInt) => Mathf.Clamp(volumeAsInt / 100.0f, MinVolume, MaxVolume);
+        private static int ConvertDecibelsToInt(float volumeAsDb) => ConvertVolumeToInt(DbToVolumeFloat(volumeAsDb));
 
         private static void SetMixerVolumeIfNecessary(AudioMixerGroup mixerGroup, string handleName, int rawVolume)
         {
@@ -158,6 +171,8 @@ namespace BobboNet.SGB.IMod
 
         private static float VolumeFloatToDb(float volumeFloat)
         {
+            // Ty Liandur for the implementation: 
+            // (https://discussions.unity.com/t/how-to-convert-decibel-db-number-to-audio-source-volume-number-0to1/46543)
             if (volumeFloat != 0)
             {
                 return 20f * Mathf.Log10(volumeFloat);
@@ -166,6 +181,13 @@ namespace BobboNet.SGB.IMod
             {
                 return -144.0f;
             }
+        }
+
+        private static float DbToVolumeFloat(float volumeDb)
+        {
+            // Ty Liandur for the implementation: 
+            // (https://discussions.unity.com/t/how-to-convert-decibel-db-number-to-audio-source-volume-number-0to1/46543)
+            return Mathf.Pow(10.0f, volumeDb / 20.0f);
         }
     }
 }
