@@ -133,8 +133,10 @@ namespace Yukar.Engine
 #endif
 
             Audio.Initialize();
+#if !IMOD
             Audio.setMasterVolume((float)catalog.getGameSettings().defaultBgmVolume / 100,
                 (float)catalog.getGameSettings().defaultSeVolume / 100);
+#endif
             Input.Initialize(this);
             Touch.Initialize(this);
 
