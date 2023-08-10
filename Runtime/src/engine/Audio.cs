@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
+#if IMOD
+using BobboNet.SGB.IMod;
+#endif
+
 namespace Yukar.Engine
 {
     public class Audio
@@ -117,8 +121,8 @@ namespace Yukar.Engine
             sInstance.masterSeVolume = se;
             sInstance.changeVolume();
 #else
-            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeBGM(bgm);
-            BobboNet.SGB.IMod.SGBAudioSettings.SetVolumeSFX(bgm);
+            SGBAudioSettings.SetVolumeBGM(bgm);
+            SGBAudioSettings.SetVolumeSFX(bgm);
 #endif
         }
 
@@ -134,7 +138,7 @@ namespace Yukar.Engine
 #if !IMOD
             return sInstance.masterBgmVolume;
 #else
-            return BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
+            return SGBAudioSettings.GetVolumeBGM();
 #endif
         }
 
@@ -143,7 +147,7 @@ namespace Yukar.Engine
 #if !IMOD
             return sInstance.masterSeVolume;
 #else
-            return BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+            return SGBAudioSettings.GetVolumeSFX();
 #endif
         }
 
@@ -252,11 +256,11 @@ namespace Yukar.Engine
                 {
                     case Common.Resource.Se romSFX:
                     case Common.Resource.Bgs romBGS:
-                        def.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupSFX());
+                        def.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupSFX());
                         break;
 
                     case Common.Resource.Bgm romBGM:
-                        def.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupBGM());
+                        def.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupBGM());
                         break;
                 }
             }
@@ -450,10 +454,22 @@ namespace Yukar.Engine
             if (mBgsSound.sound != null)
             {
 #if IMOD
-                float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
-                mBgmSound.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupSFX());
-#endif
+                float masterSeVolume = SGBAudioSettings.GetVolumeSFX();
+                mBgmSound.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupSFX());
+
+                // If we're using a mixer for this sound, do not manually calculate master volume
+                if (mBgmSound.sound.GetMixerGroup() != null)
+                {
+                    mBgmSound.sound.setVolume(volume);
+                }
+                // If we are NOT using a mixer for this sound, manually calculate the master volume
+                else
+                {
+                    mBgmSound.sound.setVolume(masterSeVolume * volume);
+                }
+#else
                 mBgsSound.sound.setVolume(masterSeVolume * volume);
+#endif
                 mBgsSound.sound.setTempo(tempo);
                 mBgsSound.sound.play(true);
             }
@@ -462,12 +478,25 @@ namespace Yukar.Engine
         internal void PlayBgm(Common.Resource.Bgm rom, float volume, float tempo)
         {
 #if IMOD
-            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
+            float masterBgmVolume = SGBAudioSettings.GetVolumeBGM();
 #endif
 
             if (mBgmSound != null && mBgmSound.rom == rom && mBgmSound.sound != null)
             {
+#if IMOD
+                // If we're using a mixer for this sound, do not manually calculate master volume
+                if (mBgmSound.sound.GetMixerGroup() != null)
+                {
+                    mBgmSound.sound.setVolume(volume);
+                }
+                // If we are NOT using a mixer for this sound, manually calculate the master volume
+                else
+                {
+                    mBgmSound.sound.setVolume(masterBgmVolume * volume);
+                }
+#else
                 mBgmSound.sound.setVolume(masterBgmVolume * volume);
+#endif
                 mBgmSound.sound.setTempo(tempo);
                 return;
             }
@@ -483,10 +512,22 @@ namespace Yukar.Engine
             if (mBgmSound.sound != null)
             {
 #if IMOD
-                mBgmSound.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupBGM());
+                mBgmSound.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupBGM());
+
+                // If this sound uses a mixer, DO NOT manually apply master volume
+                if (mBgmSound.sound.GetMixerGroup() != null)
+                {
+                    mBgmSound.sound.setVolume(volume);
+                }
+                // If this sound does NOT use a mixer, DO manually apply master volume
+                else
+                {
+                    mBgmSound.sound.setVolume(masterBgmVolume * volume);
+                }
+#else
+                mBgmSound.sound.setVolume(masterBgmVolume * volume);
 #endif
 
-                mBgmSound.sound.setVolume(masterBgmVolume * volume);
                 mBgmSound.sound.setTempo(tempo);
                 mBgmSound.sound.play(rom.isLoop);
             }
@@ -531,7 +572,7 @@ namespace Yukar.Engine
                 {
                     mBgmSound = sound;
 #if IMOD
-                    mBgmSound.sound.SetMixerGroup(BobboNet.SGB.IMod.SGBAudioSettings.GetMixerGroupBGM());
+                    mBgmSound.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupBGM());
 #endif
                     mBgmSound.sound.play(((Common.Resource.Bgm)mBgmSound.rom).isLoop);
                 }
@@ -646,7 +687,7 @@ namespace Yukar.Engine
         internal void PlaySound(int id, float pan, float volume, float tempo)
         {
 #if IMOD
-            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
+            float masterSeVolume = SGBAudioSettings.GetVolumeSFX();
 #endif
 
             if (!mSoundDictionary.ContainsKey(id))
@@ -657,7 +698,20 @@ namespace Yukar.Engine
             var def = mSoundDictionary[id];
             if (def.sound != null)
             {
+#if IMOD
+                // If this sound uses a mixer, DO NOT manually apply master volume
+                if (def.sound.GetMixerGroup() != null)
+                {
+                    def.sound.setVolume(volume);
+                }
+                // If this sound does NOT use a mixer, DO manually apply master volume
+                else
+                {
+                    def.sound.setVolume(masterSeVolume * volume);
+                }
+#else
                 def.sound.setVolume(masterSeVolume * volume);
+#endif
                 def.sound.setPan(pan);
                 def.sound.setTempo(tempo);
                 def.sound.play();
@@ -689,14 +743,39 @@ namespace Yukar.Engine
         internal void changeVolume()
         {
 #if IMOD
-            float masterSeVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeSFX();
-            float masterBgmVolume = BobboNet.SGB.IMod.SGBAudioSettings.GetVolumeBGM();
-#endif
-
             if (mBgmSound != null && mBgmSound.sound != null)
+            {
+                // If this sound uses a mixer, DO NOT manually apply master volume
+                if (mBgmSound.sound.GetMixerGroup() != null)
+                {
+                    mBgmSound.sound.setVolume(1);
+                }
+                // If this sound does NOT use a mixer, DO manually apply master volume
+                else
+                {
+                    mBgmSound.sound.setVolume(SGBAudioSettings.GetVolumeBGM());
+                }
+            }
+
+            if (mBgsSound != null && mBgsSound.sound != null)
+            {
+                // If this sound uses a mixer, DO NOT manually apply master volume
+                if (mBgsSound.sound.GetMixerGroup() != null)
+                {
+                    mBgsSound.sound.setVolume(1);
+                }
+                // If this sound does NOT use a mixer, DO manually apply master volume
+                else
+                {
+                    mBgsSound.sound.setVolume(SGBAudioSettings.GetVolumeSFX());
+                }
+            }
+#else
+          if (mBgmSound != null && mBgmSound.sound != null)
                 mBgmSound.sound.setVolume(masterBgmVolume);
             if (mBgsSound != null && mBgsSound.sound != null)
-                mBgsSound.sound.setVolume(masterSeVolume);
+                mBgsSound.sound.setVolume(masterSeVolume);  
+#endif
         }
     }
 }
