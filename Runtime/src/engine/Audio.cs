@@ -28,7 +28,7 @@ namespace Yukar.Engine
         //  Audio Mixer Group
         //
 
-        public static void SetMixerGroupSFX(UnityEngine.Audio.AudioMixerGroup group)
+        public static void SetMixerGroupBGS(UnityEngine.Audio.AudioMixerGroup group)
         {
             sInstance?.mBgsSound?.sound.SetMixerGroup(group);
         }
@@ -255,10 +255,10 @@ namespace Yukar.Engine
                 switch (def.rom)
                 {
                     case Common.Resource.Se romSFX:
-                    case Common.Resource.Bgs romBGS:
                         def.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupSFX());
                         break;
 
+                    case Common.Resource.Bgs romBGS:
                     case Common.Resource.Bgm romBGM:
                         def.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupBGM());
                         break;
@@ -454,18 +454,18 @@ namespace Yukar.Engine
             if (mBgsSound.sound != null)
             {
 #if IMOD
-                float masterSeVolume = SGBAudioSettings.GetVolumeSFX();
-                mBgmSound.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupSFX());
+                float masterSeVolume = SGBAudioSettings.GetVolumeBGM();
+                mBgsSound.sound.SetMixerGroup(SGBAudioSettings.GetMixerGroupBGM());
 
                 // If we're using a mixer for this sound, do not manually calculate master volume
-                if (mBgmSound.sound.GetMixerGroup() != null)
+                if (mBgsSound.sound.GetMixerGroup() != null)
                 {
-                    mBgmSound.sound.setVolume(volume);
+                    mBgsSound.sound.setVolume(volume);
                 }
                 // If we are NOT using a mixer for this sound, manually calculate the master volume
                 else
                 {
-                    mBgmSound.sound.setVolume(masterSeVolume * volume);
+                    mBgsSound.sound.setVolume(masterSeVolume * volume);
                 }
 #else
                 mBgsSound.sound.setVolume(masterSeVolume * volume);
@@ -767,7 +767,7 @@ namespace Yukar.Engine
                 // If this sound does NOT use a mixer, DO manually apply master volume
                 else
                 {
-                    mBgsSound.sound.setVolume(SGBAudioSettings.GetVolumeSFX());
+                    mBgsSound.sound.setVolume(SGBAudioSettings.GetVolumeBGM());
                 }
             }
 #else
