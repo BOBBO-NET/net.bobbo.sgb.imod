@@ -131,17 +131,23 @@ namespace Yukar.Common
         public static GameDataManager Load(Catalog catalog, int index)
         {
             var result = new GameDataManager();
-            var fileName = GetDataPath(index);
 
-            // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
-            if (!File.Exists(fileName))
+#if IMOD
+            if(SGBSaveManager.LoadDataOverrideFunc == null)
+#endif
             {
-                // savedata 内ではないパスにあれば、それを読み込む
-                fileName = GetDataPath(index, true);
+                var fileName = GetDataPath(index);
+
+                // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
                 if (!File.Exists(fileName))
                 {
-                    result.inititalize(catalog);
-                    return result;
+                    // savedata 内ではないパスにあれば、それを読み込む
+                    fileName = GetDataPath(index, true);
+                    if (!File.Exists(fileName))
+                    {
+                        result.inititalize(catalog);
+                        return result;
+                    }
                 }
             }
 
@@ -149,7 +155,19 @@ namespace Yukar.Common
             result.system = new SystemData();
             result.start = new StartSettings();
 
-            var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            Stream stream = null;
+#if IMOD
+            if(SGBSaveManager.LoadDataOverrideFunc == null)
+#endif
+            {
+                stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            }
+#if IMOD
+            else
+            {
+                stream = SGBSaveManager.LoadDataOverrideFunc(index);
+            }
+#endif
             var reader = new BinaryReader(stream);
 
             // シグネチャとデータバージョンを読み込む
@@ -217,27 +235,43 @@ namespace Yukar.Common
         public static GameDataManager Load(Catalog catalog, int index)
         {
             var result = new GameDataManager();
-            var path = GetDataPath(index);
+            Stream stream = null;
+
+#if IMOD
+            if (SGBSaveManager.LoadDataOverrideFunc == null)
+#endif
+            {
 
 #if UNITY_SWITCH && !UNITY_EDITOR
-            var bytes = GameDataManagerSwitch.Load(catalog, path);
-            if(bytes == null){
-                result.inititalize(catalog);
-                return result;
-            }
+                var path = GetDataPath(index);
+                var bytes = GameDataManagerSwitch.Load(catalog, path);
+                if(bytes == null){
+                    result.inititalize(catalog);
+                    return result;
+                }
 #else
-            var base64 = UnityEngine.PlayerPrefs.GetString(path, null);
-            // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
-            if (base64 == null)
-            {
-                result.inititalize(catalog);
-                return result;
-            }
+                var path = GetDataPath(index);
+                var base64 = UnityEngine.PlayerPrefs.GetString(path, null);
+                // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
+                if (base64 == null)
+                {
+                    result.inititalize(catalog);
+                    return result;
+                }
 
-            var bytes = Convert.FromBase64String(base64);
+                var bytes = Convert.FromBase64String(base64);
 #endif
 
-            var stream = new MemoryStream(bytes);
+                stream = new MemoryStream(bytes);
+            }
+#if IMOD
+            else
+            {
+                stream = SGBSaveManager.LoadDataOverrideFunc(index);
+            }
+#endif
+
+
             var reader = new BinaryReader(stream);
 
             result.party = new Party(catalog);
