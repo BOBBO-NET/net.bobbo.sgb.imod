@@ -48,6 +48,7 @@ namespace BobboNet.SGB.IMod
             mixerGroupBGM = mixerGroup;                     // Update the internal mixer group...
             mixerVolumeHandleNameBGM = volumeHandleName;    // ...cache a reference to it's volume handle...
             Audio.SetMixerGroupBGM(mixerGroup);             // ...and apply it to SGB
+            Audio.SetMixerGroupBGS(mixerGroup);             // ...and apply it to SGB
         }
 
         /// <summary>
@@ -65,7 +66,6 @@ namespace BobboNet.SGB.IMod
         {
             mixerGroupSFX = mixerGroup;                     // Update the internal mixer group...
             mixerVolumeHandleNameSFX = volumeHandleName;    // ...cache a reference to it's volume handle...
-            Audio.SetMixerGroupSFX(mixerGroup);             // ...and apply it to SGB
         }
 
         /// <summary>
