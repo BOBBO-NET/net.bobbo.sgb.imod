@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using Yukar.Common.GameData;
 
+#if IMOD
+using BobboNet.SGB.IMod;
+#endif
+
 namespace Yukar.Common
 {
     //----------------------------------------------------------
@@ -78,17 +82,30 @@ namespace Yukar.Common
 
 #if WINDOWS
         public static void Save(GameDataManager data, int index)
-        {
-            // savedata 内ではないパスにあれば、それを消す
-            var legacyPath = GetDataPath(index, true);
-            if (File.Exists(legacyPath))
+        {            
+            Stream stream = null;
+#if IMOD
+            if (SGBSaveManager.SaveDataOverrideFunc == null)
+#endif
             {
-                File.Delete(legacyPath);
-            }
+                // savedata 内ではないパスにあれば、それを消す
+                var legacyPath = GetDataPath(index, true);
+                if (File.Exists(legacyPath))
+                {
+                    File.Delete(legacyPath);
+                }
 
-            var path = GetDataPath(index);
-            Directory.CreateDirectory(Common.Util.file.getDirName(path));
-            var stream = new FileStream(path, FileMode.Create);
+                Directory.CreateDirectory(Common.Util.file.getDirName(path));
+                var path = GetDataPath(index);
+                stream = new FileStream(path, FileMode.Create);
+            }
+#if IMOD
+            else
+            {
+                stream = new MemoryStream();
+            }
+#endif
+            
             var writer = new BinaryWriter(stream);
 
             // シグネチャとデータバージョンを書く
@@ -100,6 +117,13 @@ namespace Yukar.Common
             {
                 saveChunk(chunk, writer);
             }
+
+#if IMOD
+            if (SGBSaveManager.SaveDataOverrideFunc != null)
+            {
+                SGBSaveManager.SaveDataOverrideFunc(index, stream);
+            }
+#endif
 
             writer.Close();
         }
@@ -167,16 +191,25 @@ namespace Yukar.Common
                 saveChunk(chunk, writer);
             }
 
-            // PlyaerPrefsに保存する
-            stream.Seek(0, SeekOrigin.Begin);
-#if UNITY_SWITCH && !UNITY_EDITOR
-            GameDataManagerSwitch.Save(stream, path);
-#else
-            var base64 = Convert.ToBase64String(stream.ToArray());
-            UnityEngine.PlayerPrefs.SetString(path, base64);                                    // データ本体
-            UnityEngine.PlayerPrefs.SetString(path + SAVE_DATENAME, DateTime.Now.ToString());   // 時間
-            UnityEngine.PlayerPrefs.Save();
+#if IMOD
+            if (SGBSaveManager.SaveDataOverrideFunc != null)
+            {
+                SGBSaveManager.SaveDataOverrideFunc(index, stream);
+            }
+            else
 #endif
+            {
+                // PlyaerPrefsに保存する
+                stream.Seek(0, SeekOrigin.Begin);
+#if UNITY_SWITCH && !UNITY_EDITOR
+                GameDataManagerSwitch.Save(stream, path);
+#else
+                var base64 = Convert.ToBase64String(stream.ToArray());
+                UnityEngine.PlayerPrefs.SetString(path, base64);                                    // データ本体
+                UnityEngine.PlayerPrefs.SetString(path + SAVE_DATENAME, DateTime.Now.ToString());   // 時間
+                UnityEngine.PlayerPrefs.Save();
+#endif
+            }
 
             writer.Close();
         }
@@ -243,7 +276,7 @@ namespace Yukar.Common
             if (!UnityEngine.PlayerPrefs.HasKey(path))
                 return "";
 
-             return UnityEngine.PlayerPrefs.GetString(path + GameDataManager.SAVE_DATENAME, DateTime.Now.ToString());
+            return UnityEngine.PlayerPrefs.GetString(path + GameDataManager.SAVE_DATENAME, DateTime.Now.ToString());
 #endif
         }
 #endif//WINDOWS
