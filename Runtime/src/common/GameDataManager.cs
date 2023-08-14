@@ -166,6 +166,13 @@ namespace Yukar.Common
             else
             {
                 stream = SGBSaveManager.LoadDataOverrideFunc(index);
+
+                // If there's no save and the given index, return an empty save
+                if (stream == null)
+                {
+                    result.inititalize(catalog);
+                    return result;
+                }
             }
 #endif
             var reader = new BinaryReader(stream);
@@ -268,6 +275,13 @@ namespace Yukar.Common
             else
             {
                 stream = SGBSaveManager.LoadDataOverrideFunc(index);
+
+                // If there's no save and the given index, return an empty save
+                if (stream == null)
+                {
+                    result.inititalize(catalog);
+                    return result;
+                }
             }
 #endif
 
