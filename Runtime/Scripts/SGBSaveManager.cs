@@ -61,6 +61,11 @@ namespace BobboNet.SGB.IMod
         /// </summary>
         public static LoadDataDelegate LoadDataOverrideFunc { get; set; } = null;
 
+        /// <summary>
+        /// Can the user save & load in SGB's pause menu?
+        /// </summary>
+        public static bool CanSaveLoadInPauseMenu { get; set; } = true;
+
         //
         //  Constructor
         //

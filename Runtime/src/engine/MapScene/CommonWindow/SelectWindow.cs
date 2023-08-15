@@ -10,6 +10,10 @@ using StateType = Yukar.Engine.Input.StateType;
 using Yukar.Common;
 using Yukar.Common.GameData;
 
+#if IMOD
+using BobboNet.SGB.IMod;
+#endif
+
 namespace Yukar.Engine
 {
     internal class PagedSelectWindow : CommonWindow
@@ -937,6 +941,9 @@ namespace Yukar.Engine
         {
             result = Util.RESULT_SELECTING;
             flags[4] = p.owner.parent.owner.data.system.saveAvailable;
+#if IMOD
+            flags[4] = flags[4] && SGBSaveManager.CanSaveLoadInPauseMenu;
+#endif
             base.Show();
         }
 

@@ -10,6 +10,10 @@ using KeyStates = Yukar.Engine.Input.KeyStates;
 using StateType = Yukar.Engine.Input.StateType;
 using Microsoft.Xna.Framework;
 
+#if IMOD
+using BobboNet.SGB.IMod;
+#endif
+
 namespace Yukar.Engine
 {
     class MenuController
@@ -288,7 +292,14 @@ namespace Yukar.Engine
                             detail.Hide();
                             break;
                         case MainMenu.SAVE: // セーブ
-                            if (!res.owner.parent.owner.data.system.saveAvailable)
+                            if (
+                                // If there's no save available
+                                !res.owner.parent.owner.data.system.saveAvailable
+#if IMOD
+                                // OR if IMod says we can't use this menu..
+                                || !SGBSaveManager.CanSaveLoadInPauseMenu
+#endif
+                                )
                             {
                                 Audio.PlaySound(parent.owner.se.cancel);
                                 mainMenu.result = Util.RESULT_SELECTING;
@@ -808,7 +819,8 @@ namespace Yukar.Engine
 #else
 
 #if IMOD
-                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) {
+                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+                    {
 #else
                     if (UnityEngine.Input.GetMouseButtonDown(0)) {
 #endif
@@ -1030,7 +1042,7 @@ namespace Yukar.Engine
                 }
             }
             // 効果対象がいない場合終了
-            if(!effected)
+            if (!effected)
             {
                 Audio.PlaySound(parent.owner.se.cancel);
                 return;
