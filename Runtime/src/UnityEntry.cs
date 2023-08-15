@@ -17,6 +17,10 @@ public class UnityEntry : MonoBehaviour
 
     // Icy Override End
 
+#if IMOD
+    public static bool overrideInit = false;
+#endif
+
 
     // Custom overrides
     static public bool mOverridesOn = true;             // Set false to skip all custom overrides and true to apply overrides below
@@ -31,10 +35,13 @@ public class UnityEntry : MonoBehaviour
     // Set custom color of hero name label (default Microsoft.Xna.Framework.Color.White)
     static public Microsoft.Xna.Framework.Color mHeroesNamesDecorationFontColor = Microsoft.Xna.Framework.Color.DeepPink;
     // End of custom overrides
-    static protected GameMain sGame = null;
-    static internal GameMain game { get { return sGame; } }
-    static protected UnityEntry sSelf = null;
-    static internal UnityEntry self { get { return sSelf; } }
+
+    public static GameMain game;
+    public static UnityEntry self;
+
+    public bool didInit = false;
+    public GameMain didInitWithGame = null;
+    public UnityEntry didInitWithSelf = null;
 
     private static Texture2D sFrameBuffer;
 #if UNITY_IOS || UNITY_ANDROID
@@ -42,7 +49,7 @@ public class UnityEntry : MonoBehaviour
 #endif
 
 
-    internal static void InitializeDir()
+    public static void InitializeDir()
     {
         // Icy Override Start
 #if UNITY_SWITCH && !UNITY_EDITOR
@@ -68,10 +75,12 @@ public class UnityEntry : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (overrideInit || didInit) return;
+
         if (game != null) return;
         SharpKmyGfx.Render.InitializeRender();
         UnityUtil.Initialize();
-        sSelf = this;
+        self = this;
 #if !UNITY_EDITOR
         Debug.unityLogger.logEnabled = false;
 #endif
@@ -96,21 +105,35 @@ public class UnityEntry : MonoBehaviour
         Yukar.Common.GameData.SystemData.sDefaultSeVolume = catalog.getGameSettings().defaultSeVolume;
 #endif
 
-        sGame = new GameMain();
+        game = new GameMain();
         game.initialize();
 
         UnityAdsManager.Initialize(game);
+
+        didInit = true;
+        didInitWithGame = game;
+        didInitWithSelf = this;
     }
 
     // Icy Override Start
     private void OnDestroy()
     {
+        if (!didInit) return;
+
         // Deinit everything we can
         // FOR THE FUTURE - fix a case here where we create a deinit for the UnityResolution class
-        game.finalize();
-        sGame = null;
         UnityUtil.DeInit();
-        sSelf = null;
+
+        if (game == didInitWithGame)
+        {
+            game.finalize();
+            game = null;
+        }
+
+        if (self == didInitWithSelf)
+        {
+            self = null;
+        }
     }
     // Icy Override End
 
@@ -153,7 +176,7 @@ public class UnityEntry : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        sSelf = null;
+        self = null;
     }
 
     public static bool IsImportMapScene()

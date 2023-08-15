@@ -39,7 +39,7 @@ namespace BobboNet.SGB.IMod
 
 
         // Load into a Smile Game Builder game, given the location of it's assets
-        public static async Task LoadSmileGameAsync(string smileGameName)
+        public static async Task LoadSmileGameAsync(string smileGameName, int saveFile = -1)
         {
             // Check to see if there's a smile game by this name
             if (!DoesSGBSubpathExist(smileGameName))
@@ -50,12 +50,27 @@ namespace BobboNet.SGB.IMod
             // Set the game subpath we want to load
             UnityEntry.gameSubpathName = smileGameName;
 
+            // Override natural init if we are given a save to directly load
+            UnityEntry.overrideInit = saveFile != -1;
+
             // Start async loading the scene
             await EnterWorkspaceSceneAsync();
 
-            // When the scene is done loading...
-            CreateSGBRequiredGameObjects();
+            // When the scene is done loading, create required objects
+            CreateSGBRequiredGameObjects(out UnityEntry createdEntryPoint);
             CreateCustomRequiredGameObjects();
+
+            // If we have a save file to load into, jump directly into the game.
+            if (saveFile != -1)
+            {
+                // Custom initialize SGB, ahead of Start() call, so that we can...
+                InitializeSGBEntry(createdEntryPoint);
+
+                // ...reset SGB's state, load the first save file, and boot DIRECTLY into the map scene.
+                UnityEntry.game.DoReset(true, false);
+                UnityEntry.game.DoLoad(0);
+                UnityEntry.game.ChangeScene(Yukar.Engine.GameMain.Scenes.MAP);
+            }
         }
 
         // Unload from current Smile Builder Game, and load into a specific scene
@@ -87,7 +102,7 @@ namespace BobboNet.SGB.IMod
         }
 
         // Construct the GameObjects that SGB needs to initialize
-        private static void CreateSGBRequiredGameObjects()
+        private static void CreateSGBRequiredGameObjects(out UnityEntry entry)
         {
             CreateSGBRequiredGameObjectsHelper_MainCamera();
             CreateSGBRequiredGameObjectsHelper_ParentAndDummy("MapScene");
@@ -95,7 +110,7 @@ namespace BobboNet.SGB.IMod
             CreateSGBRequiredGameObjectsHelper_ParentAndDummy("Sound");
             CreateSGBRequiredGameObjectsHelper_ParentAndDummy("Template");
             CreateSGBRequiredGameObjectsHelper_UnityAds();
-            CreateSGBRequiredGameObjectsHelper_UnityEntry();
+            CreateSGBRequiredGameObjectsHelper_UnityEntry(out entry);
         }
 
         // Helper class for CreateSGBRequiredGameObjects. Creates the Main Camera
@@ -115,13 +130,15 @@ namespace BobboNet.SGB.IMod
         }
 
         // Helper class for CreateSGBRequiredGameObjects. Creates the Entry object
-        private static void CreateSGBRequiredGameObjectsHelper_UnityEntry()
+        private static void CreateSGBRequiredGameObjectsHelper_UnityEntry(out UnityEntry entry)
         {
             // Create the Entry Object
             GameObject unityEntryObject = new GameObject(
                 "Entry",
                 typeof(UnityEntry)
             );
+
+            entry = unityEntryObject.GetComponent<UnityEntry>();
         }
 
         // Helper class for CreateSGBRequiredGameObjects. Creates an empty GameObject with a dummy child object,
@@ -171,6 +188,41 @@ namespace BobboNet.SGB.IMod
 
             // If it has been loaded correctly, it shouldn't be null.
             return assetFile != null;
+        }
+
+        private static void InitializeSGBEntry(UnityEntry entry)
+        {
+            UnityEntry.self = entry;
+
+            SharpKmyGfx.Render.InitializeRender();
+            Yukar.Common.UnityUtil.Initialize();
+#if !UNITY_EDITOR
+            Debug.unityLogger.logEnabled = false;
+#endif
+#if UNITY_IOS || UNITY_ANDROID
+            UnityResolution.Start();
+#endif //UNITY_IOS || UNITY_ANDROID
+
+            Yukar.Common.FileUtil.language = Application.systemLanguage.ToString();
+
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+            UnityEntry.InitializeDir();
+
+            Yukar.Common.FileUtil.initialize();
+
+            Yukar.Common.Catalog.createDlcList(false);
+            Yukar.Common.Catalog catalog = new Yukar.Common.Catalog();
+            catalog.load(false);
+
+            UnityEntry.game = new Yukar.Engine.GameMain();
+            UnityEntry.game.initialize();
+
+            UnityAdsManager.Initialize(UnityEntry.game);
+
+            entry.didInit = true;
+            entry.didInitWithGame = UnityEntry.game;
+            entry.didInitWithSelf = entry;
         }
     }
 }
