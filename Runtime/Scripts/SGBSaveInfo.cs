@@ -25,6 +25,14 @@ namespace BobboNet.SGB.IMod
         public DateTime LastSaveDate { get; set; } = DateTime.Now;
 
         //
+        //  Factory Methods
+        //
+
+        public static SGBSaveInfo NewEmpty() => new SGBSaveInfo();
+        public static SGBSaveInfo NewEmpty(int slotIndex) => new SGBSaveInfo() { Index = slotIndex };
+        public static SGBSaveInfo NewReal(int slotIndex, DateTime saveDate) => new SGBSaveInfo() { Exists = true, Index = slotIndex, LastSaveDate = saveDate };
+
+        //
         //  Public Static Methods
         //
 
