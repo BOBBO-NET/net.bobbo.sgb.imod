@@ -878,25 +878,142 @@ namespace Yukar.Engine
 
     internal class MainMenu : SelectWindow
     {
-        // Custom overrides
-        internal const int ITEM = 0;
-        internal const int SKILL = 1;
-        internal const int EQUIPMENT = 2;
-        internal const int STATUS = 3;
+        public enum Options
+        {
+            Item,
+            Skill,
+            Equipment,
+            Status,
+            Save,
+            Config,
+            Close,
+            Exit
+        }
 
-        internal const int SAVE = 4;
-        internal const int CONFIG = 5;
-        internal const int CLOSE = 6;
-        internal const int EXIT = 7;
-        // End of custom overrides
+        public class OptionData
+        {
+            public int Index { get; set; }
+            public string DisplayName { get; set; }
+            public bool IsInteractable { get; set; }
 
-        private string[] strs;
+            public OptionData(Options option, Common.Rom.GameSettings.Glossary glossary, bool interactable)
+            {
+                Index = -1;
+                DisplayName = NameFromCatalog(option, glossary);
+                IsInteractable = interactable;
+            }
+
+            public static string NameFromCatalog(Options option, Common.Rom.GameSettings.Glossary glossary)
+            {
+                switch (option)
+                {
+                    case Options.Item:
+                        return glossary.item;
+                    case Options.Skill:
+                        return glossary.skill;
+                    case Options.Equipment:
+                        return glossary.equipment;
+                    case Options.Status:
+                        return glossary.status;
+                    case Options.Save:
+                        return glossary.save;
+                    case Options.Config:
+                        return glossary.config;
+                    case Options.Close:
+                        return glossary.close;
+                    case Options.Exit:
+                        return glossary.exit;
+                    default:
+                        return null;
+                }
+            }
+
+#if IMOD
+            public static SGBPauseMenuOptions.MenuButtonOptions OverrideOptionsFromOption(Options option)
+            {
+                switch (option)
+                {
+                    case Options.Item:
+                        return SGBPauseMenuOptions.ItemsButton;
+                    case Options.Skill:
+                        return SGBPauseMenuOptions.SkillsButton;
+                    case Options.Equipment:
+                        return SGBPauseMenuOptions.EquipmentButton;
+                    case Options.Status:
+                        return SGBPauseMenuOptions.StatusButton;
+                    case Options.Save:
+                        return SGBPauseMenuOptions.SaveButton;
+                    case Options.Config:
+                        return SGBPauseMenuOptions.ConfigButton;
+                    case Options.Close:
+                        return SGBPauseMenuOptions.CloseButton;
+                    case Options.Exit:
+                        return SGBPauseMenuOptions.ExitButton;
+                    default:
+                        return null;
+                }
+            }
+#endif
+        }
+
+        private static readonly Options[] desiredOptionOrder = new Options[] {
+            Options.Item,
+            Options.Skill,
+            Options.Equipment,
+            Options.Status,
+            Options.Save,
+            Options.Config,
+            Options.Close,
+            Options.Exit
+        };
+
+        private Dictionary<Options, OptionData> options;
+        private string[] displayNames;
         private bool[] flags;
 
         internal MainMenu()
         {
-            maxItems = 8;
+            maxItems = 0;
             disableLeftRight = true;
+        }
+
+        /// <summary>
+        /// Given a selection index, try to get the option that was chosen.
+        /// </summary>
+        /// <param name="index">The UI selection index. This should match `result`.</param>
+        /// <param name="foundOption">Where to store the found option, if any</param>
+        /// <returns>True if an option by that index was found, false otherwise.</returns>
+        public bool TryGetOptionFromIndex(int index, out Options foundOption)
+        {
+            foreach (var pair in options)
+            {
+                if (pair.Value.Index == index)
+                {
+                    foundOption = pair.Key;
+                    return true;
+                }
+            }
+
+            foundOption = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Given an option, try to get the corresponding selection index.
+        /// </summary>
+        /// <param name="option">The option to look for.</param>
+        /// <param name="foundIndex">Where to store the found selection index. This would match `result`.</param>
+        /// <returns>true if an index by that option was found, false otherwise.</returns>
+        public bool TryGetIndexFromOption(Options option, out int foundIndex)
+        {
+            if (options.TryGetValue(option, out OptionData data))
+            {
+                foundIndex = data.Index;
+                return true;
+            }
+
+            foundIndex = default;
+            return false;
         }
 
         public override void Initialize(CommonWindow.ParamSet pset, int x, int y, int maxWidth, int maxHeight)
@@ -905,29 +1022,43 @@ namespace Yukar.Engine
             innerWidth += 4;
             innerHeight += 4;
 
-            // Custom overrides
-            strs = new String[]{
-                p.gs.glossary.item,
-                p.gs.glossary.skill,
-                p.gs.glossary.equipment,
-                p.gs.glossary.status,
-                p.gs.glossary.save,
+            options = new Dictionary<Options, OptionData>();
 
-                p.gs.glossary.config,
-                p.gs.glossary.close,
-                p.gs.glossary.exit,
-            };
-            // End of custom overrides
-            flags = new bool[]{
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-            };
+            foreach (Options option in Enum.GetValues(typeof(Options)))
+            {
+#if IMOD
+                var overrideOptions = OptionData.OverrideOptionsFromOption(option);
+                bool isVisible = overrideOptions.IsVisible;
+                bool isInteractable = overrideOptions.IsInteractable;
+#else
+                bool isVisible = true;
+                bool isInteractable = true;
+#endif
+                if (isVisible)
+                {
+                    options.Add(option, new OptionData(option, p.gs.glossary, isInteractable));
+                }
+            }
+
+            // Get the corrected index for each option given our desired order
+            int index = 0;
+            foreach (var option in desiredOptionOrder)
+            {
+                OptionData data;
+                if (!options.TryGetValue(option, out data)) continue;
+
+                data.Index = index;
+                index++;
+            }
+
+            maxItems = options.Count;
+            displayNames = new string[options.Count];
+            flags = new bool[options.Count];
+            foreach (var option in options.Values)
+            {
+                displayNames[option.Index] = option.DisplayName;
+                flags[option.Index] = option.IsInteractable;
+            }
 
             UpdateFlags();
         }
@@ -936,7 +1067,7 @@ namespace Yukar.Engine
         {
             itemHeight = innerHeight / maxItems;
 
-            DrawSelect(strs, flags);
+            DrawSelect(displayNames, flags);
         }
 
         internal override void Show()
@@ -953,21 +1084,29 @@ namespace Yukar.Engine
             result = Util.RESULT_SELECTING;
         }
 
+        /// <summary>
+        /// Update the interactable state of each option, and apply that to the flags array
+        /// </summary>
         private void UpdateFlags()
         {
+            foreach (var pair in options)
+            {
+                if (pair.Key == Options.Save)
+                {
+                    pair.Value.IsInteractable = p.owner.parent.owner.data.system.saveAvailable;
 #if IMOD
-            flags[0] = SGBPauseMenuOptions.ItemsButton.IsInteractable;
-            flags[1] = SGBPauseMenuOptions.SkillsButton.IsInteractable;
-            flags[2] = SGBPauseMenuOptions.EquipmentButton.IsInteractable;
-            flags[3] = SGBPauseMenuOptions.StatusButton.IsInteractable;
-#endif
-            flags[4] = p.owner.parent.owner.data.system.saveAvailable;
+                    pair.Value.IsInteractable = pair.Value.IsInteractable && OptionData.OverrideOptionsFromOption(Options.Save).IsInteractable;
+#endif // IMOD
+                }
 #if IMOD
-            flags[4] = flags[4] && SGBPauseMenuOptions.SaveButton.IsInteractable;
-            flags[5] = SGBPauseMenuOptions.ConfigButton.IsInteractable;
-            flags[6] = SGBPauseMenuOptions.CloseButton.IsInteractable;
-            flags[7] = SGBPauseMenuOptions.ExitButton.IsInteractable;
-#endif
+                else
+                {
+                    pair.Value.IsInteractable = OptionData.OverrideOptionsFromOption(pair.Key).IsInteractable;
+                }
+
+                flags[pair.Value.Index] = pair.Value.IsInteractable;
+#endif // IMOD
+            }
         }
 
     }
