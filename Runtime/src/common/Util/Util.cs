@@ -413,8 +413,23 @@ namespace Yukar.Common
             return false;
         }
 
+        /// <returns>true if we are running on a JP system, false otherwise.</returns>
+        public static bool getIsJapanese()
+        {
+#if WINDOWS
+            return System.Globalization.CultureInfo.CurrentCulture.Name == "ja-JP";
+#else
+            return UnityEngine.Application.systemLanguage == UnityEngine.SystemLanguage.Japanese;
+#endif
+        }
+
         public static string getSaveDate(int idx, bool multiLine = false)
         {
+#if IMOD
+            // Get the write date of the desired save file. If it doesn't exist, EXIT EARLY.
+            DateTime date;
+            if (!GameDataManager.GetSaveFileDate(idx, out date)) return "";
+#else // !IMOD            
 #if WINDOWS
             var path = Yukar.Common.GameDataManager.GetDataPath(idx);
             if (!Util.file.exists(path))
@@ -423,8 +438,7 @@ namespace Yukar.Common
             if (!Util.file.exists(path))
                 return "";
             var date = File.GetLastWriteTime(path);
-            bool isJapanese = System.Globalization.CultureInfo.CurrentCulture.Name == "ja-JP";
-#else
+#else // !WINDOWS
             var dateStr = GameDataManager.LoadDate(idx);
             if (dateStr == "")
             {
@@ -432,10 +446,10 @@ namespace Yukar.Common
             }
             var date = new DateTime();
             DateTime.TryParse(dateStr, out date);
-            bool isJapanese = UnityEngine.Application.systemLanguage == UnityEngine.SystemLanguage.Japanese;
-#endif
+#endif // (WINDOWS)
+#endif // (IMOD)
 
-            if (isJapanese)
+            if (getIsJapanese())
             {
                 return date.ToString("yy/MM/dd") + (multiLine ? "\n" : " ") + date.ToString("HH:mm:ss");
             }
@@ -579,7 +593,7 @@ namespace Yukar.Common
             float screenAspect = (float)UnityEngine.Screen.height / UnityEngine.Screen.width;
             float fixRatio = defaultAspect / screenAspect;
             x = (int)((v4.x * fixRatio * 0.25f + 0.5f) * viewportX);
-            y = (int)((v4.y * - 0.25f + 0.5f) * viewportY);
+            y = (int)((v4.y * -0.25f + 0.5f) * viewportY);
 #endif
             return v4.z;
         }

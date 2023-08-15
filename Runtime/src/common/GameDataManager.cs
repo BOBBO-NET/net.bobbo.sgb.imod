@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using Yukar.Common.GameData;
 
+#if IMOD
+using BobboNet.SGB.IMod;
+#endif
+
 namespace Yukar.Common
 {
     //----------------------------------------------------------
@@ -78,17 +82,30 @@ namespace Yukar.Common
 
 #if WINDOWS
         public static void Save(GameDataManager data, int index)
-        {
-            // savedata 内ではないパスにあれば、それを消す
-            var legacyPath = GetDataPath(index, true);
-            if (File.Exists(legacyPath))
+        {            
+            Stream stream = null;
+#if IMOD
+            if (SGBSaveManager.SaveDataOverrideFunc == null)
+#endif
             {
-                File.Delete(legacyPath);
-            }
+                // savedata 内ではないパスにあれば、それを消す
+                var legacyPath = GetDataPath(index, true);
+                if (File.Exists(legacyPath))
+                {
+                    File.Delete(legacyPath);
+                }
 
-            var path = GetDataPath(index);
-            Directory.CreateDirectory(Common.Util.file.getDirName(path));
-            var stream = new FileStream(path, FileMode.Create);
+                Directory.CreateDirectory(Common.Util.file.getDirName(path));
+                var path = GetDataPath(index);
+                stream = new FileStream(path, FileMode.Create);
+            }
+#if IMOD
+            else
+            {
+                stream = new MemoryStream();
+            }
+#endif
+            
             var writer = new BinaryWriter(stream);
 
             // シグネチャとデータバージョンを書く
@@ -101,23 +118,36 @@ namespace Yukar.Common
                 saveChunk(chunk, writer);
             }
 
+#if IMOD
+            if (SGBSaveManager.SaveDataOverrideFunc != null)
+            {
+                SGBSaveManager.SaveDataOverrideFunc(index, stream);
+            }
+#endif
+
             writer.Close();
         }
 
         public static GameDataManager Load(Catalog catalog, int index)
         {
             var result = new GameDataManager();
-            var fileName = GetDataPath(index);
 
-            // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
-            if (!File.Exists(fileName))
+#if IMOD
+            if(SGBSaveManager.LoadDataOverrideFunc == null)
+#endif
             {
-                // savedata 内ではないパスにあれば、それを読み込む
-                fileName = GetDataPath(index, true);
+                var fileName = GetDataPath(index);
+
+                // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
                 if (!File.Exists(fileName))
                 {
-                    result.inititalize(catalog);
-                    return result;
+                    // savedata 内ではないパスにあれば、それを読み込む
+                    fileName = GetDataPath(index, true);
+                    if (!File.Exists(fileName))
+                    {
+                        result.inititalize(catalog);
+                        return result;
+                    }
                 }
             }
 
@@ -125,7 +155,26 @@ namespace Yukar.Common
             result.system = new SystemData();
             result.start = new StartSettings();
 
-            var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            Stream stream = null;
+#if IMOD
+            if(SGBSaveManager.LoadDataOverrideFunc == null)
+#endif
+            {
+                stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            }
+#if IMOD
+            else
+            {
+                stream = SGBSaveManager.LoadDataOverrideFunc(index);
+
+                // If there's no save and the given index, return an empty save
+                if (stream == null)
+                {
+                    result.inititalize(catalog);
+                    return result;
+                }
+            }
+#endif
             var reader = new BinaryReader(stream);
 
             // シグネチャとデータバージョンを読み込む
@@ -167,16 +216,25 @@ namespace Yukar.Common
                 saveChunk(chunk, writer);
             }
 
-            // PlyaerPrefsに保存する
-            stream.Seek(0, SeekOrigin.Begin);
-#if UNITY_SWITCH && !UNITY_EDITOR
-            GameDataManagerSwitch.Save(stream, path);
-#else
-            var base64 = Convert.ToBase64String(stream.ToArray());
-            UnityEngine.PlayerPrefs.SetString(path, base64);                                    // データ本体
-            UnityEngine.PlayerPrefs.SetString(path + SAVE_DATENAME, DateTime.Now.ToString());   // 時間
-            UnityEngine.PlayerPrefs.Save();
+#if IMOD
+            if (SGBSaveManager.SaveDataOverrideFunc != null)
+            {
+                SGBSaveManager.SaveDataOverrideFunc(index, stream);
+            }
+            else
 #endif
+            {
+                // PlyaerPrefsに保存する
+                stream.Seek(0, SeekOrigin.Begin);
+#if UNITY_SWITCH && !UNITY_EDITOR
+                GameDataManagerSwitch.Save(stream, path);
+#else
+                var base64 = Convert.ToBase64String(stream.ToArray());
+                UnityEngine.PlayerPrefs.SetString(path, base64);                                    // データ本体
+                UnityEngine.PlayerPrefs.SetString(path + SAVE_DATENAME, DateTime.Now.ToString());   // 時間
+                UnityEngine.PlayerPrefs.Save();
+#endif
+            }
 
             writer.Close();
         }
@@ -184,27 +242,50 @@ namespace Yukar.Common
         public static GameDataManager Load(Catalog catalog, int index)
         {
             var result = new GameDataManager();
-            var path = GetDataPath(index);
+            Stream stream = null;
+
+#if IMOD
+            if (SGBSaveManager.LoadDataOverrideFunc == null)
+#endif
+            {
 
 #if UNITY_SWITCH && !UNITY_EDITOR
-            var bytes = GameDataManagerSwitch.Load(catalog, path);
-            if(bytes == null){
-                result.inititalize(catalog);
-                return result;
-            }
+                var path = GetDataPath(index);
+                var bytes = GameDataManagerSwitch.Load(catalog, path);
+                if(bytes == null){
+                    result.inititalize(catalog);
+                    return result;
+                }
 #else
-            var base64 = UnityEngine.PlayerPrefs.GetString(path, null);
-            // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
-            if (base64 == null)
-            {
-                result.inititalize(catalog);
-                return result;
-            }
+                var path = GetDataPath(index);
+                var base64 = UnityEngine.PlayerPrefs.GetString(path, null);
+                // ファイルが存在しなかったら、ゲーム開始データを読み込むだけ
+                if (base64 == null)
+                {
+                    result.inititalize(catalog);
+                    return result;
+                }
 
-            var bytes = Convert.FromBase64String(base64);
+                var bytes = Convert.FromBase64String(base64);
 #endif
 
-            var stream = new MemoryStream(bytes);
+                stream = new MemoryStream(bytes);
+            }
+#if IMOD
+            else
+            {
+                stream = SGBSaveManager.LoadDataOverrideFunc(index);
+
+                // If there's no save and the given index, return an empty save
+                if (stream == null)
+                {
+                    result.inititalize(catalog);
+                    return result;
+                }
+            }
+#endif
+
+
             var reader = new BinaryReader(stream);
 
             result.party = new Party(catalog);
@@ -243,10 +324,83 @@ namespace Yukar.Common
             if (!UnityEngine.PlayerPrefs.HasKey(path))
                 return "";
 
-             return UnityEngine.PlayerPrefs.GetString(path + GameDataManager.SAVE_DATENAME, DateTime.Now.ToString());
+            return UnityEngine.PlayerPrefs.GetString(path + GameDataManager.SAVE_DATENAME, DateTime.Now.ToString());
 #endif
         }
 #endif//WINDOWS
+
+#if IMOD
+        /// <summary>
+        /// Similar to the above method - just more straightforward.
+        /// I figure, why twist existing code to do something else when I can just write new good code? ~Holly
+        /// </summary>
+        /// <param name="saveIndex">The index of the save file to look at.</param>
+        /// <param name="saveDate">The date that the requested save file was saved at.</param>
+        /// <returns>true if a save was found, false otherwise.</returns>
+        public static bool GetSaveFileDate(int saveIndex, out DateTime saveDate)
+        {
+            string pathToPotentialSave = GetDataPath(saveIndex);
+#if IMOD
+            if (SGBSaveManager.ReadSaveInfoOverrideFunc != null)
+            {
+                var saveInfo = SGBSaveManager.ReadSaveInfoOverrideFunc(saveIndex);
+
+                // If there is not a loadable save at this slot
+                if (!SGBSaveInfo.IsLoadable(saveInfo))
+                {
+                    saveDate = default;
+                    return false;
+                }
+                // If there IS a loadable save at this slot
+                else
+                {
+                    saveDate = saveInfo.LastSaveDate;
+                    return true;
+                }
+            }
+            else
+#endif // IMOD
+            {
+#if WINDOWS
+                // If we're on WINDOWS, then just look at the last write time for the physical file
+
+                // Look for the save file at this index. If we can't find it, look for the save file at the legacy location.
+                if(!File.Exists(pathToPotentialSave)) pathToPotentialSave = GetDataPath(index, true);
+
+                // If there is no save file for this index, EXIT EARLY
+                if(!File.Exists(pathToPotentialSave)) 
+                {
+                    saveDate = default;
+                    return false;
+                }
+
+                // OTHERWISE, there IS a save file here, so let's return the file's last write time
+                return File.GetLastWriteTime(pathToPotentialSave);
+#elif UNITY_SWITCH && !UNITY_EDITOR
+                // If we're on SWITCH, then just use the switch manager for this
+                saveDate = GameDataManagerSwitch.LoadDate(pathToPotentialSave);
+                return true;
+#else
+                // If we're on ANY OTHER platform, then use player prefs for this
+
+                // If there's no date stored in player prefs, EXIT EARLY
+                if (!UnityEngine.PlayerPrefs.HasKey(pathToPotentialSave))
+                {
+                    saveDate = default;
+                    return false;
+                }
+
+                // Get the stored date string from player prefs. Try to parse it and send it out of this method
+                string storedSaveDate = UnityEngine.PlayerPrefs.GetString(pathToPotentialSave + SAVE_DATENAME, DateTime.Now.ToString());
+                if (DateTime.TryParse(storedSaveDate, out saveDate)) return true;
+
+                // If the date couldn't be parsed, EXIT.
+                saveDate = default;
+                return false;
+            }
+#endif
+        }
+#endif
 
         internal static void saveChunk(IGameDataItem chunk, BinaryWriter writer)
         {
