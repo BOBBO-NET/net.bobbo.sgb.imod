@@ -329,6 +329,58 @@ namespace Yukar.Common
         }
 #endif//WINDOWS
 
+#if IMOD
+        /// <summary>
+        /// Similar to the above method - just more straightforward.
+        /// I figure, why twist existing code to do something else when I can just write new good code? ~Holly
+        /// </summary>
+        /// <param name="saveIndex">The index of the save file to look at.</param>
+        /// <param name="saveDate">The date that the requested save file was saved at.</param>
+        /// <returns>true if a save was found, false otherwise.</returns>
+        public static bool GetSaveFileDate(int saveIndex, out DateTime saveDate)
+        {
+            string pathToPotentialSave = GetDataPath(saveIndex);
+
+#if WINDOWS
+            // If we're on WINDOWS, then just look at the last write time for the physical file
+
+            // Look for the save file at this index. If we can't find it, look for the save file at the legacy location.
+            if(!File.Exists(pathToPotentialSave)) pathToPotentialSave = GetDataPath(index, true);
+
+            // If there is no save file for this index, EXIT EARLY
+            if(!File.Exists(pathToPotentialSave)) 
+            {
+                saveDate = default;
+                return false;
+            }
+
+            // OTHERWISE, there IS a save file here, so let's return the file's last write time
+            return File.GetLastWriteTime(pathToPotentialSave);
+#elif UNITY_SWITCH && !UNITY_EDITOR
+            // If we're on SWITCH, then just use the switch manager for this
+            saveDate = GameDataManagerSwitch.LoadDate(pathToPotentialSave);
+            return true;
+#else
+            // If we're on ANY OTHER platform, then use player prefs for this
+
+            // If there's no date stored in player prefs, EXIT EARLY
+            if (!UnityEngine.PlayerPrefs.HasKey(pathToPotentialSave))
+            {
+                saveDate = default;
+                return false;
+            }
+
+            // Get the stored date string from player prefs. Try to parse it and send it out of this method
+            string storedSaveDate = UnityEngine.PlayerPrefs.GetString(pathToPotentialSave + SAVE_DATENAME, DateTime.Now.ToString());
+            if (DateTime.TryParse(storedSaveDate, out saveDate)) return true;
+
+            // If the date couldn't be parsed, EXIT.
+            saveDate = default;
+            return false;
+#endif
+        }
+#endif
+
         internal static void saveChunk(IGameDataItem chunk, BinaryWriter writer)
         {
             var stream = new MemoryStream();
