@@ -10,6 +10,10 @@ using KeyStates = Yukar.Engine.Input.KeyStates;
 using StateType = Yukar.Engine.Input.StateType;
 using Microsoft.Xna.Framework;
 
+#if IMOD
+using BobboNet.SGB.IMod;
+#endif
+
 namespace Yukar.Engine
 {
     class MenuController
@@ -227,6 +231,185 @@ namespace Yukar.Engine
             config.Update();
             //UnityEngine.Debug.Log(state);
 
+            Dictionary<int, Action> menuActionMap = new Dictionary<int, Action>();
+            int foundIndex;
+
+            // Add an action for when the Main Menu cancels
+            menuActionMap.Add(Util.RESULT_CANCEL, () =>
+            {
+                parent.UnlockControl();
+                parent.ExclusionAllEvents(null);
+                mainMenu.Hide();
+                digest.Hide();
+                hint.Hide();
+                detail.Hide();
+                itemList.ClearDic();
+                skillList.ClearDic();
+                state = State.HIDE;
+            });
+
+            // Add an action for when the Main Menu selects the Items button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Item, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+#if IMOD
+                if (!SGBPauseMenuOptions.ItemsButton.IsInteractable)
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+#endif
+                Audio.PlaySound(parent.owner.se.decide);
+                mainMenu.Lock();
+                digest.Hide();
+                digest.result = Util.RESULT_SELECTING;
+                state = State.ITEM;
+                itemList.Show();
+                SetMenuWindowDetailText("", null);
+            });
+
+            // Add an action for when the Main Menu selects the Skills button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Skill, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+#if IMOD
+                if (!SGBPauseMenuOptions.SkillsButton.IsInteractable)
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+#endif
+                Audio.PlaySound(parent.owner.se.decide);
+                mainMenu.Lock();
+                state = State.SKILL;
+                digest.result = Util.RESULT_SELECTING;
+                digest.selectable = true;
+                digest.showReturn = true;
+                digest.disableDead = true;
+                digest.Resize();
+                detail.Hide();
+            });
+
+            // Add an action for when the Main Menu selects the Equipment button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Equipment, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+#if IMOD
+                if (!SGBPauseMenuOptions.EquipmentButton.IsInteractable)
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+#endif
+                Audio.PlaySound(parent.owner.se.decide);
+                mainMenu.Lock();
+                state = State.EQUIP;
+                digest.result = Util.RESULT_SELECTING;
+                digest.selectable = true;
+                digest.showReturn = true;
+                digest.Resize();
+                detail.Hide();
+            });
+
+            // Add an action for when the Main Menu selects the Status button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Status, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+#if IMOD
+                if (!SGBPauseMenuOptions.StatusButton.IsInteractable)
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+#endif
+                Audio.PlaySound(parent.owner.se.decide);
+                mainMenu.Lock();
+                state = State.STATUS;
+                digest.result = Util.RESULT_SELECTING;
+                digest.selectable = true;
+                digest.showReturn = true;
+                digest.Resize();
+                detail.Hide();
+            });
+
+            // Add an action for when the Main Menu selects the Save button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Save, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+                if (
+                    // If there's no save available
+                    !res.owner.parent.owner.data.system.saveAvailable
+#if IMOD
+                    // OR if IMod says we can't use this menu..
+                    || !SGBPauseMenuOptions.SaveButton.IsInteractable
+#endif
+                    )
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+                Audio.PlaySound(parent.owner.se.decide);
+                mainMenu.Hide();
+                state = State.SAVE;
+                digest.Hide();
+                save.Show();
+                saveList.Show();
+                detail.Hide();
+            });
+
+            // Add an action for when the Main Menu selects the Exit button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Exit, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+#if IMOD
+                if (!SGBPauseMenuOptions.ExitButton.IsInteractable)
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+#endif
+                Audio.PlaySound(parent.owner.se.decide);
+                mainMenu.Lock();
+                state = State.EXIT;
+                ask.setInfo(res.gs.glossary.askExitGame, res.gs.glossary.yes, res.gs.glossary.no);
+                ask.selected = 1;
+                ask.Show();
+            });
+
+            // Add an action for when the Main Menu selects the Config button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Config, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+#if IMOD
+                if (!SGBPauseMenuOptions.ConfigButton.IsInteractable)
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+#endif
+                Audio.PlaySound(parent.owner.se.decide);
+                mainMenu.Hide();
+                state = State.CONFIG;
+                digest.Hide();
+                config.Show();
+                detail.Hide();
+            });
+
+            // Add an action for when the Main Menu selects the Close button
+            if (mainMenu.TryGetIndexFromOption(MainMenu.Options.Close, out foundIndex)) menuActionMap.Add(foundIndex, () =>
+            {
+#if IMOD
+                if (!SGBPauseMenuOptions.CloseButton.IsInteractable)
+                {
+                    Audio.PlaySound(parent.owner.se.cancel);
+                    mainMenu.result = Util.RESULT_SELECTING;
+                    return;
+                }
+#endif
+                Audio.PlaySound(parent.owner.se.cancel);
+                goToClose(); //#23959-2
+            });
+
             switch (state)
             {
                 case State.HIDE:
@@ -234,94 +417,9 @@ namespace Yukar.Engine
                 case State.MAIN:
                     SetMenuWindowDefaultDetailText();
 
-                    switch (mainMenu.result)
+                    if (menuActionMap.TryGetValue(mainMenu.result, out Action action))
                     {
-                        case Util.RESULT_CANCEL:
-                            parent.UnlockControl();
-                            parent.ExclusionAllEvents(null);
-                            mainMenu.Hide();
-                            digest.Hide();
-                            hint.Hide();
-                            detail.Hide();
-                            itemList.ClearDic();
-                            skillList.ClearDic();
-                            state = State.HIDE;
-                            break;
-                        case MainMenu.ITEM: // アイテム
-                            Audio.PlaySound(parent.owner.se.decide);
-                            mainMenu.Lock();
-                            digest.Hide();
-                            digest.result = Util.RESULT_SELECTING;
-                            state = State.ITEM;
-                            itemList.Show();
-                            SetMenuWindowDetailText("", null);
-                            break;
-                        case MainMenu.SKILL: // スキル
-                            Audio.PlaySound(parent.owner.se.decide);
-                            mainMenu.Lock();
-                            state = State.SKILL;
-                            digest.result = Util.RESULT_SELECTING;
-                            digest.selectable = true;
-                            digest.showReturn = true;
-                            digest.disableDead = true;
-                            digest.Resize();
-                            detail.Hide();
-                            break;
-                        case MainMenu.EQUIPMENT: // 装備
-                            Audio.PlaySound(parent.owner.se.decide);
-                            mainMenu.Lock();
-                            state = State.EQUIP;
-                            digest.result = Util.RESULT_SELECTING;
-                            digest.selectable = true;
-                            digest.showReturn = true;
-                            digest.Resize();
-                            detail.Hide();
-                            break;
-                        case MainMenu.STATUS: // ステータス
-                            Audio.PlaySound(parent.owner.se.decide);
-                            mainMenu.Lock();
-                            state = State.STATUS;
-                            digest.result = Util.RESULT_SELECTING;
-                            digest.selectable = true;
-                            digest.showReturn = true;
-                            digest.Resize();
-                            detail.Hide();
-                            break;
-                        case MainMenu.SAVE: // セーブ
-                            if (!res.owner.parent.owner.data.system.saveAvailable)
-                            {
-                                Audio.PlaySound(parent.owner.se.cancel);
-                                mainMenu.result = Util.RESULT_SELECTING;
-                                break;
-                            }
-                            Audio.PlaySound(parent.owner.se.decide);
-                            mainMenu.Hide();
-                            state = State.SAVE;
-                            digest.Hide();
-                            save.Show();
-                            saveList.Show();
-                            detail.Hide();
-                            break;
-                        case MainMenu.EXIT: // 終了確認
-                            Audio.PlaySound(parent.owner.se.decide);
-                            mainMenu.Lock();
-                            state = State.EXIT;
-                            ask.setInfo(res.gs.glossary.askExitGame, res.gs.glossary.yes, res.gs.glossary.no);
-                            ask.selected = 1;
-                            ask.Show();
-                            break;
-                        case MainMenu.CONFIG: // コンフィグ
-                            Audio.PlaySound(parent.owner.se.decide);
-                            mainMenu.Hide();
-                            state = State.CONFIG;
-                            digest.Hide();
-                            config.Show();
-                            detail.Hide();
-                            break;
-                        case MainMenu.CLOSE: // クローズ(キャンセルと同じ処理)
-                            Audio.PlaySound(parent.owner.se.cancel);
-                            goToClose(); //#23959-2
-                            break;
+                        action.Invoke();
                     }
                     break;
                 case State.ITEM:
@@ -808,7 +906,8 @@ namespace Yukar.Engine
 #else
 
 #if IMOD
-                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) {
+                    if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+                    {
 #else
                     if (UnityEngine.Input.GetMouseButtonDown(0)) {
 #endif
@@ -1030,7 +1129,7 @@ namespace Yukar.Engine
                 }
             }
             // 効果対象がいない場合終了
-            if(!effected)
+            if (!effected)
             {
                 Audio.PlaySound(parent.owner.se.cancel);
                 return;
