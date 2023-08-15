@@ -252,6 +252,14 @@ namespace Yukar.Engine
                             state = State.HIDE;
                             break;
                         case MainMenu.ITEM: // アイテム
+#if IMOD
+                            if (!SGBPauseMenuOptions.ItemsButton.IsInteractable)
+                            {
+                                Audio.PlaySound(parent.owner.se.cancel);
+                                mainMenu.result = Util.RESULT_SELECTING;
+                                break;
+                            }
+#endif
                             Audio.PlaySound(parent.owner.se.decide);
                             mainMenu.Lock();
                             digest.Hide();
@@ -261,6 +269,14 @@ namespace Yukar.Engine
                             SetMenuWindowDetailText("", null);
                             break;
                         case MainMenu.SKILL: // スキル
+#if IMOD
+                            if (!SGBPauseMenuOptions.SkillsButton.IsInteractable)
+                            {
+                                Audio.PlaySound(parent.owner.se.cancel);
+                                mainMenu.result = Util.RESULT_SELECTING;
+                                break;
+                            }
+#endif
                             Audio.PlaySound(parent.owner.se.decide);
                             mainMenu.Lock();
                             state = State.SKILL;
@@ -272,6 +288,14 @@ namespace Yukar.Engine
                             detail.Hide();
                             break;
                         case MainMenu.EQUIPMENT: // 装備
+#if IMOD
+                            if (!SGBPauseMenuOptions.EquipmentButton.IsInteractable)
+                            {
+                                Audio.PlaySound(parent.owner.se.cancel);
+                                mainMenu.result = Util.RESULT_SELECTING;
+                                break;
+                            }
+#endif
                             Audio.PlaySound(parent.owner.se.decide);
                             mainMenu.Lock();
                             state = State.EQUIP;
@@ -282,6 +306,14 @@ namespace Yukar.Engine
                             detail.Hide();
                             break;
                         case MainMenu.STATUS: // ステータス
+#if IMOD
+                            if (!SGBPauseMenuOptions.StatusButton.IsInteractable)
+                            {
+                                Audio.PlaySound(parent.owner.se.cancel);
+                                mainMenu.result = Util.RESULT_SELECTING;
+                                break;
+                            }
+#endif
                             Audio.PlaySound(parent.owner.se.decide);
                             mainMenu.Lock();
                             state = State.STATUS;
@@ -297,7 +329,7 @@ namespace Yukar.Engine
                                 !res.owner.parent.owner.data.system.saveAvailable
 #if IMOD
                                 // OR if IMod says we can't use this menu..
-                                || !SGBSaveManager.CanSaveLoadInPauseMenu
+                                || !SGBPauseMenuOptions.SaveButton.IsInteractable
 #endif
                                 )
                             {
@@ -314,6 +346,14 @@ namespace Yukar.Engine
                             detail.Hide();
                             break;
                         case MainMenu.EXIT: // 終了確認
+#if IMOD
+                            if (!SGBPauseMenuOptions.ExitButton.IsInteractable)
+                            {
+                                Audio.PlaySound(parent.owner.se.cancel);
+                                mainMenu.result = Util.RESULT_SELECTING;
+                                break;
+                            }
+#endif
                             Audio.PlaySound(parent.owner.se.decide);
                             mainMenu.Lock();
                             state = State.EXIT;
@@ -322,6 +362,14 @@ namespace Yukar.Engine
                             ask.Show();
                             break;
                         case MainMenu.CONFIG: // コンフィグ
+#if IMOD
+                            if (!SGBPauseMenuOptions.ConfigButton.IsInteractable)
+                            {
+                                Audio.PlaySound(parent.owner.se.cancel);
+                                mainMenu.result = Util.RESULT_SELECTING;
+                                break;
+                            }
+#endif
                             Audio.PlaySound(parent.owner.se.decide);
                             mainMenu.Hide();
                             state = State.CONFIG;
@@ -330,6 +378,14 @@ namespace Yukar.Engine
                             detail.Hide();
                             break;
                         case MainMenu.CLOSE: // クローズ(キャンセルと同じ処理)
+#if IMOD
+                            if (!SGBPauseMenuOptions.CloseButton.IsInteractable)
+                            {
+                                Audio.PlaySound(parent.owner.se.cancel);
+                                mainMenu.result = Util.RESULT_SELECTING;
+                                break;
+                            }
+#endif
                             Audio.PlaySound(parent.owner.se.cancel);
                             goToClose(); //#23959-2
                             break;

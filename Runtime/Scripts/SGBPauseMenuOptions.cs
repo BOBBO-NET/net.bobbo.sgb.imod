@@ -69,6 +69,16 @@ namespace BobboNet.SGB.IMod
         /// <summary>
         /// The button labeled "Exit" by default in the SGB pause menu.
         /// </summary>
+        /// 
         public static MenuButtonOptions ExitButton { get; private set; } = new MenuButtonOptions();
+
+        //
+        //  Constructor
+        //
+
+        static SGBPauseMenuOptions()
+        {
+
+        }
     }
 }

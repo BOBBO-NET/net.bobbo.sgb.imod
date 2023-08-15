@@ -928,6 +928,8 @@ namespace Yukar.Engine
                 true,
                 true,
             };
+
+            UpdateFlags();
         }
 
         internal override void DrawCallback()
@@ -940,10 +942,8 @@ namespace Yukar.Engine
         internal override void Show()
         {
             result = Util.RESULT_SELECTING;
-            flags[4] = p.owner.parent.owner.data.system.saveAvailable;
-#if IMOD
-            flags[4] = flags[4] && SGBSaveManager.CanSaveLoadInPauseMenu;
-#endif
+
+            UpdateFlags();
             base.Show();
         }
 
@@ -952,6 +952,24 @@ namespace Yukar.Engine
             base.Unlock();
             result = Util.RESULT_SELECTING;
         }
+
+        private void UpdateFlags()
+        {
+#if IMOD
+            flags[0] = SGBPauseMenuOptions.ItemsButton.IsInteractable;
+            flags[1] = SGBPauseMenuOptions.SkillsButton.IsInteractable;
+            flags[2] = SGBPauseMenuOptions.EquipmentButton.IsInteractable;
+            flags[3] = SGBPauseMenuOptions.StatusButton.IsInteractable;
+#endif
+            flags[4] = p.owner.parent.owner.data.system.saveAvailable;
+#if IMOD
+            flags[4] = flags[4] && SGBPauseMenuOptions.SaveButton.IsInteractable;
+            flags[5] = SGBPauseMenuOptions.ConfigButton.IsInteractable;
+            flags[6] = SGBPauseMenuOptions.CloseButton.IsInteractable;
+            flags[7] = SGBPauseMenuOptions.ExitButton.IsInteractable;
+#endif
+        }
+
     }
 
     internal class DetailWindow : CommonWindow
