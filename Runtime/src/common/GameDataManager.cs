@@ -340,43 +340,64 @@ namespace Yukar.Common
         public static bool GetSaveFileDate(int saveIndex, out DateTime saveDate)
         {
             string pathToPotentialSave = GetDataPath(saveIndex);
+#if IMOD
+            if (SGBSaveManager.ReadSaveInfoOverrideFunc != null)
+            {
+                var saveInfo = SGBSaveManager.ReadSaveInfoOverrideFunc(saveIndex);
 
+                // If there is not a loadable save at this slot
+                if (!SGBSaveInfo.IsLoadable(saveInfo))
+                {
+                    saveDate = default;
+                    return false;
+                }
+                // If there IS a loadable save at this slot
+                else
+                {
+                    saveDate = saveInfo.LastSaveDate;
+                    return true;
+                }
+            }
+            else
+#endif // IMOD
+            {
 #if WINDOWS
-            // If we're on WINDOWS, then just look at the last write time for the physical file
+                // If we're on WINDOWS, then just look at the last write time for the physical file
 
-            // Look for the save file at this index. If we can't find it, look for the save file at the legacy location.
-            if(!File.Exists(pathToPotentialSave)) pathToPotentialSave = GetDataPath(index, true);
+                // Look for the save file at this index. If we can't find it, look for the save file at the legacy location.
+                if(!File.Exists(pathToPotentialSave)) pathToPotentialSave = GetDataPath(index, true);
 
-            // If there is no save file for this index, EXIT EARLY
-            if(!File.Exists(pathToPotentialSave)) 
-            {
-                saveDate = default;
-                return false;
-            }
+                // If there is no save file for this index, EXIT EARLY
+                if(!File.Exists(pathToPotentialSave)) 
+                {
+                    saveDate = default;
+                    return false;
+                }
 
-            // OTHERWISE, there IS a save file here, so let's return the file's last write time
-            return File.GetLastWriteTime(pathToPotentialSave);
+                // OTHERWISE, there IS a save file here, so let's return the file's last write time
+                return File.GetLastWriteTime(pathToPotentialSave);
 #elif UNITY_SWITCH && !UNITY_EDITOR
-            // If we're on SWITCH, then just use the switch manager for this
-            saveDate = GameDataManagerSwitch.LoadDate(pathToPotentialSave);
-            return true;
+                // If we're on SWITCH, then just use the switch manager for this
+                saveDate = GameDataManagerSwitch.LoadDate(pathToPotentialSave);
+                return true;
 #else
-            // If we're on ANY OTHER platform, then use player prefs for this
+                // If we're on ANY OTHER platform, then use player prefs for this
 
-            // If there's no date stored in player prefs, EXIT EARLY
-            if (!UnityEngine.PlayerPrefs.HasKey(pathToPotentialSave))
-            {
+                // If there's no date stored in player prefs, EXIT EARLY
+                if (!UnityEngine.PlayerPrefs.HasKey(pathToPotentialSave))
+                {
+                    saveDate = default;
+                    return false;
+                }
+
+                // Get the stored date string from player prefs. Try to parse it and send it out of this method
+                string storedSaveDate = UnityEngine.PlayerPrefs.GetString(pathToPotentialSave + SAVE_DATENAME, DateTime.Now.ToString());
+                if (DateTime.TryParse(storedSaveDate, out saveDate)) return true;
+
+                // If the date couldn't be parsed, EXIT.
                 saveDate = default;
                 return false;
             }
-
-            // Get the stored date string from player prefs. Try to parse it and send it out of this method
-            string storedSaveDate = UnityEngine.PlayerPrefs.GetString(pathToPotentialSave + SAVE_DATENAME, DateTime.Now.ToString());
-            if (DateTime.TryParse(storedSaveDate, out saveDate)) return true;
-
-            // If the date couldn't be parsed, EXIT.
-            saveDate = default;
-            return false;
 #endif
         }
 #endif
