@@ -7,6 +7,6 @@
     "url": "https://bobbo.net"
   },
   "dependencies": {
-    "com.unity.inputsystem": "1.6.0"
+    "com.unity.inputsystem": "1.6.3"
   }
 }
