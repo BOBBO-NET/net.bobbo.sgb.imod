@@ -57,6 +57,10 @@ namespace Yukar.Engine
 
         public static GameMain instance { get; private set; }
 
+#if IMOD
+        internal static bool isLoadingOverrideMap = false;
+#endif
+
         public bool IsBattle2D
         {
             get
@@ -786,6 +790,9 @@ namespace Yukar.Engine
                     titleScene.Update();
                     break;
                 case Scenes.MAP:
+#if IMOD
+                    if (isLoadingOverrideMap) break;
+#endif
                     mapScene.Update();
                     break;
                 case Scenes.BATTLE_TEST:
@@ -999,7 +1006,7 @@ namespace Yukar.Engine
             return mapScene.menuWindow.res;
         }
 
-        internal void DoLoad(int index)
+        internal void DoLoad(int index, bool loadMap = true)
         {
             data = Yukar.Common.GameDataManager.Load(catalog, index);
             float bgmVolume = 0.5f;
@@ -1015,7 +1022,7 @@ namespace Yukar.Engine
 #endif
             Audio.setMasterVolume(bgmVolume, seVolume);
 
-            DoReset(false); // データがもうあるので初期化しない
+            DoReset(false, loadMap); // データがもうあるので初期化しない
         }
 
         internal void DoSave(int index)

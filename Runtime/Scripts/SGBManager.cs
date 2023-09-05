@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Yukar.Common;
+using Yukar.Engine;
 
 namespace BobboNet.SGB.IMod
 {
@@ -135,8 +136,9 @@ namespace BobboNet.SGB.IMod
                 InitializeSGBEntry(createdEntryPoint);
 
                 // ...reset SGB's state, load the first save file, and boot DIRECTLY into the map scene.
+                GameMain.isLoadingOverrideMap = true;
                 UnityEntry.game.DoReset(true, false);
-                UnityEntry.game.DoLoad(0);
+                UnityEntry.game.DoLoad(0, false);
                 UnityEntry.game.ChangeScene(Yukar.Engine.GameMain.Scenes.MAP);
 
                 // If we should load a specific map...
@@ -154,6 +156,8 @@ namespace BobboNet.SGB.IMod
                     }
                 }
 
+                // Mark that we are done manually loading into a map
+                GameMain.isLoadingOverrideMap = false;
             }
         }
 
