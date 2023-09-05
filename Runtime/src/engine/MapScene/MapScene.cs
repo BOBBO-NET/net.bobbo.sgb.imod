@@ -47,7 +47,7 @@ namespace Yukar.Engine
 
         // マップキャラ
         internal List<MapCharacter> mapCharList = new List<MapCharacter>();
-        
+
         //同期
         internal ScriptRunner dialoguePushedRunner;
         internal ScriptRunner excludedScript;
@@ -474,7 +474,7 @@ namespace Yukar.Engine
 
             spManager.owner = this;
 
-            if(withBattle)
+            if (withBattle)
                 battleSequenceManager = new BattleSequenceManager(owner, owner.catalog, new WindowDrawer(winRes, winImgId), new WindowDrawer(winRes, winImgId));
         }
 
@@ -645,7 +645,7 @@ namespace Yukar.Engine
             }
             // 前のマップで画面遷移を実行したスクリプトはそのまま動かす
             excludedScript = null;
-			cameraControlledScript = null;
+            cameraControlledScript = null;
             if (callReserveRunner != null && callReserveRunner.script != null)
             {
                 callReserveRunner.removeTrigger = ScriptRunner.RemoveTrigger.ON_EXIT;
@@ -780,7 +780,7 @@ namespace Yukar.Engine
             UnityEntry.reserveClearFB();
 #endif
         }
-        
+
         internal void updateMapGeometry()
         {
             mapDrawer.Update(GameMain.getElapsedTime());
@@ -1251,7 +1251,7 @@ namespace Yukar.Engine
 
             return result;
         }
-        
+
         internal void ProcParallelScript()
         {
             UnityUtil.changeScene(UnityUtil.SceneType.MAP);
@@ -1366,7 +1366,11 @@ namespace Yukar.Engine
          */
         internal void Draw()
         {
-            if (isLoading || isBattleLoading)
+            if (isLoading || isBattleLoading
+#if IMOD
+                || GameMain.isLoadingOverrideMap
+#endif
+            )
             {
                 // スクリーンカラーを適用
                 Graphics.DrawFillRect(0, 0, Graphics.ViewportWidth, Graphics.ViewportHeight,
@@ -1724,7 +1728,7 @@ namespace Yukar.Engine
             float screenAspect = (float)UnityEngine.Screen.height / (float)UnityEngine.Screen.width;
             float fixRatio = defaultAspect / screenAspect;
             x = (int)((v4.x * fixRatio * 0.25f + 0.5f) * Graphics.ViewportWidth);
-            y = (int)((v4.y * - 0.25f + 0.5f) * Graphics.ViewportHeight);
+            y = (int)((v4.y * -0.25f + 0.5f) * Graphics.ViewportHeight);
 #endif
             var z = Util.getScreenPos(pp, vv, v4, out x, out y, Graphics.ViewportWidth, Graphics.ViewportHeight);
 
@@ -1755,7 +1759,7 @@ namespace Yukar.Engine
 
         internal float GetRandom(float max, float min)
         {
-            if(min > max)
+            if (min > max)
             {
                 var tmp = min;
                 min = max;
@@ -2151,7 +2155,8 @@ namespace Yukar.Engine
             EndFadeOut = MoveMap;
             EndFadeOut += StartFadeIn;
             EndFadeIn = ExecGameoverEvent;
-            EndExecEvent += () => {
+            EndExecEvent += () =>
+            {
                 EndExecEvent = null;
                 UnlockControl();
                 ExclusionAllEvents(null);

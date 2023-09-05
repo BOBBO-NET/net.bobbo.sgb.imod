@@ -5,11 +5,83 @@ using System.Threading;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Yukar.Common;
+using Yukar.Engine;
 
 namespace BobboNet.SGB.IMod
 {
     public static class SGBManager
     {
+        /// <summary>
+        /// Data to use when entering into an SGB map.
+        /// </summary>
+        public class EntryMapParameters
+        {
+            /// The name of the SGB map to load.
+            public string MapName { get; set; }
+
+            // Where to place the player once the map has loaded.
+            public Vector2Int StartPosition { get; set; }
+
+            // Which way to orient the player once the map has loaded.
+            public int StartDirection { get; set; } = -1;
+
+            // Where to place the player vertically once the map has loaded.
+            public float StartHeight { get; set; } = -1.0f;
+
+            //
+            //  Public Methods
+            //
+
+            /// <summary>
+            /// Find the SGB map for these entry parameters, given a catalog of SGB data.
+            /// </summary>
+            /// <param name="catalog">The SGB catalog to search through when looking for this map.</param>
+            /// <returns>The SGB Map RomItem that this class refers to, null if not found.</returns>
+            public Yukar.Common.Rom.Map GetMap(Catalog catalog)
+            {
+                var smileMaps = catalog.getFilteredItemList(typeof(Yukar.Common.Rom.Map));
+
+                foreach (var map in smileMaps)
+                {
+                    if (map.name == MapName) return (Yukar.Common.Rom.Map)map;
+                }
+
+                return null;
+            }
+
+            /// <summary>
+            /// Generate SGB's internal change map parameters using these entry parameters and the
+            /// map to load itself.
+            /// </summary>
+            /// <param name="map">The SGB map to load.</param>
+            /// <returns>SGB's internal change map parameters.</returns>
+            internal Yukar.Engine.MapScene.ChangeMapParams GenerateChangeMapParams(Yukar.Common.Rom.Map map)
+            {
+                var changeMapParameters = Yukar.Engine.MapScene.ChangeMapParams.defaultParams;
+                changeMapParameters.guid = map.guId;
+                changeMapParameters.x = StartPosition.x;
+                changeMapParameters.y = StartPosition.y;
+                changeMapParameters.height = StartHeight;
+                changeMapParameters.dir = StartDirection;
+
+                // The following parameters are left alone, but could be implemented in the future. 
+                //
+                // changeMapParameters.createHero = true;
+                // changeMapParameters.eventStates = data.start.events;
+                // changeMapParameters.camera = data.start.camera;
+                // changeMapParameters.spriteStates = data.start.sprites;
+                // changeMapParameters.playerLock = data.start.plLock;
+                // changeMapParameters.cameraLockByEvent = data.start.camLockedByEvent;
+                // changeMapParameters.cameraLock = data.start.camLock;
+                // changeMapParameters.cameraModeLock = data.start.camModeLock;
+                // changeMapParameters.bgmStatus = data.start.currentBgm;
+                // changeMapParameters.bgsStatus = data.start.currentBgs;
+
+                return changeMapParameters;
+            }
+        }
+
         //
         //  Settings
         //
@@ -39,7 +111,7 @@ namespace BobboNet.SGB.IMod
 
 
         // Load into a Smile Game Builder game, given the location of it's assets
-        public static async Task LoadSmileGameAsync(string smileGameName, int saveFile = -1)
+        public static async Task LoadSmileGameAsync(string smileGameName, int saveFile = -1, EntryMapParameters mapLoadParams = null)
         {
             // Check to see if there's a smile game by this name
             if (!DoesSGBSubpathExist(smileGameName))
@@ -67,9 +139,28 @@ namespace BobboNet.SGB.IMod
                 InitializeSGBEntry(createdEntryPoint);
 
                 // ...reset SGB's state, load the first save file, and boot DIRECTLY into the map scene.
+                GameMain.isLoadingOverrideMap = true;
                 UnityEntry.game.DoReset(true, false);
-                UnityEntry.game.DoLoad(0);
+                UnityEntry.game.DoLoad(0, false);
                 UnityEntry.game.ChangeScene(Yukar.Engine.GameMain.Scenes.MAP);
+
+                // If we should load a specific map...
+                if (mapLoadParams != null)
+                {
+                    // Load the map for these entry details. If we can't find it, issue a warning.
+                    var mapToLoad = mapLoadParams.GetMap(UnityEntry.game.catalog);
+                    if (mapToLoad == null)
+                    {
+                        Debug.LogWarning($"Failed to find an SGB map with the name '{mapToLoad}'..! Ignoring...");
+                    }
+                    else
+                    {
+                        UnityEntry.game.mapScene.ChangeMap(mapLoadParams.GenerateChangeMapParams(mapToLoad));
+                    }
+                }
+
+                // Mark that we are done manually loading into a map
+                GameMain.isLoadingOverrideMap = false;
             }
         }
 
