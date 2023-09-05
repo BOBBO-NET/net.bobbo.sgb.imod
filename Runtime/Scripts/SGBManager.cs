@@ -62,12 +62,15 @@ namespace BobboNet.SGB.IMod
                 changeMapParameters.guid = map.guId;
                 changeMapParameters.x = StartPosition.x;
                 changeMapParameters.y = StartPosition.y;
+                changeMapParameters.height = StartHeight;
+                changeMapParameters.dir = StartDirection;
+
+                // The following parameters are left alone, but could be implemented in the future. 
+                //
                 // changeMapParameters.createHero = true;
                 // changeMapParameters.eventStates = data.start.events;
-                changeMapParameters.height = StartHeight;
                 // changeMapParameters.camera = data.start.camera;
                 // changeMapParameters.spriteStates = data.start.sprites;
-                changeMapParameters.dir = StartDirection;
                 // changeMapParameters.playerLock = data.start.plLock;
                 // changeMapParameters.cameraLockByEvent = data.start.camLockedByEvent;
                 // changeMapParameters.cameraLock = data.start.camLock;
