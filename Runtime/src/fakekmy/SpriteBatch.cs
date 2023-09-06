@@ -7,8 +7,8 @@ namespace SharpKmyGfx
 {
     public class SpriteBatch
     {
-	    public static int DEFAULT_SCREEN_X = 960;
-	    public static int DEFAULT_SCREEN_Y = 540;
+        public static int DEFAULT_SCREEN_X = 960;
+        public static int DEFAULT_SCREEN_Y = 540;
         public static float offsetX;
         public static float offsetY;
 
@@ -32,7 +32,11 @@ namespace SharpKmyGfx
         }
         private static List<DrawCall> drawCalls = new List<DrawCall>();
         private static Texture2D rectTex = null;
+#if IMOD
+        public static UnityEngine.Font defaultFont { get => BobboNet.SGB.IMod.SGBFontManager.CurrentFont; }
+#else
         internal static UnityEngine.Font defaultFont;
+#endif
         private static Material mtl;
         private static bool sIsFont_textureRebuilt = false;
 
@@ -62,7 +66,8 @@ namespace SharpKmyGfx
             }
             // End of custom overrides
 
-            if (rectTex == null) {
+            if (rectTex == null)
+            {
                 rectTex = new Texture2D(1, 1);
                 rectTex.SetPixel(0, 0, new UnityEngine.Color(1, 1, 1, 1));
                 rectTex.Apply();
@@ -78,7 +83,9 @@ namespace SharpKmyGfx
 
         static SpriteBatch()
         {
+#if !IMOD
             defaultFont = Resources.Load<UnityEngine.Font>("font");
+#endif
             UnityEngine.Font.textureRebuilt += (UnityEngine.Font obj) =>
             {
                 sIsFont_textureRebuilt = true;
@@ -163,7 +170,7 @@ namespace SharpKmyGfx
             //
             call.style.font = defaultFont;
             call.style.fontSize = (int)(font.fontSize * scl * scale);
-            if(italic)
+            if (italic)
                 call.style.fontStyle = FontStyle.Italic;
             GUIStyleState styleState = new GUIStyleState();
             styleState.textColor = new UnityEngine.Color(r, g, b, a);
@@ -472,7 +479,7 @@ namespace SharpKmyGfx
             float destY = dest.y * scale + offsetY; // 2Dオブジェクトのy座標
             float destW = dest.width * scale;  // 2Dオブジェクトの横幅
             float destH = dest.height * scale; // 2Dオブジェクトの縦幅
-            
+
             var result = new Rect((int)destX, (int)destY, 0, 0);
             result.xMax = (int)(destX + destW);
             result.yMax = (int)(destY + destH);
