@@ -10,6 +10,7 @@ using Yukar.Engine;
 using KeyStates = Yukar.Engine.Input.KeyStates;
 using StateType = Yukar.Engine.Input.StateType;
 using System.Collections;
+using BobboNet.SGB.IMod;
 
 namespace Yukar.Engine
 {
@@ -541,6 +542,37 @@ namespace Yukar.Engine
 
         internal IEnumerator changeMapImpl(ChangeMapParams p)
         {
+#if IMOD
+            // マップデータ読み込み - Load Map Data
+            map = owner.catalog.getItemFromGuid(p.guid) as Common.Rom.Map;
+
+            // If there is no map, BREAK
+            if (map == null)
+            {
+                UnityEngine.Debug.LogError($"Failed to load map {p.guid}");
+                yield break;
+            }
+
+            // Invoke the pre-load operations and find out if this load is approved
+            var approvalResult = SGBMapLoadManager.OnPreLoad.GetApproval(new SGBMapLoadManager.PreLoadApprovalArgs()
+            {
+                Guid = p.guid,
+                Map = map,
+            });
+
+            switch (approvalResult)
+            {
+                case ApproveEventResult.Approve:
+                    break;
+
+                // If there is any case where this map is not approved, EXIT EARLY.
+                default:
+                case ApproveEventResult.Error:
+                case ApproveEventResult.Cancel:
+                    yield break;
+            }
+#endif
+
             var ONE_FRAME = 10000 * 16;
             var lastTime = DateTime.Now.Ticks;
             Func<bool> waiter = () =>
@@ -585,6 +617,7 @@ namespace Yukar.Engine
             // 方向を覚えておく
             p.dir = hero == null ? p.dir : hero.getDirection();
 
+#if !IMOD
             // マップデータ読み込み
             map = catalog.getItemFromGuid(p.guid) as Common.Rom.Map;
             if (map == null)
@@ -596,6 +629,7 @@ namespace Yukar.Engine
 
                 map = list[0] as Common.Rom.Map;
             }
+#endif
             battleSetting = map.mapBattleSetting;
             mapFixCamera = map.fixCamera;
             mapFixCameraMode = map.fixCameraMode;
