@@ -23,7 +23,7 @@ public class UnityEntry : MonoBehaviour
 
 
     // Custom overrides
-    static public bool mOverridesOn = true;             // Set false to skip all custom overrides and true to apply overrides below
+    static public bool mOverridesOn = false;             // Set false to skip all custom overrides and true to apply overrides below
     static public int mResolution = 2;                 // Set 1 for 960 x 544 (540) resolution, set 2 for 1920 x 1080 resolution
     static public bool mMargin = true;                  // Set false to skip margin correction and true to apply margin correction
     static public bool mRemoveFontBorders = true;       // Set true to remove font borders and false to default font borders
