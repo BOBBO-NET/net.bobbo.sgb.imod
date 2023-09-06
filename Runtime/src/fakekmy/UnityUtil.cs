@@ -30,7 +30,7 @@ namespace Yukar.Common
         private static SceneType currentScene = SceneType.MAP;
 
         private static Transform[] parents = new Transform[(int)ParentType.COUNT];
-        private static int[] sSceneBuildIndexList = new int[(int)SceneType.COUNT] { -1, -1};
+        private static int[] sSceneBuildIndexList = new int[(int)SceneType.COUNT] { -1, -1 };
         private static AsyncOperation sSceneAsyncOperation = null;
 
         // Icy Override Start
@@ -56,7 +56,7 @@ namespace Yukar.Common
             parents[2] = GameObject.Find("Sound").transform;
             parents[3] = GameObject.Find("Template").transform;
             parents[4] = GameObject.Find("Main Camera").transform;
-            
+
             //分割が有効の場合
             if (UnityEntry.IsDivideMapScene())
             {
@@ -148,7 +148,7 @@ namespace Yukar.Common
                     }
                 }
             }
-            
+
 
         }
 
@@ -173,13 +173,13 @@ namespace Yukar.Common
             }
 
             //一時的なカメラを有効
-            if(isUseTempCamera == true
+            if (isUseTempCamera == true
             && parents[(int)ParentType.CAMERA] != null)
             {
                 parents[(int)ParentType.CAMERA].gameObject.SetActive(true);
             }
         }
-        
+
         internal static int getEntryScene()
         {
             // Icy Override Start
@@ -226,7 +226,7 @@ namespace Yukar.Common
         {
             var curSceneBuildIndex = getCurrentScene();
             if (curSceneBuildIndex == -1) return;
-            
+
             //動的オブジェクトのシーン移動
             var entryScene = getEntryScene();
             moveParent(entryScene);
@@ -238,7 +238,7 @@ namespace Yukar.Common
                 if (index != curSceneBuildIndex) continue;
                 userCnt++;
             }
-            if(2 <= userCnt)
+            if (2 <= userCnt)
             {
                 sSceneBuildIndexList[(int)currentScene] = -1;
                 return;
@@ -271,7 +271,8 @@ namespace Yukar.Common
             var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scenePath);
 
             //すでにシーンが読み込まれているのであれば抜ける
-            if (scene.isLoaded) {
+            if (scene.isLoaded)
+            {
                 sSceneBuildIndexList[(int)currentScene] = scene.buildIndex;
                 return;
             }
@@ -290,7 +291,7 @@ namespace Yukar.Common
 
             var sceneBuildIndex = getCurrentScene();
             var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByBuildIndex(sceneBuildIndex);
-            if (scene.isLoaded == false)return false;
+            if (scene.isLoaded == false) return false;
 
             //シーン切り替え
             UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
@@ -354,7 +355,7 @@ namespace Yukar.Common
 
         internal static string pathConvertToUnityResource(string path, bool removeExtension = true)
         {
-            if(removeExtension)
+            if (removeExtension)
                 path = GetPathWithoutExtension(path);
             path = FileUtil.toLower(path.Replace("\\", "/"));
 
@@ -368,12 +369,27 @@ namespace Yukar.Common
 
             path = path.Replace("./", "");
 
-            // Icy Override Start
+
+#if IMOD
+            // Create a list of paths that should NOT be loaded relative to the catalog subpath
+            var restrictList = new string[]
+            {
+                "dummy",
+                "mapmesh",
+                "matforalpha",
+                "matforpremultiplied",
+                "motion controller",
+                "quad mesh",
+                "vrctrlparts",
+                "vrctrlpartsb",
+                "updown"
+            };
 
             // Once we're done with the initial conversion, convert this too our new subpath
-            path = Path.Combine(Catalog.sInResourceDir, path);
+            // (provided it's not in the restrict list)
+            if (!restrictList.Contains(path.ToLower())) path = Path.Combine(Catalog.sInResourceDir, path);
+#endif
 
-            // Icy Override End
 
             return path;
         }
@@ -447,7 +463,7 @@ namespace Yukar.Common
                 case ParentType.ROOT:
                     break;
                 case ParentType.OBJECT:
-                    if(currentScene == SceneType.MAP)
+                    if (currentScene == SceneType.MAP)
                         obj.transform.SetParent(parents[0]);
                     else
                         obj.transform.SetParent(parents[1]);

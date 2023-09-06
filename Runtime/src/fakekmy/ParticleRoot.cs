@@ -16,7 +16,7 @@ namespace SharpKmyGfx
         {
             this.path = UnityUtil.pathConvertToUnityResource(path, false);
         }
-        
+
         public void Release()
         {
         }
@@ -32,7 +32,7 @@ namespace SharpKmyGfx
             var buf = Resources.Load<TextAsset>(path).bytes;
             var stream = new MemoryStream(buf);
             var reader = new StreamReader(stream);
-            
+
             var alphaCurve = new GradientAlphaKey[3];
             var brightnessCurve = new GradientColorKey[3];
             var scaleCurve = new float[3];
@@ -191,7 +191,7 @@ namespace SharpKmyGfx
                         break;
                     case "linearVelocityRandom":
                         var lvr = getFloat(1) * 0.5f;
-                        if(lvr > 0)
+                        if (lvr > 0)
                         {
                             velo.x = new ParticleSystem.MinMaxCurve(velo.x.constant * (1 - lvr), velo.x.constant * (lvr + 1));
                             velo.y = new ParticleSystem.MinMaxCurve(velo.y.constant * (1 - lvr), velo.y.constant * (lvr + 1));
@@ -373,7 +373,7 @@ namespace SharpKmyGfx
                             angle.y = 180;
                         }
                         if (angleRange.z >= 360)
-                        { 
+                        {
                             angleRange.z = 359.9f;
                             angle.z = 180;
                         }
@@ -418,7 +418,12 @@ namespace SharpKmyGfx
                         anim.frameOverTime = new ParticleSystem.MinMaxCurve(0);
                         break;
                     case "texture":
+#if IMOD
+
+                        var resPath = path.Substring(0, path.Replace('\\', '/').LastIndexOf('/')) + "/textures/" + words[1];
+#else
                         var resPath = UnityUtil.pathConvertToUnityResource(Util.file.getDirName(path) + "/textures/" + words[1]);
+#endif
                         mtl.mainTexture = Resources.Load<Texture2D>(resPath);
                         renderer.material = mtl;//念のため設定しなおす
                         break;
