@@ -58,6 +58,13 @@ namespace BobboNet.SGB.IMod
 
         private void Awake()
         {
+            // If we're not in the editor, DESTROY THIS.
+            if (!Application.isEditor)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             buttonWindowToggle.onClick.AddListener(delegate ()
             {
                 SetWindowOpen(!windowIsOpen);
