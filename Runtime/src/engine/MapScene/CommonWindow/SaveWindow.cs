@@ -1,5 +1,6 @@
 ﻿// Custom overrides description
 // Resolution overrides, Margin corrections for the Save window selection options and message
+using BobboNet.SGB.IMod;
 using Microsoft.Xna.Framework;
 using Yukar.Common;
 
@@ -16,7 +17,11 @@ namespace Yukar.Engine
         {
             columnNum = 1;
             itemNumPerPage = 5;
+#if IMOD
+            maxItems = SGBSaveManager.MaxSaveFileCount;
+#else
             maxItems = 40;
+#endif
             itemHeight = 68;
             //pageMarkOffsetY = 22;
             marginRow = 1;
@@ -125,9 +130,9 @@ namespace Yukar.Engine
                 var touchPos = InputCore.getTouchPos(0);
                 var offsetX = (int)windowPos.X - innerWidth / 2;
                 var offsetY = (int)windowPos.Y - innerHeight / 2;
-                if (offsetX + maxWindowSize.X < touchPos.x 
-                    && touchPos.x < Graphics.ScreenWidth - offsetX 
-                    && offsetY < touchPos.y 
+                if (offsetX + maxWindowSize.X < touchPos.x
+                    && touchPos.x < Graphics.ScreenWidth - offsetX
+                    && offsetY < touchPos.y
                     && touchPos.y < maxWindowSize.Y)
                 {
                     if (returnSelected == 0) result = selected;

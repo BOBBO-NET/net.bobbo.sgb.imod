@@ -61,6 +61,11 @@ namespace BobboNet.SGB.IMod
         /// </summary>
         public static LoadDataDelegate LoadDataOverrideFunc { get; set; } = null;
 
+        /// <summary>
+        /// How many save files should SGB be allowed to display and store?
+        /// </summary>
+        public static int MaxSaveFileCount { get; set; } = 40;
+
         //
         //  Constructor
         //
