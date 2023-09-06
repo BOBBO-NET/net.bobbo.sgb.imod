@@ -23,7 +23,7 @@ namespace BobboNet.SGB.IMod
             public Guid Guid { get; set; }
 
             /// <summary>
-            /// A reference to the actual map data getting loaded. May be null.
+            /// A reference to the actual map data getting loaded. 
             /// </summary>
             public Yukar.Common.Rom.Map Map { get; set; }
         }
