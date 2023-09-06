@@ -51,7 +51,7 @@ namespace Yukar.Engine
         private Common.Rom.ThirdPersonCameraSettings ITEM_USER_CAMERA;
         private Common.Rom.ThirdPersonCameraSettings RESULT_START_CAMERA;
         private Common.Rom.ThirdPersonCameraSettings RESULT_END_CAMERA;
-        
+
         private WindowDrawer statusWindow;
         private WindowDrawer commandWindow;
 
@@ -285,7 +285,11 @@ namespace Yukar.Engine
 #if WINDOWS
             windowPos = new Vector2(0, 544 - windowSize.Y);
 #else
+#if IMOD
+            windowPos = new Vector2(16, 544 - windowSize.Y - 16);
+#else
             windowPos = new Vector2(16, 32);
+#endif
 #endif
             windowPos.Y += (windowSize.Y / 2 - (windowSize.Y / 2 * tweenBattleCommandWindowScale.CurrentValue.Y));
             windowSize *= tweenBattleCommandWindowScale.CurrentValue;
@@ -567,7 +571,7 @@ namespace Yukar.Engine
             battleStatusWindowDrawer.PositiveEnhanceEffect = player.positiveEffectDrawers.ElementAtOrDefault(player.positiveEffectIndex);
             battleStatusWindowDrawer.NegativeEnhanceEffect = player.negativeEffectDrawers.ElementAtOrDefault(player.negativeEffectIndex);
             battleStatusWindowDrawer.StatusAilmentEffect = player.statusEffectDrawers.ElementAtOrDefault(player.statusEffectIndex);
-            
+
             drawPlayerPanel(player, count);
 
             // 状態エフェクトを描画
@@ -701,7 +705,7 @@ namespace Yukar.Engine
 
             // totalを数える
             int total = 0;
-            foreach(var enm in enemies)
+            foreach (var enm in enemies)
             {
                 if (enm != null)
                     total++;
@@ -750,7 +754,7 @@ namespace Yukar.Engine
                 foreach (var info in damageTextList.Where(info => info.textInfo != null).GroupBy(info => info.targetCharacter).Select(group => group.FirstOrDefault()).Where(info => info != null))
                 {
                     Color color = Color.White;
-                    if(info.type < BattleDamageTextInfo.TextType.Miss)
+                    if (info.type < BattleDamageTextInfo.TextType.Miss)
                         color = catalog.getGameSettings().damageNumColors[(int)info.type];
 
                     //switch (info.type)
@@ -1053,7 +1057,7 @@ namespace Yukar.Engine
         private void executeAction(BattleCharacterBase self, bool action, bool start)
         {
             var actor = searchFromActors(self);
-            
+
             // パーティから外すなどで既にアクターがいない場合がある
             if (actor == null)
                 return;
@@ -1221,11 +1225,11 @@ namespace Yukar.Engine
                 }
             }
         }
-        
+
         internal bool isCurrentActorReady()
         {
             // Attackが予備動作まで済んでいないキャラクターがいるか調べる
-            foreach(var actor in friends)
+            foreach (var actor in friends)
             {
                 if (actor == null)
                     continue;
@@ -1305,7 +1309,7 @@ namespace Yukar.Engine
                 createCameraMatrix(out p, out v, camera.Now, asp);
 #if WINDOWS
 #else
-                if(shakeValue.x == 0 && shakeValue.y == 0)
+                if (shakeValue.x == 0 && shakeValue.y == 0)
                     scn.resetCameraMatrix();
 #endif
                 scn.setViewMatrix(p, v);
@@ -1387,7 +1391,7 @@ namespace Yukar.Engine
             {
                 v = SharpKmyMath.Matrix4.lookat(lookat, target, vecUp);
                 v = SharpKmyMath.Matrix4.inverse(v);
-                p = SharpKmyMath.Matrix4.translate(shakeValue.x, shakeValue.y, 0) * 
+                p = SharpKmyMath.Matrix4.translate(shakeValue.x, shakeValue.y, 0) *
                     SharpKmyMath.Matrix4.perspectiveFOV(MathHelper.ToRadians(c.fov), asp, nearclip, farclip);
             }
 
