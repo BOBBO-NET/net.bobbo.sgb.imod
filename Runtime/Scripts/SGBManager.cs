@@ -72,22 +72,7 @@ namespace BobboNet.SGB.IMod
                 GameMain.isLoadingOverrideMap = true;
                 UnityEntry.game.DoReset(true, false);
                 UnityEntry.game.DoLoad(0, false);
-                UnityEntry.game.ChangeScene(Yukar.Engine.GameMain.Scenes.MAP);
-
-                // If we should load a specific map...
-                if (loadMapArgs != null)
-                {
-                    // Load the map for these entry details. If we can't find it, issue a warning.
-                    var mapToLoad = loadMapArgs.GetMap(UnityEntry.game.catalog);
-                    if (mapToLoad == null)
-                    {
-                        Debug.LogWarning($"Failed to find an SGB map with the name '{mapToLoad}'..! Ignoring...");
-                    }
-                    else
-                    {
-                        UnityEntry.game.mapScene.ChangeMap(loadMapArgs.GenerateChangeMapParams(mapToLoad));
-                    }
-                }
+                SGBMapLoadManager.LoadMap(loadMapArgs);
 
                 // Mark that we are done manually loading into a map
                 GameMain.isLoadingOverrideMap = false;
