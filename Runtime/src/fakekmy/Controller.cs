@@ -51,7 +51,7 @@ namespace SharpKmyIO
         }
 
         internal void update()
-        {           
+        {
 #if UNITY_EDITOR
 #if UNITY_2017_1_OR_NEWER
 #else
@@ -84,14 +84,14 @@ namespace SharpKmyIO
 
                 if (this.mGameMain.catalog.getGameSettings().exportSettings.unity.visibleVirtualPad)
                     this.mControllerVirtual.update();
-                
+
                 if (this.mControllerVirtual.Touch.isTouchPressed()) inputState = InputState.TOUCHPANEL;
             }
 
 #if IMOD
             // If any key is pressed, then we're using the keyboard?
             // This should not be necessary w/ Unity's new inputsystem..?
-            if(UnityEngine.InputSystem.Keyboard.current.anyKey.wasPressedThisFrame) 
+            if (UnityEngine.InputSystem.Keyboard.current.anyKey.wasPressedThisFrame)
             {
                 inputState = InputState.KEYBOARD;
             }
@@ -225,7 +225,7 @@ namespace SharpKmyIO
                     return Input.GetKeyUp(KeyCode.F2);
             }
 #endif
-            
+
             return false;
         }
 
@@ -322,18 +322,18 @@ namespace SharpKmyIO
                     return (playerMovement.x < -axisThreshold) || (repeatTouchRight) ? 1 : 0;
 
                 case "PAD_X":
-                    if(playerMovement.x > axisThreshold) return 1;
-                    if(playerMovement.x < -axisThreshold) return -1;
+                    if (playerMovement.x > axisThreshold) return 1;
+                    if (playerMovement.x < -axisThreshold) return -1;
                     return 0;
                 case "PAD_Y":
-                    if(playerMovement.y > axisThreshold) return 1;
-                    if(playerMovement.y < -axisThreshold) return -1;
+                    if (playerMovement.y > axisThreshold) return 1;
+                    if (playerMovement.y < -axisThreshold) return -1;
                     return 0;
 
                 case "PAD_DASH":
                 case "DASH_0":
                     return this.IModInput.Player.Dash.IsPressed() ? 1 : 0;
-                    
+
                 // Menus
                 case "PAD_DECIDE":
                 case "DECIDE_0":
@@ -1179,7 +1179,7 @@ namespace SharpKmyIO
             int touchCount = supportsTouchScreen ? (UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count) : (0);
 
             // If we want to get a touchscreen touch (iOS / Android)
-            if(touchCount > inIndex)
+            if (touchCount > inIndex)
             {
                 var myTouch = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches[inIndex];
                 pos.x = (int)((myTouch.screenPosition.x - offsetX) / (Screen.width - offsetX * 2) * (screenSize.x));
@@ -1190,8 +1190,8 @@ namespace SharpKmyIO
             else
             {
                 // Windows
-                pos.x = (int)((UnityEngine.InputSystem.Mouse.current.position.value.x - offsetX) / (Screen.width - offsetX * 2) * (screenSize.x));
-                pos.y = (int)((UnityEngine.InputSystem.Mouse.current.position.value.y - offsetY) / (Screen.height - offsetY * 2) * (screenSize.y));
+                pos.x = (int)((UnityEngine.InputSystem.Mouse.current.position.ReadValue().x - offsetX) / (Screen.width - offsetX * 2) * (screenSize.x));
+                pos.y = (int)((UnityEngine.InputSystem.Mouse.current.position.ReadValue().y - offsetY) / (Screen.height - offsetY * 2) * (screenSize.y));
                 res.Id = 0;
                 //UnityEngine.Debug.Log("touchPos : " + pos.x + " " + pos.y);
             }
@@ -1214,7 +1214,7 @@ namespace SharpKmyIO
                 //UnityEngine.Debug.Log("touchPos : " + pos.x + " " + pos.y);
             }
 #endif
-            
+
             if (pos.x < 0) pos.x = 0;
             if (pos.x > screenSize.x) pos.x = screenSize.x;
             if (pos.y < 0) pos.y = 0;
@@ -1232,10 +1232,10 @@ namespace SharpKmyIO
             int touchCount = supportsTouchScreen ? (UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count) : (0);
 
             // If we have touch support, the touch is not negative, and someone is touching, return true.
-            if(supportsTouchScreen && inIndex >= 0 && inIndex < touchCount) return true;
+            if (supportsTouchScreen && inIndex >= 0 && inIndex < touchCount) return true;
 
             // If there are no touches, and we only want the first one, and we're pressing left mouse, return true.
-            if(touchCount == 0 && inIndex == 0 && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed) return true;
+            if (touchCount == 0 && inIndex == 0 && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed) return true;
 
             // OTHERWISE - return false
             return false;
@@ -1605,19 +1605,19 @@ namespace SharpKmyIO
                     this.mPosCenter = this.Pos;
                 }
 
-                if(mController.GameMain != null)
+                if (mController.GameMain != null)
                 {
                     var mapScene = mController.GameMain.mapScene;
-                    if(mapScene != null)
+                    if (mapScene != null)
                     {
-                        if(mapScene.messageWindow.isVisible() || mapScene.choicesWindow.isVisible()) 
+                        if (mapScene.messageWindow.isVisible() || mapScene.choicesWindow.isVisible())
                         {
                             this.mPosCenter = this.Pos;
                             return;
                         }
                     }
                 }
-                
+
                 this.mPosCenter.z -= 1.0f;
                 if (!IsFourWay)
                 {

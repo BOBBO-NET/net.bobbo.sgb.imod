@@ -110,7 +110,7 @@ namespace Yukar.Engine
                 map[x, y].CopyTo(cell, 0);
                 map[x, y] = cell;
             }
-            
+
             cell[index].h = h;
             cell[index].col = collidable;
             cell[index].chr = ev;
@@ -761,13 +761,13 @@ namespace Yukar.Engine
 #else
                 var power = 10.0f;
 #if IMOD
-                var x = UnityEngine.InputSystem.Mouse.current.position.value.x * power;
-                var y = UnityEngine.InputSystem.Mouse.current.position.value.y * power;
+                var x = UnityEngine.InputSystem.Mouse.current.position.ReadValue().x * power;
+                var y = UnityEngine.InputSystem.Mouse.current.position.ReadValue().y * power;
 #else
                 var x = UnityEngine.Input.GetAxis("Mouse X") * power;
                 var y = UnityEngine.Input.GetAxis("Mouse Y") * power;
 #endif
-                
+
                 var diff = new Point((int)-x, (int)y);
 #endif //WINDOWS
 
@@ -1018,10 +1018,10 @@ namespace Yukar.Engine
         {
             if (SharpKmy.Entry.isFullScreenMode())
                 flag = false;
-            
+
             if (cursorVisible == flag) return;
             cursorVisible = flag;
-            
+
             updateCursorVisibility();
         }
 
@@ -1729,7 +1729,7 @@ namespace Yukar.Engine
             owner.battleSequenceManager.BattleStart(owner.owner.data.party, nowEnemies, owner.battleSetting);
             owner.StartBattleMode();
             owner.isBattleLoading = false;
-            
+
 #if WINDOWS
 #else
             UnityEntry.reserveClearFB();

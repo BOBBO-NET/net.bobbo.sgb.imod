@@ -29,7 +29,7 @@ namespace Yukar.Engine
 
             return Table[vertical, horizontal];
         }
-        
+
         private bool GetTableIndex(BattleCharacterBase inCh, ref int outX, ref int outY)
         {
             var size0 = Table.GetLength(0);
@@ -38,7 +38,7 @@ namespace Yukar.Engine
                 var size1 = Table.GetLength(1);
                 for (int x = 0; x < size1; ++x)
                 {
-                    if(Table[x, y] == inCh)
+                    if (Table[x, y] == inCh)
                     {
                         outX = x;
                         outY = y;
@@ -49,7 +49,7 @@ namespace Yukar.Engine
             }
             return false;
         }
-        
+
         public CommandTargetSelecter()
         {
             Table = new BattleCharacterBase[9, 9];
@@ -135,7 +135,7 @@ namespace Yukar.Engine
             if (owner.data.system.cursorPosition == Common.GameData.SystemData.CursorPosition.KEEP &&
                 recentSelectedTarget.ContainsKey(chr))
             {
-                if(SetSelect(recentSelectedTarget[chr]))
+                if (SetSelect(recentSelectedTarget[chr]))
                     return;
             }
 
@@ -344,7 +344,7 @@ namespace Yukar.Engine
                 else
                 {
 #if IMOD
-                    var rawMousePos = UnityEngine.InputSystem.Mouse.current.position.value;
+                    var rawMousePos = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
                     var mousPos = new UnityEngine.Vector3(rawMousePos.x, rawMousePos.y, 0);
 #else
                     var mousPos = UnityEngine.Input.mousePosition;
