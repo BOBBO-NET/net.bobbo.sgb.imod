@@ -822,7 +822,11 @@ namespace Yukar.Engine
 
         internal void Update()
         {
-            if (isLoading || isBattleLoading)
+            if (isLoading || isBattleLoading
+#if IMOD
+            || GameMain.isLoadingOverrideMap
+#endif
+            )
                 return;
 
             IsMapChangedFrame = false;
