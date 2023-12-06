@@ -121,7 +121,11 @@ namespace BobboNet.SGB.IMod
             newTextRect.sizeDelta = new Vector2(0, 0);
 
             // Set the button's font
+#if UNITY_2022_2_OR_NEWER
+            Font ArialFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+#else
             Font ArialFont = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
+#endif
             newText.font = ArialFont;
             newText.material = ArialFont.material;
             newText.color = Color.black;
