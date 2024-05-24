@@ -131,3 +131,15 @@ Stream OnSgbLoad(int saveIndex)
 // Tell SGB IMod that we want to use the above function to override how SGB handles reading the raw binary data of a save slot
 SGBSaveManager.LoadDataOverrideFunc = OnSgbLoad;
 ```
+
+### Override SGB's Font
+
+For more details see [Runtime/Scripts/SGBFontManager.cs](Runtime/Scripts/SGBFontManager.cs). For a real implementation see net.bobbo.sgb.imod.naninovel's usage in [SGBFontBridgeService.cs](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/blob/main/Runtime/SGBFontBridgeService.cs).
+
+```C#
+// Load a font from somewhere
+var someFont = Resources.Load<Font>("myCoolFont");
+
+// Tell SGB IMod that we want to use the above font to override the font SGB will display text with
+SGBFontManager.CurrentFont = someFont;
+```
