@@ -169,3 +169,24 @@ AudioMixerGroup mixer = /* get some mixer group */;
 SGBAudioSettings.SetMixerGroupBGM(mixer, /* name of the volume handle */);
 SGBAudioSettings.SetMixerGroupSFX(mixer, /* name of the volume handle */);
 ```
+
+### Override Map Loading
+
+For more details see [Runtime/Scripts/SGBMapLoadManager.cs](Runtime/Scripts/SGBMapLoadManager.cs). For a real implementation see net.bobbo.sgb.imod.naninovel's usage in [NaniReturnService.cs](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/blob/main/Runtime/NaniReturnService.cs).
+
+```C#
+// Create a method that SGB IMod will use to determine if a map loading operation should be approved or canceled
+ApproveEventResult OnSgbMapPreload(SGBMapLoadManager.PreLoadApprovalArgs args)
+{
+    // In this example funciton - we'll cancel the loading of any maps named "game_exit".
+    if(args.Map.name == "game_exit") 
+    {
+        return ApproveEventResult.Cancel;
+    }
+
+    return ApproveEventResult.Approve;
+}
+
+// Tell SGB IMod that we want to use the above method to approve or deny an SGB map loading
+SGBMapLoadManager.OnPreLoad.AddApprovalSource(OnSgbMapPreload);
+```
