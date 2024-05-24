@@ -31,7 +31,7 @@ This has been built primarily for Cobysoft Joe's [Dome-King Cabbage](https://cob
 
 ### Entering / Exiting an SGB Project at Runtime
 
-SGB IMod exposes a class named SGBManager to help with this.
+For more details see [Runtime/Scripts/SGBManager.cs](Runtime/Scripts/SGBManager.cs). For a real implementation see net.bobbo.sgb.imod.naninovel's usage in [FrontendModeManager.cs](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/blob/main/Runtime/FrontendModeManager.cs).
 
 ```C#
 // Enter the title screen of the game
@@ -64,7 +64,7 @@ await SGBManager.UnloadSmileGameAsync();
 
 ### Controlling Pause Menu Options
 
-For more details on what pause menu options can be controller, check the properties in [Runtime/Scripts/SGBPauseMenuOptions.cs](Runtime/Scripts/SGBPauseMenuOptions.cs)
+For more details see [Runtime/Scripts/SGBPauseMenuOptions.cs](Runtime/Scripts/SGBPauseMenuOptions.cs). For a real implementation see net.bobbo.sgb.imod.naninovel's usage in [SGBSaveBridgeService.cs](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/blob/main/Runtime/SGBSaveBridgeService.cs).
 
 ```C#
 // Make the Exit Button invisible and non-interactable
@@ -79,6 +79,8 @@ SGBPauseMenuOptions.SaveButton.IsInteractable = false
 ```
 
 ### Override how Save Data is Read / Written to Disk
+
+For more details see [Runtime/Scripts/SGBSaveManager.cs](Runtime/Scripts/SGBSaveManager.cs). For a real implementation see net.bobbo.sgb.imod.naninovel's usage in [SGBSaveBridgeService.cs](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/blob/main/Runtime/SGBSaveBridgeService.cs).
 
 ```C#
 // Create a method that handles the raw binary data from SGB
