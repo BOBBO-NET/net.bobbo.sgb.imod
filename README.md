@@ -25,7 +25,6 @@ A heavy modification of [SMILE GAME BUILDER](https://store.steampowered.com/app/
 
 This has been built primarily for Cobysoft Joe's [Dome-King Cabbage](https://cobysoft.co/) via the [Naninovel extension](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/) that uses this package. I don't really intend to be active on this project outside of features / fixes necessary for Dome-King - though if you find this useful and have problems with it, don't be afraid to drop a ticket in the Issues tab.
 
-
 ## Features
 
 - Installable from [OpenUPM](https://openupm.com/packages/net.bobbo.sgb.imod/)
