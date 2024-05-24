@@ -143,3 +143,29 @@ var someFont = Resources.Load<Font>("myCoolFont");
 // Tell SGB IMod that we want to use the above font to override the font SGB will display text with
 SGBFontManager.CurrentFont = someFont;
 ```
+
+### Overriding Volume Levels & Mixer Routing
+
+For more details see [Runtime/Scripts/SGBAudioSettings.cs](Runtime/Scripts/SGBAudioSettings.cs). For a real implementation see net.bobbo.sgb.imod.naninovel's usage in [SGBAudioBridgeService.cs](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/blob/main/Runtime/SGBAudioBridgeService.cs).
+
+```C#
+// Set background music volume to 50%
+SGBAudioSettings.SetVolumeBGMRaw(50);
+
+// Set background music volume to 20%
+SGBAudioSettings.SetVolumeBGM(0.2);
+
+// Set sound effect volume to -5db
+SGBAudioSettings.SetVolumeSFXDecibels(-5);
+
+// Set the sound effect volume to the background music volume
+SGBAudioSettings.SetVolumeSFXRaw(SGBAudioSettings.GetVolumeBGMRaw());
+```
+
+```C#
+AudioMixerGroup mixer = /* get some mixer group */;
+
+// Set the mixer group of background music and sound effects
+SGBAudioSettings.SetMixerGroupBGM(mixer, /* name of the volume handle */);
+SGBAudioSettings.SetMixerGroupSFX(mixer, /* name of the volume handle */);
+```
