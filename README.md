@@ -18,6 +18,7 @@ This has been built primarily for Cobysoft Joe's [Dome-King Cabbage](https://cob
 - Supports manipulating SGB's volume settings and mixer routing
 - Supports Unity's [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.2/manual/index.html)
 - Fixes visual visual bugs with the default SGB Unity Exporter Runtime
+- Approve / Deny SGB loading maps for custom inter-scene navigation
 
 ## Usage
 
@@ -33,10 +34,6 @@ This has been built primarily for Cobysoft Joe's [Dome-King Cabbage](https://cob
 SGB IMod exposes a class named SGBManager to help with this.
 
 ```C#
-using BobboNet.SGB.IMod;
-
-...
-
 // Enter the title screen of the game
 await SGBManager.LoadSmileGameAsync("theNameOfTheGame");
 
@@ -63,4 +60,22 @@ await SGBManager.LoadSmileGameAsync("demoGame", 1, mapLoadParams);
 
 // Exit the currently loaded SGB game
 await SGBManager.UnloadSmileGameAsync();
+```
+
+### Controlling Pause Menu Options
+
+```C#
+// Make the Exit Button invisible and non-interactable
+SGBPauseMenuOptions.ExitButton.IsVisible = false
+SGBPauseMenuOptions.ExitButton.IsInteractable = false
+
+...
+
+// Make the Save Button visible, but not-interactable
+SGBPauseMenuOptions.SaveButton.IsVisible = true
+SGBPauseMenuOptions.SaveButton.IsInteractable = false
+
+...
+
+// For more details on what pause menu options can be controller, check the properties in `Runtime/Scripts/SGBPauseMenuOptions.cs`
 ```
