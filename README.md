@@ -9,6 +9,9 @@ A heavy modification of [SMILE GAME BUILDER](https://store.steampowered.com/app/
 - [SGB IMod](#sgb-imod)
   - [Future Development](#future-development)
   - [Features](#features)
+  - [Installing](#installing)
+    - [via OpenUPM](#via-openupm)
+    - [via Manual Install](#via-manual-install)
   - [Usage](#usage)
     - [Importing an SGB Project](#importing-an-sgb-project)
     - [Entering / Exiting an SGB Project at Runtime](#entering--exiting-an-sgb-project-at-runtime)
@@ -36,6 +39,18 @@ This has been built primarily for Cobysoft Joe's [Dome-King Cabbage](https://cob
 - Supports Unity's [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.2/manual/index.html)
 - Fixes visual visual bugs with the default SGB Unity Exporter Runtime
 - Approve / Deny SGB loading maps for custom inter-scene navigation
+
+## Installing
+
+### via OpenUPM
+
+```bash
+openupm add net.bobbo.sgb.imod
+```
+
+### via Manual Install
+
+See: [OpenUPM's manual installation instructions](https://openupm.com/packages/net.bobbo.sgb.imod/#modal-manualinstallation).
 
 ## Usage
 
