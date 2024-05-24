@@ -4,7 +4,24 @@
 
 A heavy modification of [SMILE GAME BUILDER](https://store.steampowered.com/app/483950/SMILE_GAME_BUILDER/)'s [Unity Exporter](https://store.steampowered.com/app/766450/SMILE_GAME_BUILDER_Exporter_for_Unity/) Runtime that makes manipulating the runtime state easier, fixes some problems with the original runtime, and adds support for embedding multiple SGB projects in one parent Unity project.
 
+---
+
+- [SGB IMod](#sgb-imod)
+  - [Future Development](#future-development)
+  - [Features](#features)
+  - [Usage](#usage)
+    - [Importing an SGB Project](#importing-an-sgb-project)
+    - [Entering / Exiting an SGB Project at Runtime](#entering--exiting-an-sgb-project-at-runtime)
+    - [Controlling Pause Menu Options](#controlling-pause-menu-options)
+    - [Override how Save Data is Read / Written to Disk](#override-how-save-data-is-read--written-to-disk)
+    - [Override SGB's Font](#override-sgbs-font)
+    - [Overriding Volume Levels \& Mixer Routing](#overriding-volume-levels--mixer-routing)
+    - [Override Map Loading](#override-map-loading)
+
+## Future Development
+
 This has been built primarily for Cobysoft Joe's [Dome-King Cabbage](https://cobysoft.co/) via the [Naninovel extension](https://github.com/BOBBO-NET/net.bobbo.sgb.imod.naninovel/) that uses this package. I don't really intend to be active on this project outside of features / fixes necessary for Dome-King - though if you find this useful and have problems with it, don't be afraid to drop a ticket in the Issues tab.
+
 
 ## Features
 
