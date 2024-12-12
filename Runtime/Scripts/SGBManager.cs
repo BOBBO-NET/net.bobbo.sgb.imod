@@ -201,6 +201,7 @@ namespace BobboNet.SGB.IMod
             UnityEntry.self = entry;
 
             SharpKmyGfx.Render.InitializeRender();
+            UnityEntry.blackout(); // Fill the renderer with black. If we don't do this, there may be some leftover data in the render buffer.
             Yukar.Common.UnityUtil.Initialize();
 #if !UNITY_EDITOR
             Debug.unityLogger.logEnabled = false;
